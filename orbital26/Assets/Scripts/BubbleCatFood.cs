@@ -10,7 +10,7 @@ public class BubbleCatFood : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     private Cat cat; 
     // how long the user has clicked on the bubble
     private float holdTime = 0f; 
-    [SerializeField] private float targetHoldTime = 3f;
+    [SerializeField] private float targetHoldTime = 2f;
     private bool isHolding = false;
 
     // Set up, called by "Cat.cs" AFTER bubble is initialized
@@ -23,12 +23,13 @@ public class BubbleCatFood : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     // Update is called once per frame
     void Update()
     {       
-        Debug.Log("Hold durat: " + holdTime);
+        Debug.Log("Hold durat: " + holdTime + " "+ targetHoldTime);
         if (!isHolding) return;
         holdTime += Time.deltaTime;
         if (holdTime >= targetHoldTime)
         {
             // will automatically destroy this bubble as well
+            holdTime  =targetHoldTime;
             cat.FeedCat();
         }
     }
