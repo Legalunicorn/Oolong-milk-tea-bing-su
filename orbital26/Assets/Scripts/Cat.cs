@@ -7,51 +7,129 @@ using UnityEngine;
  */ 
 public class Cat : MonoBehaviour
 {
+
+    // Refactorize cat states to ENUM rather than bunch of booleans
+    public enum CatState
+    {
+        Idle,
+        Walking,
+        Hungry,
+        Eating,
+        Tired,
+        Sleeping
+    }
+    [SerializeField] private CatState state;
+
     // States for the cat 
-    [SerializeField] private bool isWalking;
-    [SerializeField] private bool isHungry;
-    public float speed = 2f;
-
-    // Animator component (handle x-direction, and current state)
+    // [SerializeField] private bool isWalking;
+    // [SerializeField] private bool isHungry;
+    
+    // [ANIMATION] component (handle x-direction, and current state)
     Animator animator;
+    private Vector2 lastPosition; // use last pos to face sprite in the right direciton: left or right
 
-    // Movement Related Mechanics (abstract later if needed)
+    //  [MOVEMENT]  Related Mechanics 
+    public float speed = 2f;
     public BoxCollider2D area; // boundary object
     private Vector2 targetPos; // position to move towards
     private const float fixedIdleDuration = 1f; // how long to idle between each walk
     private float idleTimeLeft = 0f; // reset to 1f
 
-    //Animation variables
-    private Vector2 lastPosition; // use last pos to face sprite in the right direciton: left or right
+    // [HUNGER] variables
+    [SerializeField] private float timeBetweenMeal = 5f; 
+    private float timeLeftToHungry;
 
-    
-    
+    // Hunger Bubble or Sleep bubble
+    private GameObject currentBubble;
+    [SerializeField] private GameObject foodBubblePrefab;
+    // to implement in the future
+    //[SerializeField] private GameObject sleepBubblePrefab;
 
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Initialize variables 
+        // find animator component to edit params
         animator = GetComponent<Animator>();
+        // start position 
         lastPosition = transform.position;
+        // start walking already
         PickRandomTargetPos();
-        isWalking = true;
-        updateAnimation();
+        state = CatState.Walking;
+        UpdateAnimation();
+        // Start timer to become hungry 
+        timeLeftToHungry = timeBetweenMeal;
     }
 
     // Update is called once per frame
     void Update()
     {
-        handleMovement();
-        orientateCat();
+        HandleHunger();
+        HandleMovement();
+        OrientateCat();
     }
 
-    void orientateCat()
+    void HandleHunger()
+    {
+        // already hungry/eating -> ignore 
+        if (state == CatState.Hungry || state == CatState.Eating) return;
+
+        // reduce time left to hungry by duration since last frame
+        timeLeftToHungry -= Time.deltaTime; 
+
+        if (timeLeftToHungry <= 0f)
+        {
+            state = CatState.Hungry;
+            UpdateAnimation();
+            SpawnHungerBubble(); 
+        }
+    }
+    // Feed the cat 
+    public void FeedCat()
+    {
+        // remove Prefab Instance of any bubble
+        if (currentBubble != null) Destroy(currentBubble); 
+        timeLeftToHungry = timeBetweenMeal;
+        state = CatState.Eating;
+        //animator.SetTrigger("eat");
+        animator.SetBool("isEating", true);
+
+        // eat for 2s -> return to Idle
+        Invoke(nameof(FinishEating), 2f);
+    }
+
+    void FinishEating()
+    {
+        animator.SetBool("isEating", false);
+        state = CatState.Idle;
+        idleTimeLeft = fixedIdleDuration;
+        UpdateAnimation();
+    }
+
+    void SpawnHungerBubble()
+    {
+        // assign current bubble to FOOD BUBBLE 
+        currentBubble = Instantiate(
+            foodBubblePrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        // parent bubble position to cat pos
+        currentBubble.transform.SetParent(transform);
+        // off set by 1.2F
+        currentBubble.transform.localPosition = new Vector3(0, 1.2f, 0);
+
+        BubbleCatFood bubbleScript = currentBubble.GetComponent<BubbleCatFood>();
+        bubbleScript.Setup(this); // pass reference of cat to bubble
+    }
+
+
+    // make cat face left/right depending on delta x
+    void OrientateCat()
     {
         Vector2 movementDelta = (Vector2) transform.position - lastPosition;
         if (movementDelta.x > 0.01f)
         {
-            // x,y,z 
             transform.localScale = new Vector3(1, 1, 1);
         } else if (movementDelta.x < -0.01f)
         {
@@ -62,31 +140,34 @@ public class Cat : MonoBehaviour
 
 
 
-    void updateAnimation()
+    void UpdateAnimation()
     {
-        // set the Animator params to our cat state
-        animator.SetBool("isWalking", isWalking);      
+        // Update isWalking
+        animator.SetBool("isWalking", state == CatState.Walking);      
+        // Update isWating
 
-        Debug.Log($"=== Cat Startup Debug ===");
-        Debug.Log($"Start Position: {transform.position}");
-        Debug.Log($"Target Position: {targetPos}");
+        // Debug.Log($"=== Cat Startup Debug ===");
+        // Debug.Log($"Start Position: {transform.position}");
+        // Debug.Log($"Target Position: {targetPos}");
     }
 
-    void handleMovement()
+    void HandleMovement()
     {
-        // cat is idle  
-        if (!isWalking)
+        // no movement when hungry or eating ,so that user can click and hold  on hungry bubble 
+        if (state == CatState.Hungry || state == CatState.Eating) return; 
+        if (state == CatState.Idle)
         {
             // minus the duration since the last Frame
             idleTimeLeft -= Time.deltaTime;
             if (idleTimeLeft <= 0f)
             {
                 // cat has idled long enough, time to start walking
-                isWalking = true;
-                updateAnimation();
+                state = CatState.Walking;
+                UpdateAnimation();
                 PickRandomTargetPos();
             }
-        } else
+        } 
+        else if (state == CatState.Walking)
         {
             // move towards the target position 
             transform.position = Vector2.MoveTowards(
@@ -94,11 +175,12 @@ public class Cat : MonoBehaviour
                 targetPos,
                 speed * Time.deltaTime
             );
+
             // reached the target position 
             if (Vector2.Distance(transform.position, targetPos) < 0.1f)
             {
-                isWalking = false;
-                updateAnimation();
+                state = CatState.Idle;
+                UpdateAnimation();
                 idleTimeLeft = fixedIdleDuration;
             }
         }
