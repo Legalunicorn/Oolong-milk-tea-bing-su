@@ -37,10 +37,20 @@ public class Cat : MonoBehaviour
     [SerializeField] private float timeBetweenMeal = 5f; 
     private float timeLeftToHungry;
     // Hunger Bubble or Sleep bubble
-    private GameObject currentBubble;
+    // private GameObject currentBubble;
     [SerializeField] private GameObject foodBubblePrefab;
     // to implement in the future
     //[SerializeField] private GameObject sleepBubblePrefab;
+
+    // [SLEEP] variables
+    [SerializeField] private float timeBetweenSleep = 5f;
+    private float timeLeftToSleep;
+    [SerializeField] private GameObject sleepBubblePrefab;
+
+    // [Sleep/Hunger] shared bubble
+    private GameObject currentBubble;
+
+
 
 
     void Start()
@@ -57,21 +67,89 @@ public class Cat : MonoBehaviour
         state = CatState.Walking;
         UpdateAnimation();
         // Start timer to become hungry 
-        timeLeftToHungry = Random.Range(timeBetweenMeal/2,timeBetweenMeal);
+        timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
+        timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
     }
 
     // Update is called once per frame
     void Update()
     {
         HandleHunger();
+        HandleSleep();
         HandleMovement();
         OrientateCat();
+
     }
+
+    // Hunger takes priorty over Sleep
+    void HandleSleep()
+    {
+        // hunger takes priority 
+        if (state == CatState.Hungry || state == CatState.Eating) return;
+        // already handled sleepiness
+        if (state == CatState.Tired || state == CatState.Hungry) return; 
+
+        timeLeftToSleep -= Time.deltaTime;
+        if (timeLeftToSleep <= 0f)
+        {
+            state = CatState.Tired;
+            UpdateAnimation();
+            SpawnSleepBubble();
+        }
+    }
+
+    public void SleepCat()
+    {
+        // remove Prefab Instance of any bubble
+        currentBubble = null;
+        timeLeftToSleep = Random.Range(timeBetweenSleep/2,timeBetweenSleep);
+        state = CatState.Sleeping;
+        animator.SetBool("isSleeping", true);
+        UpdateAnimation();
+
+        // Just incase there was multiple invocations from overclicking
+        // just defensive measure, probably not needed 
+        CancelInvoke(nameof(FinishSleep));
+        // call finish eating
+        Invoke(nameof(FinishSleep), 2f);     
+    }
+
+    void FinishSleep()
+    {
+        animator.SetBool("isSleeping", false);
+        state = CatState.Idle;
+        idleTimeLeft = fixedIdleDuration;
+        UpdateAnimation();        
+    }
+
+    void SpawnSleepBubble()
+    {
+        if (currentBubble != null) Destroy(currentBubble);
+        // assign current bubble to FOOD BUBBLE 
+        currentBubble = Instantiate(
+            sleepBubblePrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        // parent bubble position to cat pos
+        currentBubble.transform.SetParent(transform);
+        // offset bubble above cat
+        currentBubble.transform.localPosition = new Vector3(0, 1f, 0);
+
+        BubbleCatSleep bubbleScript = currentBubble.GetComponent<BubbleCatSleep>();
+        bubbleScript.Setup(this);
+     
+    }
+
+
 
     void HandleHunger()
     {
-        // already hungry/eating -> ignore 
+        // already hungry ignore
+        // hungry take priority over sleep 
+        if (state == CatState.Tired || state == CatState.Sleeping) return;
         if (state == CatState.Hungry || state == CatState.Eating) return;
+        
 
         // reduce time left to hungry by duration since last frame
         timeLeftToHungry -= Time.deltaTime; 
@@ -92,6 +170,7 @@ public class Cat : MonoBehaviour
         timeLeftToHungry = Random.Range(timeBetweenMeal/2,timeBetweenMeal);
         state = CatState.Eating;
         animator.SetBool("isEating", true);
+        UpdateAnimation();
 
         // Just incase there was multiple invocations from overclicking
         // just defensive measure, probably not needed
@@ -110,6 +189,7 @@ public class Cat : MonoBehaviour
 
     void SpawnHungerBubble()
     {
+        if (currentBubble != null) Destroy(currentBubble);
         // assign current bubble to FOOD BUBBLE 
         currentBubble = Instantiate(
             foodBubblePrefab,
@@ -144,14 +224,17 @@ public class Cat : MonoBehaviour
 
     void UpdateAnimation()
     {
-        // Update isWalking
+        // just to be safe update everything
         animator.SetBool("isWalking", state == CatState.Walking);      
+        animator.SetBool("isEating", state == CatState.Eating);      
+        animator.SetBool("isSleeping", state == CatState.Sleeping);      
     }
 
     void HandleMovement()
     {
         // no movement when hungry or eating ,so that user can click and hold  on hungry bubble 
         if (state == CatState.Hungry || state == CatState.Eating) return; 
+        if (state == CatState.Sleeping || state == CatState.Tired) return;
         if (state == CatState.Idle)
         {
             // minus the duration since the last Frame
