@@ -19,26 +19,23 @@ public class Cat : MonoBehaviour
         Sleeping
     }
     [SerializeField] private CatState state;
-
-    // States for the cat 
-    // [SerializeField] private bool isWalking;
-    // [SerializeField] private bool isHungry;
     
     // [ANIMATION] component (handle x-direction, and current state)
     Animator animator;
+    SpriteRenderer spriteRenderer;
     private Vector2 lastPosition; // use last pos to face sprite in the right direciton: left or right
 
+
     //  [MOVEMENT]  Related Mechanics 
-    public float speed = 2f;
+    [SerializeField] private float speed = 2f;
     public BoxCollider2D area; // boundary object
-    private Vector2 targetPos; // position to move towards
+    [SerializeField] private Vector2 targetPos; // position to move towards
     private const float fixedIdleDuration = 1f; // how long to idle between each walk
     private float idleTimeLeft = 0f; // reset to 1f
 
     // [HUNGER] variables
     [SerializeField] private float timeBetweenMeal = 5f; 
     private float timeLeftToHungry;
-
     // Hunger Bubble or Sleep bubble
     private GameObject currentBubble;
     [SerializeField] private GameObject foodBubblePrefab;
@@ -51,6 +48,8 @@ public class Cat : MonoBehaviour
         // Initialize variables 
         // find animator component to edit params
         animator = GetComponent<Animator>();
+        // find the sprite renderer to flip it 
+        spriteRenderer = GetComponent<SpriteRenderer>();
         // start position 
         lastPosition = transform.position;
         // start walking already
@@ -58,7 +57,7 @@ public class Cat : MonoBehaviour
         state = CatState.Walking;
         UpdateAnimation();
         // Start timer to become hungry 
-        timeLeftToHungry = timeBetweenMeal;
+        timeLeftToHungry = Random.Range(timeBetweenMeal/2,timeBetweenMeal);
     }
 
     // Update is called once per frame
@@ -88,13 +87,16 @@ public class Cat : MonoBehaviour
     public void FeedCat()
     {
         // remove Prefab Instance of any bubble
-        if (currentBubble != null) Destroy(currentBubble); 
-        timeLeftToHungry = timeBetweenMeal;
+        //if (currentBubble != null) Destroy(currentBubble); 
+        currentBubble = null;
+        timeLeftToHungry = Random.Range(timeBetweenMeal/2,timeBetweenMeal);
         state = CatState.Eating;
-        //animator.SetTrigger("eat");
         animator.SetBool("isEating", true);
 
-        // eat for 2s -> return to Idle
+        // Just incase there was multiple invocations from overclicking
+        // just defensive measure, probably not needed
+        CancelInvoke(nameof(FinishEating));
+        // call finish eating
         Invoke(nameof(FinishEating), 2f);
     }
 
@@ -116,8 +118,8 @@ public class Cat : MonoBehaviour
         );
         // parent bubble position to cat pos
         currentBubble.transform.SetParent(transform);
-        // off set by 1.2F
-        currentBubble.transform.localPosition = new Vector3(0, 1.2f, 0);
+        // offset bubble above cat
+        currentBubble.transform.localPosition = new Vector3(0, 1f, 0);
 
         BubbleCatFood bubbleScript = currentBubble.GetComponent<BubbleCatFood>();
         bubbleScript.Setup(this); // pass reference of cat to bubble
@@ -130,10 +132,10 @@ public class Cat : MonoBehaviour
         Vector2 movementDelta = (Vector2) transform.position - lastPosition;
         if (movementDelta.x > 0.01f)
         {
-            transform.localScale = new Vector3(1, 1, 1);
+            spriteRenderer.flipX = false;
         } else if (movementDelta.x < -0.01f)
         {
-            transform.localScale = new Vector3(-1, 1, 1);
+            spriteRenderer.flipX = true;
         }
         lastPosition = transform.position; 
     }
@@ -144,11 +146,6 @@ public class Cat : MonoBehaviour
     {
         // Update isWalking
         animator.SetBool("isWalking", state == CatState.Walking);      
-        // Update isWating
-
-        // Debug.Log($"=== Cat Startup Debug ===");
-        // Debug.Log($"Start Position: {transform.position}");
-        // Debug.Log($"Target Position: {targetPos}");
     }
 
     void HandleMovement()

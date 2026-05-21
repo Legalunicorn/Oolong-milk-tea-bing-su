@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8459043287245258415}
   - component: {fileID: 1615700414983999254}
   - component: {fileID: 4890740621074098940}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BubbleCatFood
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -146,12 +146,12 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.07758984}
-  m_Radius: 0.49524966
+  m_Offset: {x: 0, y: 0.012822807}
+  m_Radius: 0.63160163
 --- !u!114 &4890740621074098940
 MonoBehaviour:
   m_ObjectHideFlags: 0

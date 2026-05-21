@@ -110,6 +110,7 @@ MonoBehaviour:
   state: 0
   speed: 2
   area: {fileID: 0}
+  targetPos: {x: 0, y: 0}
   timeBetweenMeal: 5
   foodBubblePrefab: {fileID: 7748677934914827185, guid: abb735364261b9345ba7f81acf62b10a, type: 3}
 --- !u!50 &8619738118987724684
