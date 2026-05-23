@@ -34,21 +34,22 @@ public class Cat : MonoBehaviour
     private float idleTimeLeft = 0f; // reset to 1f
 
     // [HUNGER] variables
-    [SerializeField] private float timeBetweenMeal = 5f; 
+    [SerializeField] private float timeBetweenMeal = 10f; 
     private float timeLeftToHungry;
-    // Hunger Bubble or Sleep bubble
     // private GameObject currentBubble;
     [SerializeField] private GameObject foodBubblePrefab;
-    // to implement in the future
-    //[SerializeField] private GameObject sleepBubblePrefab;
-
+    [SerializeField] private float eatDuration = 4f;
+    
     // [SLEEP] variables
-    [SerializeField] private float timeBetweenSleep = 5f;
+    [SerializeField] private float timeBetweenSleep = 10f;
     private float timeLeftToSleep;
     [SerializeField] private GameObject sleepBubblePrefab;
+    [SerializeField] private float sleepDuration = 4f;
 
     // [Sleep/Hunger] shared bubble
     private GameObject currentBubble;
+
+
 
 
 
@@ -87,7 +88,7 @@ public class Cat : MonoBehaviour
         // hunger takes priority 
         if (state == CatState.Hungry || state == CatState.Eating) return;
         // already handled sleepiness
-        if (state == CatState.Tired || state == CatState.Hungry) return; 
+        if (state == CatState.Tired || state == CatState.Sleeping) return; 
 
         timeLeftToSleep -= Time.deltaTime;
         if (timeLeftToSleep <= 0f)
@@ -111,7 +112,7 @@ public class Cat : MonoBehaviour
         // just defensive measure, probably not needed 
         CancelInvoke(nameof(FinishSleep));
         // call finish eating
-        Invoke(nameof(FinishSleep), 2f);     
+        Invoke(nameof(FinishSleep), sleepDuration);     
     }
 
     void FinishSleep()
@@ -176,7 +177,7 @@ public class Cat : MonoBehaviour
         // just defensive measure, probably not needed
         CancelInvoke(nameof(FinishEating));
         // call finish eating
-        Invoke(nameof(FinishEating), 2f);
+        Invoke(nameof(FinishEating), eatDuration);
     }
 
     void FinishEating()
