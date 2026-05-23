@@ -25,7 +25,6 @@ public class Cat : MonoBehaviour
     SpriteRenderer spriteRenderer;
     private Vector2 lastPosition; // use last pos to face sprite in the right direciton: left or right
 
-
     //  [MOVEMENT]  Related Mechanics 
     [SerializeField] private float speed = 2f;
     public BoxCollider2D area; // boundary object
@@ -36,7 +35,6 @@ public class Cat : MonoBehaviour
     // [HUNGER] variables
     [SerializeField] private float timeBetweenMeal = 10f; 
     private float timeLeftToHungry;
-    // private GameObject currentBubble;
     [SerializeField] private GameObject foodBubblePrefab;
     [SerializeField] private float eatDuration = 4f;
     
@@ -49,10 +47,9 @@ public class Cat : MonoBehaviour
     // [Sleep/Hunger] shared bubble
     private GameObject currentBubble;
 
-
-
-
-
+    // [Unsatisfied Cat tracking] 
+    [SerializeField] private float maxDurationWainting = 10f; // max duration to stay hungry/tired
+    private float currentWaitDuration;
 
     void Start()
     {
@@ -70,6 +67,7 @@ public class Cat : MonoBehaviour
         // Start timer to become hungry 
         timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
         timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
+        currentWaitDuration = 0f;
     }
 
     // Update is called once per frame
@@ -79,16 +77,36 @@ public class Cat : MonoBehaviour
         HandleSleep();
         HandleMovement();
         OrientateCat();
+        HandleDissatisfaction();
+    }
 
+    void HandleDissatisfaction()
+    {
+        // one of two waiting states
+        if (state == CatState.Hungry || state == CatState.Tired)
+        {
+            currentWaitDuration += Time.deltaTime;
+            if (currentWaitDuration >= maxDurationWainting)
+            {
+                // ######################################################################
+                // TODO: { call LevelManager decrease satisfaction here, when implemented}
+                Debug.Log(gameObject.name + " is Unsatisfied!");
+                currentWaitDuration = 0f;
+                // Rest cat to fresh
+                timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
+                timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
+                if (currentBubble != null) Destroy(currentBubble);
+
+                SetToIdle();
+            }
+        }
     }
 
     // Hunger takes priorty over Sleep
     void HandleSleep()
     {
-        // hunger takes priority 
-        if (state == CatState.Hungry || state == CatState.Eating) return;
-        // already handled sleepiness
-        if (state == CatState.Tired || state == CatState.Sleeping) return; 
+        // Update sleep only if cat is IDLE or WALKING
+        if (state != CatState.Idle && state != Cat.CatState.Walking ) return;
 
         timeLeftToSleep -= Time.deltaTime;
         if (timeLeftToSleep <= 0f)
@@ -118,9 +136,7 @@ public class Cat : MonoBehaviour
     void FinishSleep()
     {
         animator.SetBool("isSleeping", false);
-        state = CatState.Idle;
-        idleTimeLeft = fixedIdleDuration;
-        UpdateAnimation();        
+        SetToIdle();      
     }
 
     void SpawnSleepBubble()
@@ -142,19 +158,12 @@ public class Cat : MonoBehaviour
      
     }
 
-
-
     void HandleHunger()
     {
-        // already hungry ignore
-        // hungry take priority over sleep 
-        if (state == CatState.Tired || state == CatState.Sleeping) return;
-        if (state == CatState.Hungry || state == CatState.Eating) return;
-        
-
+        // Update hunger only if cat is IDLE or WALKING
+        if (state != CatState.Idle && state != Cat.CatState.Walking ) return;        
         // reduce time left to hungry by duration since last frame
         timeLeftToHungry -= Time.deltaTime; 
-
         if (timeLeftToHungry <= 0f)
         {
             state = CatState.Hungry;
@@ -183,9 +192,7 @@ public class Cat : MonoBehaviour
     void FinishEating()
     {
         animator.SetBool("isEating", false);
-        state = CatState.Idle;
-        idleTimeLeft = fixedIdleDuration;
-        UpdateAnimation();
+        SetToIdle();
     }
 
     void SpawnHungerBubble()
@@ -206,7 +213,6 @@ public class Cat : MonoBehaviour
         bubbleScript.Setup(this); // pass reference of cat to bubble
     }
 
-
     // make cat face left/right depending on delta x
     void OrientateCat()
     {
@@ -214,21 +220,12 @@ public class Cat : MonoBehaviour
         if (movementDelta.x > 0.01f)
         {
             spriteRenderer.flipX = false;
-        } else if (movementDelta.x < -0.01f)
+        }
+        else if (movementDelta.x < -0.01f)
         {
             spriteRenderer.flipX = true;
         }
         lastPosition = transform.position; 
-    }
-
-
-
-    void UpdateAnimation()
-    {
-        // just to be safe update everything
-        animator.SetBool("isWalking", state == CatState.Walking);      
-        animator.SetBool("isEating", state == CatState.Eating);      
-        animator.SetBool("isSleeping", state == CatState.Sleeping);      
     }
 
     void HandleMovement()
@@ -258,13 +255,24 @@ public class Cat : MonoBehaviour
             );
 
             // reached the target position 
-            if (Vector2.Distance(transform.position, targetPos) < 0.1f)
-            {
-                state = CatState.Idle;
-                UpdateAnimation();
-                idleTimeLeft = fixedIdleDuration;
-            }
+            if (Vector2.Distance(transform.position, targetPos) < 0.1f) SetToIdle();
         }
+    }
+
+    void UpdateAnimation()
+    {
+        // just to be safe update everything
+        animator.SetBool("isWalking", state == CatState.Walking);      
+        animator.SetBool("isEating", state == CatState.Eating);      
+        animator.SetBool("isSleeping", state == CatState.Sleeping);      
+    }
+
+    // common action abstracted, reset cat to Idle and update needed variables
+    void SetToIdle()
+    {
+        state = CatState.Idle;
+        UpdateAnimation();
+        idleTimeLeft = fixedIdleDuration;        
     }
 
     void PickRandomTargetPos()
