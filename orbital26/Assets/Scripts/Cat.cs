@@ -27,7 +27,7 @@ public class Cat : MonoBehaviour
 
     //  [MOVEMENT]  Related Mechanics 
     [SerializeField] private float speed = 2f;
-    public BoxCollider2D area; // boundary object
+    [SerializeField] private BoxCollider2D area; // boundary object
     [SerializeField] private Vector2 targetPos; // position to move towards
     private const float fixedIdleDuration = 1f; // how long to idle between each walk
     private float idleTimeLeft = 0f; // reset to 1f
@@ -53,6 +53,9 @@ public class Cat : MonoBehaviour
 
     void Start()
     {
+        // Search for WanderArea (boundary) by tag
+        area = GameObject.FindWithTag("WanderArea").GetComponent<BoxCollider2D>();
+
         // Initialize variables 
         // find animator component to edit params
         animator = GetComponent<Animator>();

@@ -82,8 +82,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 384645139
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1593486516139116798, guid: 09b0c344368b6674999db1970b4e1a0f, type: 3}
@@ -114,8 +114,11 @@ MonoBehaviour:
   targetPos: {x: 0, y: 0}
   timeBetweenMeal: 5
   foodBubblePrefab: {fileID: 7748677934914827185, guid: abb735364261b9345ba7f81acf62b10a, type: 3}
+  eatDuration: 4
   timeBetweenSleep: 5
   sleepBubblePrefab: {fileID: 5528474114536450980, guid: 6a0bff1e3aa5931489fa280a0220fbd6, type: 3}
+  sleepDuration: 4
+  maxDurationWainting: 10
 --- !u!50 &8619738118987724684
 Rigidbody2D:
   serializedVersion: 5
@@ -223,3 +226,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bc49ae1dc0bfcc4fb845a991ff455c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  holdTime: 0
+  targetHoldTime: 1.5
