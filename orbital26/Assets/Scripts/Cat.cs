@@ -93,6 +93,7 @@ public class Cat : MonoBehaviour
             {
                 // ######################################################################
                 // TODO: { call LevelManager decrease satisfaction here, when implemented}
+                LevelManager.instance.DecreaseSatisfaction(10);
                 Debug.Log(gameObject.name + " is Unsatisfied!");
                 currentWaitDuration = 0f;
                 // Rest cat to fresh
@@ -103,6 +104,11 @@ public class Cat : MonoBehaviour
                 SetToIdle();
             }
         }
+    }
+
+    void HandleSatisfaction(int increaseBy)
+    {
+        LevelManager.instance.IncreaseSatisfaction(increaseBy);
     }
 
     // Hunger takes priorty over Sleep
@@ -123,6 +129,7 @@ public class Cat : MonoBehaviour
     public void SleepCat()
     {
         // remove Prefab Instance of any bubble
+        if (currentBubble != null) Destroy(currentBubble);
         currentBubble = null;
         timeLeftToSleep = Random.Range(timeBetweenSleep/2,timeBetweenSleep);
         state = CatState.Sleeping;
@@ -139,6 +146,9 @@ public class Cat : MonoBehaviour
     void FinishSleep()
     {
         animator.SetBool("isSleeping", false);
+        // TODO: this is currently hardcoded (!!) 
+        // Different cats might have different benefits when happen
+        HandleSatisfaction(5); 
         SetToIdle();      
     }
 
@@ -178,7 +188,7 @@ public class Cat : MonoBehaviour
     public void FeedCat()
     {
         // remove Prefab Instance of any bubble
-        //if (currentBubble != null) Destroy(currentBubble); 
+        if (currentBubble != null) Destroy(currentBubble); 
         currentBubble = null;
         timeLeftToHungry = Random.Range(timeBetweenMeal/2,timeBetweenMeal);
         state = CatState.Eating;
@@ -195,6 +205,9 @@ public class Cat : MonoBehaviour
     void FinishEating()
     {
         animator.SetBool("isEating", false);
+        //TODO: this is current hard coded, leave it for now
+        // when we expand to more cats with personalities change
+        HandleSatisfaction(8); 
         SetToIdle();
     }
 

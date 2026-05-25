@@ -47,6 +47,14 @@ public class BubbleCatSleep : MonoBehaviour
         holdTime += Time.deltaTime;
         if (holdTime >= targetHoldTime && !isSleepingTriggered)
         {
+            // TODO: remove this once settings
+            // BUG: when feedingCat, null pointer referencing cat suddenly appears. why??
+            if (cat == null)
+            {
+                Debug.LogWarning("BubbleCatSleep: cat reference is null, destroying bubble");
+                Destroy(gameObject);
+                return;
+            }            
             isSleepingTriggered = true;
             cat.SleepCat();
             GetComponent<SpriteRenderer>().enabled = false;
