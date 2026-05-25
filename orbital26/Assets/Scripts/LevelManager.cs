@@ -24,8 +24,8 @@ public class LevelManager : MonoBehaviour
     
     // NOTE: hardcode this for now since one level only 
     // with multiple levels -> read these from file instead
-    public float timeLimit = 60f;
-    public float timeLeft = 60f;
+    public float timeLimit = 30f;
+    public float timeLeft;
 
     public bool isGameOver = false;
 
