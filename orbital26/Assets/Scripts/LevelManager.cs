@@ -20,6 +20,7 @@ public class LevelManager : MonoBehaviour
     public int satisfactionDecay = 0;
 
     // NOTE: final cash should persist after level ends, but keep it simple now
+    // TODO: this might be redudant now, remove if not used
     public int cash = 0;
     
     // NOTE: hardcode this for now since one level only 
@@ -29,6 +30,9 @@ public class LevelManager : MonoBehaviour
 
     public bool isGameOver = false;
 
+    // Singlular spawn point in a level for now
+    public Transform catSpawnPoint;
+
 
     // #### UI #### 
     public SatisfactionBar satisfactionBar;
@@ -36,9 +40,9 @@ public class LevelManager : MonoBehaviour
     // #### Customer Spawn Logic #### 
     // #### plan first because Customer Prefab not completed
     // public GameObject CustomerPrefab
-    public Transform spawnPoint;
-    public float spawnInterval = 10f;
-    public float spawnTimer = 0f;
+    public Transform CustomerspawnPoint;
+    public float CustomerspawnInterval = 10f;
+    public float CustomerspawnTimer = 0f;
  
 
 
@@ -59,6 +63,7 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        cash = GameManager.instance.cash;
         timeLeft = timeLimit;
         satisfactionBar.SetMaxSatisfaction(maxSatisfaction);
     }
@@ -84,10 +89,10 @@ public class LevelManager : MonoBehaviour
 
         // 2. manage spawn of customers 
         // TODO: make spawn interval vary by randomness
-        spawnTimer += Time.deltaTime;
-        if (spawnTimer >= spawnInterval)
+        CustomerspawnTimer += Time.deltaTime;
+        if (CustomerspawnTimer >= CustomerspawnInterval)
         {
-            spawnTimer = 0f;
+            CustomerspawnTimer = 0f;
             // TODO: spawn customer prefab
         }
 
@@ -148,5 +153,10 @@ public class LevelManager : MonoBehaviour
         isGameOver = true;
         Debug.Log("Game over: " + msg);
         RestartLevel();
+    }
+
+    public void SpawnCat(GameObject catPrefab)
+    {
+        Instantiate(catPrefab, catSpawnPoint.position, Quaternion.identity);
     }
 }

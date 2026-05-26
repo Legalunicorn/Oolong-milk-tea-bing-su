@@ -65,6 +65,14 @@ public class BubbleCatFood : MonoBehaviour
         holdTime += Time.deltaTime;
         if (holdTime >= targetHoldTime && !isFeedingTriggered)
         {
+            // not enough money to feed cat
+            if (!GameManager.instance.SpendCash(cat.GetFeedCost()))
+            {
+                Debug.Log("Not enough cash to feed");
+                isHolding = false;
+                holdTime = 0f;
+                return;
+            }
             isFeedingTriggered = true;
             cat.FeedCat();
             GetComponent<SpriteRenderer>().enabled = false;

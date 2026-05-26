@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb7bf1608b06b4944b8857b3094bdc11, type: 3}
+  m_Name: BrownCat
+  m_EditorClassIdentifier: Assembly-CSharp::CatData
+  name: brownie
+  prefab: {fileID: 7196350137628518048, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
+  icon: {fileID: 1593486516139116798, guid: 09b0c344368b6674999db1970b4e1a0f, type: 3}
+  price: 15

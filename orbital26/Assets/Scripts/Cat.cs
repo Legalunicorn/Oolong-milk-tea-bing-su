@@ -37,6 +37,9 @@ public class Cat : MonoBehaviour
     private float timeLeftToHungry;
     [SerializeField] private GameObject foodBubblePrefab;
     [SerializeField] private float eatDuration = 4f;
+    // SerializeField -> draw from cat prefab type
+    // Default to 2 here
+    [SerializeField] private int feedCost = 1;
     
     // [SLEEP] variables
     [SerializeField] private float timeBetweenSleep = 10f;
@@ -195,6 +198,8 @@ public class Cat : MonoBehaviour
         animator.SetBool("isEating", true);
         UpdateAnimation();
 
+        
+
         // Just incase there was multiple invocations from overclicking
         // just defensive measure, probably not needed
         CancelInvoke(nameof(FinishEating));
@@ -298,5 +303,10 @@ public class Cat : MonoBehaviour
         float x = Random.Range(bound.min.x, bound.max.x);
         float y = Random.Range(bound.min.y, bound.max.y);
         targetPos = new Vector2(x, y);
+    }
+
+    public int GetFeedCost()
+    {
+        return feedCost;
     }
 }

@@ -10,10 +10,6 @@ public class TimerDisplay : MonoBehaviour
 
     private string GetClockText(float totalTime, float currTime)
     {
-        string AM = ":00 AM"; // change to PM if need 
-        string PM = ":00 PM";
-        // 8am - 5pm has 10 hours in it 
-    
         // 1,2,3,4,5,6,7,8,9,10
         int hoursPassed = Mathf.FloorToInt((1f-(currTime / totalTime))*9);
         int time = 8 + hoursPassed;
