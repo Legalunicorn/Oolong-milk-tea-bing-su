@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewCatData", menuName = "Cats/CatData")]
 public class CatData : ScriptableObject
 {
-    public string name;
+    public string catName;
     public GameObject prefab;
 
     // shop 
