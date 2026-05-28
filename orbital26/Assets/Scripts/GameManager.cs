@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
             instance = this;
             // dont destroy, must persist betwene levels
             DontDestroyOnLoad(gameObject);
+            // TODO: uncomment when inventory is fully in place
+            //InitInventory();
+            cash = 145;
             
         }
         else
@@ -33,6 +36,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // TODO: this is never called 
     private void InitInventory()
     {
         // ensure brown cats is enough

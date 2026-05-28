@@ -134,6 +134,7 @@ public class Cat : MonoBehaviour
         // remove Prefab Instance of any bubble
         if (currentBubble != null) Destroy(currentBubble);
         currentBubble = null;
+        currentWaitDuration = 0f;
         timeLeftToSleep = Random.Range(timeBetweenSleep/2,timeBetweenSleep);
         state = CatState.Sleeping;
         animator.SetBool("isSleeping", true);
@@ -193,6 +194,7 @@ public class Cat : MonoBehaviour
         // remove Prefab Instance of any bubble
         if (currentBubble != null) Destroy(currentBubble); 
         currentBubble = null;
+        currentWaitDuration = 0f;
         timeLeftToHungry = Random.Range(timeBetweenMeal/2,timeBetweenMeal);
         state = CatState.Eating;
         animator.SetBool("isEating", true);
