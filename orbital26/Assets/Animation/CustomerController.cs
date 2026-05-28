@@ -15,21 +15,25 @@ public class CustomerController : MonoBehaviour
     [Header("References")]
     public Animator animator;
     // BUG: this is directly linked in the inspector, does not worked with spawned prefabs
-    // TODO: use 
-    public GameObject hungryBubble;
+    // TODO: use this as a Prefab
+    public GameObject hungryBubblePrefab;
+    public GameObject currentBubble;
 
     private bool isMoving = true;
     private bool hasReachedStopPosition = false;
+    private bool isHungry = false;
+
+    // when the customer starts being unhappy 
+    [SerializeField] private float hungryTime = 0f;
+    [SerializeField] private float maxWaitDuration = 5f;
+    // howoften to decrease the satisfaction
+    [SerializeField] private float complainInterval = 1f;
+    [SerializeField] private float timeSinceLastComplain = 0f;
 
 
     void Start()
     {
         transform.position = fakeEntrance.position;
-
-        if (hungryBubble != null)
-        {
-            hungryBubble.SetActive(false);
-        }
     }
 
     void Update()
@@ -38,6 +42,29 @@ public class CustomerController : MonoBehaviour
         if (isMoving && !hasReachedStopPosition)
         {
             MoveToStopPosition();
+        }
+        HandleIsHungry();
+    }
+
+    void HandleIsHungry()
+    {
+        if (isHungry)
+        {
+            hungryTime += Time.deltaTime;
+            if (hungryTime >= maxWaitDuration)
+            {
+                timeSinceLastComplain += Time.deltaTime;
+                if (timeSinceLastComplain >= complainInterval)
+                {
+                    Debug.Log("satisfaction DOWN "); 
+                    // if (LevelManager.instance != null)
+                    // {
+                    //     LevelManager.DecreaseSatisfaction(1);
+                    // }
+                    timeSinceLastComplain = 0f; //reset timer                
+                }
+
+            }
         }
     }
 
@@ -50,7 +77,6 @@ public class CustomerController : MonoBehaviour
         {
             transform.position = stopPosition.position;
             StopMoving();
-
             Invoke(nameof(BecomeHungry), 1.5f);
             return;
         }
@@ -82,21 +108,39 @@ public class CustomerController : MonoBehaviour
 
     private void BecomeHungry()
     {
+        if (isHungry) return;
+        isHungry = true;
         // TODO: refactor this: instantiate bubble instead of having relation to gameobject exist before hand
         // TODO: start hungry timer 
-        if (hungryBubble != null)
-        {
-            hungryBubble.SetActive(true);
-        }
+        // if (hungryBubble != null)
+        // {
+        //     hungryBubble.SetActive(true);
+        // }
+
+        // remove currentBubble incase it exists, also planning for future bubbles (cat bubble)
+        if (currentBubble != null) Destroy(currentBubble);
+        currentBubble = Instantiate(
+            hungryBubblePrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        currentBubble.transform.SetParent(transform);
+        currentBubble.transform.localPosition = new Vector3(-1f, 1f, 0);
+        HungryBubbleClick bubbleScript = currentBubble.GetComponent<HungryBubbleClick>();
+        if (bubbleScript != null) bubbleScript.Setup(this);
     }
 
     public void Unhungry()
     {
         // TODO: end hungry timer
-        if (hungryBubble != null)
+        if (currentBubble != null)
         {
-            hungryBubble.SetActive(false);
+            Destroy(currentBubble);
+           // hungryBubble.SetActive(false);
         }
+        isHungry = false;
+        hungryTime = 0f;
+        timeSinceLastComplain = 0f;
 
         animator.SetBool("isWalking", false);
     }

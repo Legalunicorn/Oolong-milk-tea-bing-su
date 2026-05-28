@@ -6,11 +6,14 @@ public class HungryBubbleClick : MonoBehaviour
     // FIX: customer should instantiate HungryBubbleClick prefab and parent it etc
     // Current the connection is physically dragged via the in
     public CustomerController customerController;
-
-    private void Start()
+ 
+    // once this object has been instantiated by customer
+    // it will call the set up to link tofether
+    public void Setup(CustomerController customerRef)
     {
-       
+        customerController = customerRef;
     }
+
 
     private void Update()
     {
