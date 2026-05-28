@@ -39,9 +39,10 @@ public class LevelManager : MonoBehaviour
 
     // #### Customer Spawn Logic #### 
     // #### plan first because Customer Prefab not completed
-    // public GameObject CustomerPrefab
+    public GameObject CustomerPrefab;
+    // fake Entrnece
     public Transform CustomerspawnPoint;
-    public float CustomerspawnInterval = 10f;
+    [SerializeField] private float CustomerspawnInterval = 6f;
     public float CustomerspawnTimer = 0f;
  
 
@@ -93,11 +94,22 @@ public class LevelManager : MonoBehaviour
         if (CustomerspawnTimer >= CustomerspawnInterval)
         {
             CustomerspawnTimer = 0f;
+            SpawnCustomer();
             // TODO: spawn customer prefab
         }
 
 
         // [potential] 3. add decay to satisfactoin
+    }
+
+    void SpawnCustomer()
+    {
+        if (CustomerPrefab == null || CustomerspawnPoint == null) return;
+        GameObject customer = Instantiate(
+            CustomerPrefab,
+            CustomerspawnPoint.position,
+            Quaternion.identity
+        );
     }
 
 

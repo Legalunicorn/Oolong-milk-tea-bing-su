@@ -30,7 +30,11 @@ public class CustomerController : MonoBehaviour
     [SerializeField] private float complainInterval = 1f;
     [SerializeField] private float timeSinceLastComplain = 0f;
 
-
+    void Awake()
+    {
+        fakeEntrance = GameObject.FindWithTag("fakeEntrance").transform;
+        stopPosition = GameObject.FindWithTag("stopPosition").transform;
+    }
     void Start()
     {
         transform.position = fakeEntrance.position;
@@ -57,10 +61,10 @@ public class CustomerController : MonoBehaviour
                 if (timeSinceLastComplain >= complainInterval)
                 {
                     Debug.Log("satisfaction DOWN "); 
-                    // if (LevelManager.instance != null)
-                    // {
-                    //     LevelManager.DecreaseSatisfaction(1);
-                    // }
+                    if (LevelManager.instance != null)
+                    {
+                        LevelManager.instance.DecreaseSatisfaction(1);
+                    }
                     timeSinceLastComplain = 0f; //reset timer                
                 }
 
@@ -137,6 +141,11 @@ public class CustomerController : MonoBehaviour
         {
             Destroy(currentBubble);
            // hungryBubble.SetActive(false);
+        }
+        // Add cash once feed 
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.AddCash(5); 
         }
         isHungry = false;
         hungryTime = 0f;
