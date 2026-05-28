@@ -22,6 +22,7 @@ public class CustomerController : MonoBehaviour
     private bool isMoving = true;
     private bool hasReachedStopPosition = false;
     private bool isHungry = false;
+    private bool isExiting = false;
 
     // when the customer starts being unhappy 
     [SerializeField] private float hungryTime = 0f;
@@ -42,6 +43,13 @@ public class CustomerController : MonoBehaviour
 
     void Update()
     {
+        // move to entrance when need to exit
+        if(isExiting)
+        {
+            MoveToEntrance();
+            return;
+        }
+
         // keep moving to stop position
         if (isMoving && !hasReachedStopPosition)
         {
@@ -89,6 +97,32 @@ public class CustomerController : MonoBehaviour
 
         Vector3 moveDirection = direction.normalized;
         // speed = distance/time  -> distance = speed * time
+        transform.position += moveDirection * moveSpeed * Time.deltaTime;
+
+        animator.SetBool("isWalking", true);
+
+        animator.SetFloat("InputX", moveDirection.x);
+        animator.SetFloat("InputY", moveDirection.y);
+
+        animator.SetFloat("LastInputX", moveDirection.x);
+        animator.SetFloat("LastInputY", moveDirection.y);
+    }
+
+    private void MoveToEntrance()
+    {
+        Vector3 direction = fakeEntrance.position - transform.position;
+
+        // If close enough to entrance, remove customer
+        if (direction.magnitude <= 0.05f)
+        {
+            transform.position = fakeEntrance.position;
+            StopMoving();
+
+             Destroy(gameObject); 
+            return;
+        }
+
+        Vector3 moveDirection = direction.normalized;
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
 
         animator.SetBool("isWalking", true);
@@ -151,6 +185,17 @@ public class CustomerController : MonoBehaviour
         hungryTime = 0f;
         timeSinceLastComplain = 0f;
 
-        animator.SetBool("isWalking", false);
+        // After feeding, the customer exits the scene 
+        StartExiting();
+    }
+
+    private void StartExiting()
+    {
+        isHungry = false;
+        isMoving = false;
+        hasReachedStopPosition = false;
+        isExiting = true;
+
+        animator.SetBool("isWalking", true);
     }
 }
