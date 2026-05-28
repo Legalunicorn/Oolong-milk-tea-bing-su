@@ -114,12 +114,6 @@ public class CustomerController : MonoBehaviour
     {
         if (isHungry) return;
         isHungry = true;
-        // TODO: refactor this: instantiate bubble instead of having relation to gameobject exist before hand
-        // TODO: start hungry timer 
-        // if (hungryBubble != null)
-        // {
-        //     hungryBubble.SetActive(true);
-        // }
 
         // remove currentBubble incase it exists, also planning for future bubbles (cat bubble)
         if (currentBubble != null) Destroy(currentBubble);
@@ -137,10 +131,10 @@ public class CustomerController : MonoBehaviour
     public void Unhungry()
     {
         // TODO: end hungry timer
+        Debug.Log("FED CUSTOMER");
         if (currentBubble != null)
         {
             Destroy(currentBubble);
-           // hungryBubble.SetActive(false);
         }
         // Add cash once feed 
         if (GameManager.instance != null)

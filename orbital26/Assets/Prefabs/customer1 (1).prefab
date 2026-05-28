@@ -144,7 +144,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &5955748547855006902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,7 +201,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   fakeEntrance: {fileID: 0}
   stopPosition: {fileID: 0}
-  moveSpeed: 0.8
+  moveSpeed: 1.2
   animator: {fileID: 1170219524669324987}
   hungryBubblePrefab: {fileID: 6146627127509063364, guid: 815942f26f3c66741b86aa2b1e700784, type: 3}
   currentBubble: {fileID: 0}

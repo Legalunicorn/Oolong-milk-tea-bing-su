@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 // reference: https://stackoverflow.com/questions/79773098/why-onmousedown-is-still-not-working-after-i-checked-the-script-and-the-collid
 // 1. need to add 2d physics ray cast to main camera of the scene 
@@ -12,6 +13,7 @@ public class BubbleCatFood : MonoBehaviour
     // how long the user has clicked on the bubble
     [SerializeField] private float holdTime = 0f; 
     [SerializeField] private float targetHoldTime = 1.5f;
+    [SerializeField] private Image progressRing;
     private bool isHolding = false;
     private bool isFeedingTriggered = false;
 
@@ -56,6 +58,7 @@ public class BubbleCatFood : MonoBehaviour
     {
         isHolding = false;
         holdTime = 0f;
+        progressRing.fillAmount = 0f;
         // MouseHolding() has triggered feeding already
         if (isFeedingTriggered) Destroy(gameObject);
     }
@@ -63,6 +66,7 @@ public class BubbleCatFood : MonoBehaviour
     void Mouseholding()
     {
         holdTime += Time.deltaTime;
+        progressRing.fillAmount = holdTime / targetHoldTime;
         if (holdTime >= targetHoldTime && !isFeedingTriggered)
         {
             // not enough money to feed cat
