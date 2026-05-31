@@ -24,6 +24,8 @@ public class Cat : MonoBehaviour
     Animator animator;
     SpriteRenderer spriteRenderer;
     private Vector2 lastPosition; // use last pos to face sprite in the right direciton: left or right
+    private float flipSpriteCoolDown = 0f;
+    private float minFlipSpriteInterval = 0.5f; // limit the number of flips
 
     //  [MOVEMENT]  Related Mechanics 
     [SerializeField] private float speed = 2f;
@@ -53,6 +55,7 @@ public class Cat : MonoBehaviour
     // [Unsatisfied Cat tracking] 
     [SerializeField] private float maxDurationWainting = 10f; // max duration to stay hungry/tired
     private float currentWaitDuration;
+
 
     void Start()
     {
@@ -239,15 +242,26 @@ public class Cat : MonoBehaviour
     // make cat face left/right depending on delta x
     void OrientateCat()
     {
+        // only flip direction when walking
+        if (state != CatState.Walking) return; 
+
+        flipSpriteCoolDown -= Time.deltaTime;
+
         Vector2 movementDelta = (Vector2) transform.position - lastPosition;
-        if (movementDelta.x > 0.01f)
-        {
-            spriteRenderer.flipX = false;
+        if (flipSpriteCoolDown <= 0f)
+        {      
+            if (movementDelta.x > 0.01f)
+            {
+                spriteRenderer.flipX = false;
+                flipSpriteCoolDown = minFlipSpriteInterval;
+            }
+            else if (movementDelta.x < -0.01f)
+            {
+                spriteRenderer.flipX = true;
+                flipSpriteCoolDown = minFlipSpriteInterval;
+            }
         }
-        else if (movementDelta.x < -0.01f)
-        {
-            spriteRenderer.flipX = true;
-        }
+    
         lastPosition = transform.position; 
     }
 

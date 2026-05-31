@@ -1544,7 +1544,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4245594146911115457, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
       propertyPath: maxDurationWainting
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4913790008959711716, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1589,6 +1589,10 @@ PrefabInstance:
     - target: {fileID: 7196350137628518048, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
       propertyPath: m_Name
       value: brown_cat_0 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7196350137628518048, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6454,7 +6458,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4245594146911115457, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
       propertyPath: maxDurationWainting
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4913790008959711716, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6500,6 +6504,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: brown_cat_0 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7196350137628518048, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6523,7 +6531,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4245594146911115457, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
       propertyPath: maxDurationWainting
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4913790008959711716, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6568,6 +6576,10 @@ PrefabInstance:
     - target: {fileID: 7196350137628518048, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
       propertyPath: m_Name
       value: brown_cat_0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7196350137628518048, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
