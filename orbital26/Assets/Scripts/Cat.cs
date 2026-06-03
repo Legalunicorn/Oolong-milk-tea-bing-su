@@ -30,12 +30,12 @@ public class Cat : MonoBehaviour
 
     //  [MOVEMENT]  Related Mechanics 
     [SerializeField] private float speed = 2f;
-    [SerializeField] private BoxCollider2D area; // boundary object
+    // [SerializeField] private BoxCollider2D area; // boundary object
     [SerializeField] private Vector2 targetPos; // position to move towards
     private const float fixedIdleDuration = 1f; // how long to idle between each walk
     private float idleTimeLeft = 0f; // reset to 1f
     // NOTE: ##### NEW PATH VARIABLES FOR PATH FINDING ##########
-    private List<Node> currPath;
+    [SerializeField] private List<Node> currPath;
     private int pathIdx;
 
     // [HUNGER] variables
@@ -63,9 +63,6 @@ public class Cat : MonoBehaviour
 
     void Start()
     {
-        // Search for WanderArea (boundary) by tag
-        area = GameObject.FindWithTag("WanderArea").GetComponent<BoxCollider2D>();
-
         // Initialize variables 
         // find animator component to edit params
         animator = GetComponent<Animator>();
@@ -74,9 +71,7 @@ public class Cat : MonoBehaviour
         // start position 
         lastPosition = transform.position;
         // start walking already
-        PickRandomTargetPos();
-        state = CatState.Walking;
-        UpdateAnimation();
+        SetToIdle(); 
         // Start timer to become hungry 
         timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
         timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
@@ -101,8 +96,6 @@ public class Cat : MonoBehaviour
             currentWaitDuration += Time.deltaTime;
             if (currentWaitDuration >= maxDurationWainting)
             {
-                // ######################################################################
-                // TODO: { call LevelManager decrease satisfaction here, when implemented}
                 LevelManager.instance.DecreaseSatisfaction(10);
                 Debug.Log(gameObject.name + " is Unsatisfied!");
                 currentWaitDuration = 0f;
@@ -269,47 +262,17 @@ public class Cat : MonoBehaviour
         lastPosition = transform.position; 
     }
 
-    // REMOVE THIS IF THE NEW VERSION WORKS
-    void HandleMovementOLD()
+    void HandleMovement()
     {
-        // no movement when hungry or eating ,so that user can click and hold  on hungry bubble 
-        if (state == CatState.Hungry || state == CatState.Eating) return; 
-        if (state == CatState.Sleeping || state == CatState.Tired) return;
         if (state == CatState.Idle)
         {
-            // minus the duration since the last Frame
             idleTimeLeft -= Time.deltaTime;
             if (idleTimeLeft <= 0f)
             {
-                // cat has idled long enough, time to start walking
                 state = CatState.Walking;
                 UpdateAnimation();
                 PickRandomTargetPos();
             }
-        } 
-        else if (state == CatState.Walking)
-        {
-            // move towards the target position 
-            transform.position = Vector2.MoveTowards(
-                transform.position,
-                targetPos,
-                speed * Time.deltaTime
-            );
-
-            // reached the target position 
-            if (Vector2.Distance(transform.position, targetPos) < 0.1f) SetToIdle();
-        }
-    }
-
-    void HandleMovement()
-    {
-        if (state != CatState.Idle || state != CatState.Walking) return;
-        if (state == CatState.Idle)
-        {
-            // same as the old function
-            // keep idling until time to pick new pos
-            state = CatState.Walking;
-            PickRandomTargetPos();
         }
         else if (state == CatState.Walking)
         {
@@ -322,7 +285,7 @@ public class Cat : MonoBehaviour
             Vector2 next = currPath[pathIdx].transform.position;
             transform.position = Vector2.MoveTowards(
                 transform.position,
-                targetPos,
+                next,
                 speed * Time.deltaTime
             );
             if (Vector2.Distance(transform.position, next) <= 0.1f)
@@ -348,16 +311,6 @@ public class Cat : MonoBehaviour
         idleTimeLeft = fixedIdleDuration;        
     }
 
-    // OLD VERSION - TODO: REMOVE IF NOT USED
-    // void PickRandomTargetPos()
-    // {
-    //     Bounds bound = area.bounds;
-    //     // select random point within bound
-    //     float x = Random.Range(bound.min.x, bound.max.x);
-    //     float y = Random.Range(bound.min.y, bound.max.y);
-    //     targetPos = new Vector2(x, y);
-    // }
-
     void PickRandomTargetPos()
     {
         Node target = AStar.instance.GetRandomNode();
@@ -368,7 +321,6 @@ public class Cat : MonoBehaviour
         pathIdx = 0;
     }
     
-
     public int GetFeedCost()
     {
         return feedCost;

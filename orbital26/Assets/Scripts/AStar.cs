@@ -14,7 +14,7 @@ public class AStar : MonoBehaviour
     {
         //TOD: singleton pattern
         instance = this;
-        allNodes = FindObjectsOfType<nodes>();
+        nodes = FindObjectsOfType<Node>();
     }
 
     // find closest movement node to given position
@@ -51,6 +51,14 @@ public class AStar : MonoBehaviour
     // Generate path using nodes only then the unit use this to travel
     public List<Node> GeneratePath(Vector2 from, Vector2 to)
     {
+        Node start = GetNearestNode(from);
+        Node end = GetNearestNode(to);
+        if (start == null || end == null)
+        {
+            Debug.Log(start + " " + end);
+            return null;
+        }
+
         return GeneratePath(GetNearestNode(from), GetNearestNode(to));
     }
 
@@ -80,11 +88,10 @@ public class AStar : MonoBehaviour
             if (curr == end)
             {
                 List<Node> path = new List<Node>(); 
-                path.Insert(0, end);
                 while(curr != start)
                 {
-                    curr = curr.cameFrom;
                     path.Add(curr);
+                    curr = curr.cameFrom;
                 }
                 path.Reverse();
                 return path;
