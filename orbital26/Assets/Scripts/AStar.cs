@@ -49,7 +49,7 @@ public class AStar : MonoBehaviour
     }
 
     // Generate path using nodes only then the unit use this to travel
-    public List<Node> CreatePath(Vector2 from, Vector2 to)
+    public List<Node> GeneratePath(Vector2 from, Vector2 to)
     {
         return GeneratePath(GetNearestNode(from), GetNearestNode(to));
     }

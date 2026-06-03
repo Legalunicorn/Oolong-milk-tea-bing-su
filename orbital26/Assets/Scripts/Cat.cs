@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /**
  * Script controls CAT behavior in the game 
@@ -33,6 +34,9 @@ public class Cat : MonoBehaviour
     [SerializeField] private Vector2 targetPos; // position to move towards
     private const float fixedIdleDuration = 1f; // how long to idle between each walk
     private float idleTimeLeft = 0f; // reset to 1f
+    // NOTE: ##### NEW PATH VARIABLES FOR PATH FINDING ##########
+    private List<Node> currPath;
+    private int pathIdx;
 
     // [HUNGER] variables
     [SerializeField] private float timeBetweenMeal = 10f; 
@@ -265,7 +269,8 @@ public class Cat : MonoBehaviour
         lastPosition = transform.position; 
     }
 
-    void HandleMovement()
+    // REMOVE THIS IF THE NEW VERSION WORKS
+    void HandleMovementOLD()
     {
         // no movement when hungry or eating ,so that user can click and hold  on hungry bubble 
         if (state == CatState.Hungry || state == CatState.Eating) return; 
@@ -296,6 +301,37 @@ public class Cat : MonoBehaviour
         }
     }
 
+    void HandleMovement()
+    {
+        if (state != CatState.Idle || state != CatState.Walking) return;
+        if (state == CatState.Idle)
+        {
+            // same as the old function
+            // keep idling until time to pick new pos
+            state = CatState.Walking;
+            PickRandomTargetPos();
+        }
+        else if (state == CatState.Walking)
+        {
+            if (currPath == null || pathIdx >= currPath.Count)
+            {
+                // done walking 
+                SetToIdle();
+                return;
+            }
+            Vector2 next = currPath[pathIdx].transform.position;
+            transform.position = Vector2.MoveTowards(
+                transform.position,
+                targetPos,
+                speed * Time.deltaTime
+            );
+            if (Vector2.Distance(transform.position, next) <= 0.1f)
+            {
+                pathIdx++;
+            }
+        }
+    }
+
     void UpdateAnimation()
     {
         // just to be safe update everything
@@ -312,14 +348,26 @@ public class Cat : MonoBehaviour
         idleTimeLeft = fixedIdleDuration;        
     }
 
+    // OLD VERSION - TODO: REMOVE IF NOT USED
+    // void PickRandomTargetPos()
+    // {
+    //     Bounds bound = area.bounds;
+    //     // select random point within bound
+    //     float x = Random.Range(bound.min.x, bound.max.x);
+    //     float y = Random.Range(bound.min.y, bound.max.y);
+    //     targetPos = new Vector2(x, y);
+    // }
+
     void PickRandomTargetPos()
     {
-        Bounds bound = area.bounds;
-        // select random point within bound
-        float x = Random.Range(bound.min.x, bound.max.x);
-        float y = Random.Range(bound.min.y, bound.max.y);
-        targetPos = new Vector2(x, y);
+        Node target = AStar.instance.GetRandomNode();
+        currPath = AStar.instance.GeneratePath(
+            transform.position, // current cat position
+            target.transform.position // selected target pos
+        );
+        pathIdx = 0;
     }
+    
 
     public int GetFeedCost()
     {
