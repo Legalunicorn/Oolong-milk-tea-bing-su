@@ -115,7 +115,7 @@ public class CustomerController : MonoBehaviour
                 nxt,
                 moveSpeed * Time.deltaTime
             );
-            if (Vector2.Distance(transform.position,nxt)<=0.1f) pathIdx++;
+            if (Vector2.Distance(transform.position,nxt)<=0.01f) pathIdx++;
         }
         else
         {
@@ -137,7 +137,7 @@ public class CustomerController : MonoBehaviour
     bool HasReachedDestination(Vector2 end)
     {
         return currPath != null && pathIdx >= currPath.Count && 
-            Vector2.Distance(transform.position, end) < 0.1f;
+            Vector2.Distance(transform.position, end) < 0.01f;
     }
     
     void StopWalking()

@@ -50,11 +50,11 @@ TagManager:
   - name: WalkInfront
     uniqueID: 505538229
     locked: 0
-  - name: Player
-    uniqueID: 384645139
-    locked: 0
   - name: Collision
     uniqueID: 1459055725
+    locked: 0
+  - name: Player
+    uniqueID: 384645139
     locked: 0
   - name: Bubble
     uniqueID: 3256474171
