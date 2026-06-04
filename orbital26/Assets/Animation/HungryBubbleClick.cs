@@ -27,7 +27,7 @@ public class HungryBubbleClick : MonoBehaviour
  
             if (hit != null && hit.gameObject == gameObject && customerController != null)
             {
-                customerController.Unhungry();
+                customerController.ServeFood();
             }
            
         }

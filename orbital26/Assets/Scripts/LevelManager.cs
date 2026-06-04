@@ -38,14 +38,13 @@ public class LevelManager : MonoBehaviour
     public SatisfactionBar satisfactionBar;
 
     // #### Customer Spawn Logic #### 
-    // #### plan first because Customer Prefab not completed
     public GameObject CustomerPrefab;
-    // fake Entrnece
     public Transform CustomerspawnPoint;
     [SerializeField] private float CustomerspawnInterval = 6f;
     public float CustomerspawnTimer = 0f;
  
-
+    // Manage chairs 
+    private ChairSlot[] chairSlots;
 
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
@@ -67,6 +66,8 @@ public class LevelManager : MonoBehaviour
         cash = GameManager.instance.cash;
         timeLeft = timeLimit;
         satisfactionBar.SetMaxSatisfaction(maxSatisfaction);
+        //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Object.FindObjectsByType.html
+        chairSlots = FindObjectsByType<ChairSlot>(FindObjectsSortMode.None);
     }
 
     // // Update is called once per frame
@@ -86,8 +87,6 @@ public class LevelManager : MonoBehaviour
             TriggerEndGame("YOU LOSE");
         }
 
-        
-
         // 2. manage spawn of customers 
         // TODO: make spawn interval vary by randomness
         CustomerspawnTimer += Time.deltaTime;
@@ -95,10 +94,7 @@ public class LevelManager : MonoBehaviour
         {
             CustomerspawnTimer = 0f;
             SpawnCustomer();
-            // TODO: spawn customer prefab
         }
-
-
         // [potential] 3. add decay to satisfactoin
     }
 
@@ -115,6 +111,17 @@ public class LevelManager : MonoBehaviour
 
 
     // ############ PUBLIC Methods ############### 
+
+    public ChairSlot GetAvailableChair()
+    {
+        foreach(ChairSlot chair in chairSlots)
+        {
+            if (!chair.isOccupied) return chair;
+        }
+        Debug.Log("Chair not found.");
+        return null;
+    }
+
     // Mainly interaction with satisfaction bar 
     // For the sake of separation of layers, we
     // decrease this method here, as the "middle" man 
@@ -152,7 +159,6 @@ public class LevelManager : MonoBehaviour
     }
 
     // Restart level 
-    // TODO: add button/UI to restart rather that automatically 
     public void RestartLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

@@ -3,6 +3,25 @@ using System.Collections.Generic;
 
 public class CustomerController : MonoBehaviour
 {
+
+    // TODO: refacfactor this code
+    // remove all the bools and use an enum to manage the customer 
+    
+    public enum CustomerState
+    {
+        WalkingToCounter,
+        WaitingAtCounter,
+        WalkingToChair,
+        Eating,
+        RequestCat, // not impl
+        WalkingToCat, // not impl
+        InteractingWithCat, // not impl
+        Exiting
+    }
+
+    private CustomerState state;
+
+
     [Header("Movement Points")]
     // fakeEntrance -> spawn point 
     public Transform entrance;
@@ -19,10 +38,10 @@ public class CustomerController : MonoBehaviour
     public GameObject hungryBubblePrefab;
     public GameObject currentBubble;
 
-    private bool isMoving = true;
-    private bool hasReachedStopPosition = false;
-    private bool isHungry = false;
-    private bool isExiting = false;
+    // private bool isMoving = true;
+    // private bool hasReachedStopPosition = false;
+    // private bool isHungry = false;
+    // private bool isExiting = false;
     private List<Node> currPath;
     private int pathIdx;
 
@@ -33,211 +52,183 @@ public class CustomerController : MonoBehaviour
     [SerializeField] private float complainInterval = 1f;
     [SerializeField] private float timeSinceLastComplain = 0f;
 
+    private Vector3 currDest;
+
+    // CHAIR 
+    private ChairSlot chair;
+
     void Awake()
     {
         entrance = GameObject.FindWithTag("Entrance").transform;
         stopPosition = GameObject.FindWithTag("Counter").transform;
     }
+
     void Start()
     {
         transform.position = entrance.position;
-        currPath  = AStar.instance.GeneratePath(
-            transform.position,
-            stopPosition.position
-        );
-        pathIdx = 0;
+        SetPath(stopPosition.position, CustomerState.WalkingToCounter);
     }
-
 
     void Update()
     {
-        // move to entrance when need to exit
-        if(isExiting)
+        if (state == CustomerState.WalkingToCounter)
         {
-            // MoveToEntrance();
-            MoveTowards(entrance.position);
-            // ADD: remove customer from game when he lefts 
-            if (Vector2.Distance(transform.position, entrance.position) < 0.1f)
-            {
-                Destroy(gameObject);
-            }
-            return;
-        }
-
-        // keep moving to stop position
-        // why is "isMoving" checked? ill leave it here first but remove if not needed 
-        if (isMoving && !hasReachedStopPosition)
+            MoveTowards(currDest);
+            if (HasReachedDestination(currDest)) OnReachCounter();
+        } else if (state == CustomerState.WaitingAtCounter)
         {
-            MoveTowards(stopPosition.position);
-            if (Vector2.Distance(transform.position, stopPosition.position) < 0.1f)
-            {
-                hasReachedStopPosition = true;
-                StopMoving();
-                Invoke(nameof(BecomeHungry), 1.5f);
-            }
-            // MoveToStopPosition();
+            HandleWaiting();
+        } else if (state == CustomerState.WalkingToChair)
+        {
+            MoveTowards(currDest);
+            if (HasReachedDestination(currDest)) OnReachChair();
+        } else if (state == CustomerState.Eating)
+        {
+            // don handle? once chair is reached
+            // the animation is cued and finish eating is called
+        } else if  (state == CustomerState.Exiting)
+        {
+            MoveTowards(currDest);
+            if (HasReachedDestination(currDest)) Destroy(gameObject);
         }
-        HandleIsHungry();
     }
 
-    void HandleIsHungry()
+    // Navigation functions
+    void SetPath(Vector2 position, CustomerState updatedState)
     {
-        if (isHungry)
-        {
-            hungryTime += Time.deltaTime;
-            if (hungryTime >= maxWaitDuration)
-            {
-                timeSinceLastComplain += Time.deltaTime;
-                if (timeSinceLastComplain >= complainInterval)
-                {
-                    Debug.Log("satisfaction DOWN "); 
-                    if (LevelManager.instance != null)
-                    {
-                        LevelManager.instance.DecreaseSatisfaction(1);
-                    }
-                    timeSinceLastComplain = 0f; //reset timer                
-                }
-
-            }
-        }
+        currPath = AStar.instance.GeneratePath(transform.position, position);
+        pathIdx = 0;
+        state = updatedState;
+        currDest = position;
     }
 
     void MoveTowards(Vector2 end)
     {
         if (currPath == null) return;
         Vector2 nxt;
+        // move along path given
         if (pathIdx < currPath.Count)
         {
-            // moving along path nodes in A*
             nxt = currPath[pathIdx].transform.position;
-            transform.position = Vector2.MoveTowards(transform.position,nxt, moveSpeed * Time.deltaTime);
-            if (Vector2.Distance(transform.position,nxt) <= 0.1f) pathIdx++;
-        } else  {
-            // end of path, walk to destimation irection
-            nxt = end;
-            transform.position = Vector2.MoveTowards(transform.position, end, moveSpeed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(
+                transform.position,
+                nxt,
+                moveSpeed * Time.deltaTime
+            );
+            if (Vector2.Distance(transform.position,nxt)<=0.1f) pathIdx++;
         }
-        Vector2 dir = (nxt - (Vector2) transform.position).normalized;
+        else
+        {
+            nxt = end;
+            transform.position = Vector2.MoveTowards(
+                transform.position,
+                end,
+                moveSpeed * Time.deltaTime
+            );
+        }
+        Vector2 dir = (nxt - (Vector2)transform.position).normalized;
         animator.SetBool("isWalking", true);
         animator.SetFloat("InputX", dir.x);
         animator.SetFloat("InputY", dir.y);
         animator.SetFloat("LastInputX", dir.x);
-        animator.SetFloat("LastInputY", dir.y);   
+        animator.SetFloat("LastInputY", dir.y);
     }
 
-    // private void MoveToStopPosition()
-    // {
-    //     Vector3 direction = stopPosition.position - transform.position;
-        
-    //     // close enough to target position, stop and be hungry
-    //     if (direction.magnitude <= 0.05f)
-    //     {
-    //         transform.position = stopPosition.position;
-    //         StopMoving();
-    //         Invoke(nameof(BecomeHungry), 1.5f);
-    //         return;
-    //     }
-
-    //     // Keep on moving 
-
-    //     Vector3 moveDirection = direction.normalized;
-    //     // speed = distance/time  -> distance = speed * time
-    //     transform.position += moveDirection * moveSpeed * Time.deltaTime;
-
-    //     animator.SetBool("isWalking", true);
-
-    //     animator.SetFloat("InputX", moveDirection.x);
-    //     animator.SetFloat("InputY", moveDirection.y);
-
-    //     animator.SetFloat("LastInputX", moveDirection.x);
-    //     animator.SetFloat("LastInputY", moveDirection.y);
-    // }
-
-    // private void MoveToEntrance()
-    // {
-    //     Vector3 direction = fakeEntrance.position - transform.position;
-
-    //     // If close enough to entrance, remove customer
-    //     if (direction.magnitude <= 0.05f)
-    //     {
-    //         transform.position = fakeEntrance.position;
-    //         StopMoving();
-
-    //          Destroy(gameObject); 
-    //         return;
-    //     }
-
-    //     Vector3 moveDirection = direction.normalized;
-    //     transform.position += moveDirection * moveSpeed * Time.deltaTime;
-
-    //     animator.SetBool("isWalking", true);
-
-    //     animator.SetFloat("InputX", moveDirection.x);
-    //     animator.SetFloat("InputY", moveDirection.y);
-
-    //     animator.SetFloat("LastInputX", moveDirection.x);
-    //     animator.SetFloat("LastInputY", moveDirection.y);
-    // }
-
-    private void StopMoving()
+    bool HasReachedDestination(Vector2 end)
     {
-        isMoving = false;
-        hasReachedStopPosition = true;
-
+        return currPath != null && pathIdx >= currPath.Count && 
+            Vector2.Distance(transform.position, end) < 0.1f;
+    }
+    
+    void StopWalking()
+    {
         animator.SetBool("isWalking", false);
         animator.SetFloat("InputX", 0);
         animator.SetFloat("InputY", 0);
     }
 
-    private void BecomeHungry()
+    void OnReachCounter()
     {
-        if (isHungry) return;
-        isHungry = true;
+        // start to request for food
+        state = CustomerState.WaitingAtCounter;
+        StopWalking();
+        Invoke(nameof(BecomeHungry),1.5f);
+    } 
 
-        // remove currentBubble incase it exists, also planning for future bubbles (cat bubble)
-        if (currentBubble != null) Destroy(currentBubble);
-        currentBubble = Instantiate(
-            hungryBubblePrefab,
-            transform.position,
-            Quaternion.identity
-        );
-        currentBubble.transform.SetParent(transform);
-        currentBubble.transform.localPosition = new Vector3(-1f, 1f, 0);
-        HungryBubbleClick bubbleScript = currentBubble.GetComponent<HungryBubbleClick>();
-        if (bubbleScript != null) bubbleScript.Setup(this);
+    void OnReachChair()
+    {
+        state = CustomerState.Eating;
+        StopWalking();
+        bool isChairRight = chair.isFaceRight;
+        SpriteRenderer render = GetComponent<SpriteRenderer>();
+        if (isChairRight) render.flipX = false;
+        else render.flipX = true;
+
+        animator.SetBool("isEating", true);
+        Invoke(nameof(FinishEating), 5f);
     }
 
-    public void Unhungry()
+     void FinishEating()
     {
-        // TODO: end hungry timer
-        Debug.Log("FED CUSTOMER");
-        if (currentBubble != null)
-        {
-            Destroy(currentBubble);
-        }
-        // Add cash once feed 
-        if (GameManager.instance != null)
-        {
-            GameManager.instance.AddCash(5); 
-        }
-        isHungry = false;
-        hungryTime = 0f;
-        timeSinceLastComplain = 0f;
-
-        // After feeding, the customer exits the scene 
+        animator.SetBool("isEating", false); // make a transition into Sitting or something
+        chair.isOccupied = false;
+        chair = null;
         StartExiting();
     }
 
-    private void StartExiting()
+    void StartExiting()
     {
-        isHungry = false;
-        isMoving = false;
-        hasReachedStopPosition = false;
-        isExiting = true;
+        SetPath(entrance.position, CustomerState.Exiting);
+    }
 
-        // animator.SetBool("isWalking", true);
-        currPath = AStar.instance.GeneratePath(transform.position,entrance.position);
-        pathIdx = 0;
+    // INTERACTION FUNCTIONS - HUNGRY etc
+    void BecomeHungry()
+    {
+        if (state != CustomerState.WaitingAtCounter) return;
+        if (currentBubble != null) Destroy(currentBubble);
 
+        // right now we only have one food, we extend in the future 
+        // to have more food 
+        currentBubble = Instantiate(hungryBubblePrefab, transform.position, Quaternion.identity);
+        currentBubble.transform.SetParent(transform);
+        currentBubble.transform.localPosition = new Vector3(-1f,1f,0);
+        HungryBubbleClick bubble = currentBubble.GetComponent<HungryBubbleClick>();
+        if (bubble != null) bubble.Setup(this);
+    }
+
+    void HandleWaiting()
+    {
+        hungryTime +=Time.deltaTime;
+        if (hungryTime < maxWaitDuration) return;
+        timeSinceLastComplain += Time.deltaTime;
+        if (timeSinceLastComplain >= complainInterval && LevelManager.instance != null)
+        {
+            LevelManager.instance.DecreaseSatisfaction(1);
+            timeSinceLastComplain = 0f; // reset complain timer
+        }
+    }
+
+    // public method called by bubble script 
+    public void ServeFood()
+    {
+        if (currentBubble != null) Destroy(currentBubble);
+        if (GameManager.instance != null) GameManager.instance.AddCash(10);
+        hungryTime = 0f;
+        timeSinceLastComplain = 0f;
+        chair = LevelManager.instance.GetAvailableChair();
+        if (chair == null)
+        {
+            // this should not happen because i put alot of chairs 
+            // but just incase this happens we make the customer exit 
+            // maybe in the future we can do sth else 
+            StartExiting();
+            return;
+        }
+        chair.isOccupied = true;
+        // TODO: we might need to offset the position to the chair 
+        // so the customer aligneds perfectly
+        Vector3 chairOffset = new Vector3(0f, 0.5f,  0f); // mannually adjust
+        // move slightly higher
+        SetPath(chair.transform.position + chairOffset,  CustomerState.WalkingToChair);
     }
 }
