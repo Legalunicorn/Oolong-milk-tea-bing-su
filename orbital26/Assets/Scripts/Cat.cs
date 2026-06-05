@@ -17,9 +17,13 @@ public class Cat : MonoBehaviour
         Hungry,
         Eating,
         Tired,
-        Sleeping
+        Sleeping,
+        Locked, // locked for customer
     }
     [SerializeField] private CatState state;
+    // Scriptable object used for identifying cats
+    // during cat selection mods
+    [SerializeField] private CatData catData;
     
     // [ANIMATION] component (handle x-direction, and current state)
     Animator animator;
@@ -325,4 +329,31 @@ public class Cat : MonoBehaviour
     {
         return feedCost;
     }
+
+    // #### METHODS FOR CAT SELECTION ## 
+    publicvoid LockForCustomer()
+    {
+        // remove all activities from the cat
+        // make cat keep still
+        if (currentBubble != null)
+        {
+            Destroy(currentBubble);
+            currentBubble = null;
+        }
+        animator.SetBool("isEating", false);
+        animator.SetBool("isSleeping", false);
+        animator.SetBool("isWalking", false);
+        state = CatState.Locked;
+    }
+
+    public void UnlockFromCustomer()
+    {
+        SetToIdle();
+    }
+
+    public CatData GetCatData()
+    {
+        return catData;
+    }
+
 }

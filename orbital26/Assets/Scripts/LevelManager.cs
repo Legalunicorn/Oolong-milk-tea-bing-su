@@ -7,6 +7,12 @@ using UnityEngine;
 // https://www.youtube.com/watch?v=yhlyoQ2F-NM
 public class LevelManager : MonoBehaviour
 {
+    // CAT SELECTION INTERACTION
+    // we need new variavles to handle from the level
+    public enum LevelState { Normal, CatSelection}
+    private LevelState state;
+    private CatData requestedCatData;
+    private CustomerController pendingCustomer;
 
     // Singletone
     public static LevelManager instance {get; private set;}
@@ -176,5 +182,42 @@ public class LevelManager : MonoBehaviour
     public void SpawnCat(GameObject catPrefab)
     {
         Instantiate(catPrefab, catSpawnPoint.position, Quaternion.identity);
+    }
+
+
+    // # CAT SELECTION FUNCTIONS, STATE MANAGEMENT
+    public void EnterCatSelection(CatData catData, CustomerControler customer)
+    {
+        state = LevelState.CatSelection;
+        requestedCatData = catData;
+        pendingCustomer = customer;
+    }
+
+    // Match the cat to the customer = )
+    // then cancel out of selection mode
+    public void ConfirmCatSelection(Cat cat)
+    {
+        if (state!=LevelState.CatSelection) return;
+        state = LevelState.Normal;
+        pendingCustomer.WalkingToCat(cat);
+        CancelCatSelection();
+    }
+
+    // Exit out of selection mode 
+    public void CancelCatSelection()
+    {
+        state = LevelState.Normal;
+        requestedCatData = null;
+        pendingCustomer = null;  
+    }
+
+    public bool IsInCatSelection()
+    {
+        return state == LevelState.CatSelection;
+    }
+
+    public CatData GetRequestedCatData()
+    {
+        return requestedCatData;
     }
 }

@@ -2,9 +2,6 @@ using UnityEngine;
 
 public class HungryBubbleClick : MonoBehaviour
 {
-    // BUG: this cannot work for prefabs, we cant manually connect spawned bubble to customer controller 
-    // FIX: customer should instantiate HungryBubbleClick prefab and parent it etc
-    // Current the connection is physically dragged via the in
     public CustomerController customerController;
  
     // once this object has been instantiated by customer
@@ -13,7 +10,6 @@ public class HungryBubbleClick : MonoBehaviour
     {
         customerController = customerRef;
     }
-
 
     private void Update()
     {
