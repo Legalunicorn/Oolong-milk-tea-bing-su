@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-
+using UnityEngine.InputSystem;
 /**
  * Script controls CAT behavior in the game 
  * - movement, animation, walking mechanics, hunger  (for now)
@@ -85,11 +85,34 @@ public class Cat : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        OnMouseClicked();
         HandleHunger();
         HandleSleep();
         HandleMovement();
         OrientateCat();
         HandleDissatisfaction();
+    }
+
+    void OnMouseClicked()
+    {
+        // old input system to detect if mouse is clicked
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            if (LevelManager.instance.IsInCatSelection())
+            {
+                // Logic toi check if cat was clicked
+                Vector2 pos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+                float dist = Vector2.Distance(pos, (Vector2) transform.position);
+                if (dist > 0.5f) return;
+
+                // handle cat being clicked 
+                // must not be locked, and musts be correct cat type
+                if (state != CatState.Locked && catData == LevelManager.instance.GetRequestedCatData())
+                {
+                    LevelManager.instance.ConfirmCatSelection(this);
+                }
+            }
+        }
     }
 
     void HandleDissatisfaction()
@@ -331,7 +354,7 @@ public class Cat : MonoBehaviour
     }
 
     // #### METHODS FOR CAT SELECTION ## 
-    publicvoid LockForCustomer()
+    public void LockForCustomer()
     {
         // remove all activities from the cat
         // make cat keep still
@@ -346,14 +369,33 @@ public class Cat : MonoBehaviour
         state = CatState.Locked;
     }
 
-    public void UnlockFromCustomer()
-    {
-        SetToIdle();
-    }
+    // // kind of redudant but i add this for clairyt
+    // public void UnlockFromCustomer()
+    // {
+    //     SetToIdle();
+    // }
 
     public CatData GetCatData()
     {
         return catData;
+    }
+
+    public void InteractWithCustomer()
+    {
+        // cat was previous locked we just need to queue animation
+        // TODO: create animation state transtion AND animation
+        // for now : eating aniomation 
+        animator.SetBool("isPet", true);
+        Invoke(nameof(FinishCustomerInteraction), 4f);
+    }
+
+    public void FinishCustomerInteraction()
+    {
+        // TOD: customer add cash as well
+        animator.SetBool("isPet", false);
+        HandleSatisfaction(10); 
+        SetToIdle();
+        // UnlockFromCustomer();
     }
 
 }

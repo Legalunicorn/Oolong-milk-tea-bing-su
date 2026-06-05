@@ -20,6 +20,9 @@ public class CustomerController : MonoBehaviour
     }
 
     private CustomerState state;
+    private Cat assignedCat;
+    [SerializeField] private GameObject catRequestBubblePrefab;
+    [SerializeField] private CatData requestedCatData;
 
 
     [Header("Movement Points")]
@@ -51,6 +54,11 @@ public class CustomerController : MonoBehaviour
     // howoften to decrease the satisfaction
     [SerializeField] private float complainInterval = 1f;
     [SerializeField] private float timeSinceLastComplain = 0f;
+    // timers for waiting for catsd
+    [SerializeField] private float catWaitingTIme = 0f;
+    [SerializeField] private float maxCatWaitTime =  9f;
+    [SerializeField] private float catComplainInterval =  1f;
+    [SerializeField] private float timeSinceLastCatComplain =  0f;
 
     private Vector3 currDest;
 
@@ -86,11 +94,82 @@ public class CustomerController : MonoBehaviour
         {
             // don handle? once chair is reached
             // the animation is cued and finish eating is called
+        } else if (state == CustomerState.RequestCat)
+        {
+            // I USE THIS LOGIC ALOT, maybe abstrqact it as well 
+            // catWaitingTIme += Time.deltaTime;
+            // if (catWaitingTIme >= maxCatWaitTime)
+            // {
+            //     timeSinceLastCatComplain += Time.deltaTime;
+            //     if (timeSinceLastCatComplain >= catComplainInterval)
+            //     {
+            //         LevelManager.instance.DecreaseSatisfaction(1);
+            //         timeSinceLastCatComplain = 0f;
+            //     }
+            // }
+            // TODO : 
+        } else if (state == CustomerState.WalkingToCat)
+        {
+            // TODO: 
+            MoveTowards(currDest);
+            if (HasReachedDestination(currDest)) OnReachCat();
+        } else if (state == CustomerState.InteractingWithCat)
+        {
+            // TODO:
         } else if  (state == CustomerState.Exiting)
         {
             MoveTowards(currDest);
             if (HasReachedDestination(currDest)) Destroy(gameObject);
         }
+    }
+
+    public void RequestCat()
+    {
+        if (currentBubble != null) Destroy(currentBubble);
+        state = CustomerState.RequestCat;
+        // position and spawn bubble 
+        currentBubble = Instantiate(
+            catRequestBubblePrefab,
+            transform.position,
+            Quaternion.identity
+        );
+        currentBubble.transform.SetParent(transform);
+        // offset the bubble
+        currentBubble.transform.localPosition = new Vector3(-1f,1f,0);
+        // get the script
+        RequestCatBubble bubble = currentBubble.GetComponent<RequestCatBubble>();
+        bubble.Setup(this, requestedCatData);
+
+    }
+
+    public void WalkToCat(Cat cat)
+    {
+        assignedCat = cat;
+        // TODO: tweak the offset manually
+        // adjust is so that the customer is on the cat 
+        // then we can switch the animationjh
+        Vector3 offset = new Vector3(0f,0.5f,0f);
+        SetPath(cat.transform.position+offset, CustomerState.WalkingToCat);
+    }
+
+    public void OnReachCat()
+    {
+        state = CustomerState.InteractingWithCat;
+        StopWalking(); 
+        animator.SetBool("isPet", true);
+        //TODO: for now hardcode the interaction time 
+        // but later make it store in some manager globally 
+        // the cat -> que animation for duration, then auto relase
+        assignedCat.InteractWithCustomer();
+        Invoke(nameof(FinishCatInteraction), 4f);
+    }
+
+    private void FinishCatInteraction()
+    {
+        // cat will reset on its own to dle
+        animator.SetBool("isPet", false);
+        assignedCat = null;
+        StartExiting();
     }
 
     // Navigation functions
@@ -126,7 +205,8 @@ public class CustomerController : MonoBehaviour
                 moveSpeed * Time.deltaTime
             );
         }
-        Vector2 dir = (nxt - (Vector2)transform.position).normalized;
+        Vector2 dir = ((Vector2)nxt - (Vector2)transform.position).normalized;
+        Debug.Log(dir);
         animator.SetBool("isWalking", true);
         animator.SetFloat("InputX", dir.x);
         animator.SetFloat("InputY", dir.y);
@@ -168,12 +248,16 @@ public class CustomerController : MonoBehaviour
         Invoke(nameof(FinishEating), 5f);
     }
 
+    // TODO: probalby bug wioth how the animation shifts 
+    // will figure that out later
      void FinishEating()
     {
         animator.SetBool("isEating", false); // make a transition into Sitting or something
         chair.isOccupied = false;
         chair = null;
-        StartExiting();
+        // remove exit, instead request for cat
+        // StartExiting();
+        Invoke(nameof(RequestCat), 2f); 
     }
 
     void StartExiting()
@@ -230,5 +314,11 @@ public class CustomerController : MonoBehaviour
         Vector3 chairOffset = new Vector3(0f, 0.5f,  0f); // mannually adjust
         // move slightly higher
         SetPath(chair.transform.position + chairOffset,  CustomerState.WalkingToChair);
+    }
+
+    public void ClearBubble()
+    {
+        if (currentBubble != null) Destroy(currentBubble);
+        currentBubble = null;
     }
 }

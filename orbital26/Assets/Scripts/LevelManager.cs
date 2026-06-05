@@ -1,7 +1,7 @@
 // restart level -> call same scene
 using UnityEngine.SceneManagement;
 using UnityEngine;
-
+using System.Collections.Generic;
 
 // SINGLETON: 
 // https://www.youtube.com/watch?v=yhlyoQ2F-NM
@@ -13,7 +13,8 @@ public class LevelManager : MonoBehaviour
     private LevelState state;
     private CatData requestedCatData;
     private CustomerController pendingCustomer;
-
+    // when go into selection, hide these UI buttons
+    [SerializeField] private List<GameObject> hideOnCatSelection;
     // Singletone
     public static LevelManager instance {get; private set;}
 
@@ -101,7 +102,12 @@ public class LevelManager : MonoBehaviour
             CustomerspawnTimer = 0f;
             SpawnCustomer();
         }
-        // [potential] 3. add decay to satisfactoin
+        
+        // escape out of selection mode 
+        if (Input.GetKeyDown(KeyCode.Escape) && state == LevelState.CatSelection)
+        {
+            CancelCatSelection();
+        }
     }
 
     void SpawnCustomer()
@@ -186,20 +192,24 @@ public class LevelManager : MonoBehaviour
 
 
     // # CAT SELECTION FUNCTIONS, STATE MANAGEMENT
-    public void EnterCatSelection(CatData catData, CustomerControler customer)
+    public void EnterCatSelection(CatData catData, CustomerController customer)
     {
         state = LevelState.CatSelection;
         requestedCatData = catData;
         pendingCustomer = customer;
+        foreach(GameObject ui in hideOnCatSelection) ui.SetActive(false);
     }
 
     // Match the cat to the customer = )
     // then cancel out of selection mode
+    // method only called when a valid cat was selected
     public void ConfirmCatSelection(Cat cat)
     {
         if (state!=LevelState.CatSelection) return;
-        state = LevelState.Normal;
-        pendingCustomer.WalkingToCat(cat);
+        cat.LockForCustomer();
+        pendingCustomer.WalkToCat(cat);
+        // remove the bubble as well 
+        pendingCustomer.ClearBubble();
         CancelCatSelection();
     }
 
@@ -209,6 +219,7 @@ public class LevelManager : MonoBehaviour
         state = LevelState.Normal;
         requestedCatData = null;
         pendingCustomer = null;  
+        foreach(GameObject ui in hideOnCatSelection) ui.SetActive(true);
     }
 
     public bool IsInCatSelection()

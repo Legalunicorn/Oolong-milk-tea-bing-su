@@ -199,7 +199,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 453fcbf06522b4cc194a241892afb5a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  fakeEntrance: {fileID: 0}
+  catRequestBubblePrefab: {fileID: 6690692462034092085, guid: daa8ac0c0cb53694ab3cc781c1b12105, type: 3}
+  requestedCatData: {fileID: 11400000, guid: 2c35c2d94ced0754785f14dafa3bea77, type: 2}
+  entrance: {fileID: 0}
   stopPosition: {fileID: 0}
   moveSpeed: 1.2
   animator: {fileID: 1170219524669324987}
@@ -209,3 +211,7 @@ MonoBehaviour:
   maxWaitDuration: 5
   complainInterval: 1
   timeSinceLastComplain: 0
+  catWaitingTIme: 0
+  maxCatWaitTime: 0
+  catComplainInterval: 0
+  timeSinceLastCatComplain: 0
