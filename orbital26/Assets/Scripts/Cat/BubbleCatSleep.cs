@@ -29,12 +29,16 @@ public class BubbleCatSleep : MonoBehaviour
     
     void MouseClicked()
     {
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(
-            Mouse.current.position.ReadValue()
-        );
-        float distance = Vector2.Distance(mousePos, (Vector2) transform.position);
-        // estimate radius of bubble ~ 0.5f
-        if (distance < 0.5f) isHolding = true;
+        if (InputUtils.IsMouseInRadius(transform.position))
+        {
+            isHolding = true;
+        }
+        // Vector2 mousePos = Camera.main.ScreenToWorldPoint(
+        //     Mouse.current.position.ReadValue()
+        // );
+        // float distance = Vector2.Distance(mousePos, (Vector2) transform.position);
+        // // estimate radius of bubble ~ 0.5f
+        // if (distance < 0.5f) isHolding = true;
     }
 
     void MouseLetGo()

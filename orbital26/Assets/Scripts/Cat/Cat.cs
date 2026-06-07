@@ -100,10 +100,8 @@ public class Cat : MonoBehaviour
         {
             if (LevelManager.instance.IsInCatSelection())
             {
-                // Logic toi check if cat was clicked
-                Vector2 pos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-                float dist = Vector2.Distance(pos, (Vector2) transform.position);
-                if (dist > 0.5f) return;
+                // mouse not in radius
+                if (!InputUtils.IsMouseInRadius(transform.position)) return;
 
                 // handle cat being clicked 
                 // must not be locked, and musts be correct cat type
