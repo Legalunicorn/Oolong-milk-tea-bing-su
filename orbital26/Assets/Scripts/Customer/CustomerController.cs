@@ -231,8 +231,12 @@ public class CustomerController : MonoBehaviour
         StopWalking();
         bool isChairRight = chair.isFaceRight;
         SpriteRenderer render = GetComponent<SpriteRenderer>();
-        if (isChairRight) render.flipX = false;
-        else render.flipX = true;
+        if (isChairRight) {
+            render.flipX = false;
+        }
+        else {
+            render.flipX = true;
+        }
 
         animator.SetBool("isEating", true);
         Invoke(nameof(FinishEating), 5f);
@@ -242,6 +246,11 @@ public class CustomerController : MonoBehaviour
     // will figure that out later
      void FinishEating()
     {
+        // if we flipped the customer when sitting
+        // we need to flip back or else he would walk backwards
+        SpriteRenderer render = GetComponent<SpriteRenderer>();
+        if (render.flipX) render.flipX = false;
+
         animator.SetBool("isEating", false); // make a transition into Sitting or something
         chair.isOccupied = false;
         chair = null;
