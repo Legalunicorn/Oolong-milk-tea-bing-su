@@ -4,15 +4,12 @@ using TMPro;
 
 public class MenuManager : MonoBehaviour
 {
-
     public GameObject menuPanel;
-
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         menuPanel.SetActive(false);
-        
     }
 
     public void RestartLevel()
@@ -36,11 +33,4 @@ public class MenuManager : MonoBehaviour
     {
         menuPanel.SetActive(false);
     }
-
-
-    // // Update is called once per frame
-    // void Update()
-    // {
-        
-    // }
 }

@@ -31,8 +31,6 @@ public class BubbleCatFood : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame) MouseClicked();
         if (Mouse.current.leftButton.wasReleasedThisFrame) MouseLetGo();
         if (isHolding) Mouseholding();
-        
-
     }
 
     void MouseClicked()
@@ -45,7 +43,6 @@ public class BubbleCatFood : MonoBehaviour
         isHolding = false;
         holdTime = 0f;
         progressRing.fillAmount = 0f;
-        // MouseHolding() has triggered feeding already
         if (isFeedingTriggered) Destroy(gameObject);
     }
 
@@ -68,6 +65,5 @@ public class BubbleCatFood : MonoBehaviour
             GetComponent<SpriteRenderer>().enabled = false;
             GetComponent<Collider2D>().enabled = false;
         }
-
     }
 }

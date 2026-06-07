@@ -14,7 +14,6 @@ public class ShopManager : MonoBehaviour
     // direct UI elements inside shop panel
     public Transform itemContainer;
     public GameObject shopItemPrefab;
-    // ignore this for now 
     public TextMeshProUGUI feedbackText;
 
 

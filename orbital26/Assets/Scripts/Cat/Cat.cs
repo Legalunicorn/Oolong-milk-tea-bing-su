@@ -30,7 +30,7 @@ public class Cat : MonoBehaviour
     SpriteRenderer spriteRenderer;
     private Vector2 lastPosition; // use last pos to face sprite in the right direciton: left or right
     private float flipSpriteCoolDown = 0f;
-    private float minFlipSpriteInterval = 0.5f; // limit the number of flips
+    private float minFlipSpriteInterval = 0.3f; // limit the number of flips
 
     //  [MOVEMENT]  Related Mechanics 
     [SerializeField] private float speed = 2f;
@@ -128,7 +128,6 @@ public class Cat : MonoBehaviour
                 timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
                 timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
                 if (currentBubble != null) Destroy(currentBubble);
-
                 SetToIdle();
             }
         }
@@ -165,10 +164,7 @@ public class Cat : MonoBehaviour
         animator.SetBool("isSleeping", true);
         UpdateAnimation();
 
-        // Just incase there was multiple invocations from overclicking
-        // just defensive measure, probably not needed 
         CancelInvoke(nameof(FinishSleep));
-        // call finish eating
         Invoke(nameof(FinishSleep), sleepDuration);     
     }
 
@@ -225,12 +221,7 @@ public class Cat : MonoBehaviour
         animator.SetBool("isEating", true);
         UpdateAnimation();
 
-        
-
-        // Just incase there was multiple invocations from overclicking
-        // just defensive measure, probably not needed
         CancelInvoke(nameof(FinishEating));
-        // call finish eating
         Invoke(nameof(FinishEating), eatDuration);
     }
 
@@ -367,12 +358,6 @@ public class Cat : MonoBehaviour
         state = CatState.Locked;
     }
 
-    // // kind of redudant but i add this for clairyt
-    // public void UnlockFromCustomer()
-    // {
-    //     SetToIdle();
-    // }
-
     public CatData GetCatData()
     {
         return catData;
@@ -395,5 +380,4 @@ public class Cat : MonoBehaviour
         SetToIdle();
         // UnlockFromCustomer();
     }
-
 }

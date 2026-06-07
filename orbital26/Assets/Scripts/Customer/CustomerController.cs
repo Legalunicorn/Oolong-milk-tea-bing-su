@@ -4,18 +4,15 @@ using System.Collections.Generic;
 public class CustomerController : MonoBehaviour
 {
 
-    // TODO: refacfactor this code
-    // remove all the bools and use an enum to manage the customer 
-    
     public enum CustomerState
     {
         WalkingToCounter,
         WaitingAtCounter,
         WalkingToChair,
         Eating,
-        RequestCat, // not impl
-        WalkingToCat, // not impl
-        InteractingWithCat, // not impl
+        RequestCat, 
+        WalkingToCat, 
+        InteractingWithCat, 
         Exiting
     }
 
@@ -24,11 +21,8 @@ public class CustomerController : MonoBehaviour
     [SerializeField] private GameObject catRequestBubblePrefab;
     [SerializeField] private CatData requestedCatData;
 
-
     [Header("Movement Points")]
-    // fakeEntrance -> spawn point 
     public Transform entrance;
-    // arbitarary empty game object in cafe marked as the stop position
     public Transform stopPosition;
 
     [Header("Movement Settings")]
@@ -36,15 +30,10 @@ public class CustomerController : MonoBehaviour
 
     [Header("References")]
     public Animator animator;
-    // BUG: this is directly linked in the inspector, does not worked with spawned prefabs
-    // TODO: use this as a Prefab
+
     public GameObject hungryBubblePrefab;
     public GameObject currentBubble;
 
-    // private bool isMoving = true;
-    // private bool hasReachedStopPosition = false;
-    // private bool isHungry = false;
-    // private bool isExiting = false;
     private List<Node> currPath;
     private int pathIdx;
 
@@ -61,8 +50,6 @@ public class CustomerController : MonoBehaviour
     [SerializeField] private float timeSinceLastCatComplain =  0f;
 
     private Vector3 currDest;
-
-    // CHAIR 
     private ChairSlot chair;
 
     void Awake()
@@ -116,6 +103,8 @@ public class CustomerController : MonoBehaviour
         } else if (state == CustomerState.InteractingWithCat)
         {
             // TODO:
+            // For now I realised I dont need this state
+            // but keep here first incase needed
         } else if  (state == CustomerState.Exiting)
         {
             MoveTowards(currDest);
@@ -145,9 +134,7 @@ public class CustomerController : MonoBehaviour
     public void WalkToCat(Cat cat)
     {
         assignedCat = cat;
-        // TODO: tweak the offset manually
         // adjust is so that the customer is on the cat 
-        // then we can switch the animationjh
         Vector3 offset = new Vector3(0f,0.5f,0f);
         SetPath(cat.transform.position+offset, CustomerState.WalkingToCat);
     }
@@ -208,8 +195,11 @@ public class CustomerController : MonoBehaviour
         Vector2 dir = ((Vector2)nxt - (Vector2)transform.position).normalized;
         Debug.Log(dir);
         animator.SetBool("isWalking", true);
-        animator.SetFloat("InputX", dir.x);
-        animator.SetFloat("InputY", dir.y);
+        if (dir.magnitude > 0.01f)
+        {
+            animator.SetFloat("InputX", dir.x);
+            animator.SetFloat("InputY", dir.y);
+        }
         animator.SetFloat("LastInputX", dir.x);
         animator.SetFloat("LastInputY", dir.y);
     }
@@ -255,8 +245,6 @@ public class CustomerController : MonoBehaviour
         animator.SetBool("isEating", false); // make a transition into Sitting or something
         chair.isOccupied = false;
         chair = null;
-        // remove exit, instead request for cat
-        // StartExiting();
         Invoke(nameof(RequestCat), 2f); 
     }
 
@@ -309,10 +297,8 @@ public class CustomerController : MonoBehaviour
             return;
         }
         chair.isOccupied = true;
-        // TODO: we might need to offset the position to the chair 
-        // so the customer aligneds perfectly
-        Vector3 chairOffset = new Vector3(0f, 0.5f,  0f); // mannually adjust
         // move slightly higher
+        Vector3 chairOffset = new Vector3(0f, 0.5f,  0f); // mannually adjust
         SetPath(chair.transform.position + chairOffset,  CustomerState.WalkingToChair);
     }
 
