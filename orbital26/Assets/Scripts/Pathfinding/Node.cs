@@ -7,6 +7,7 @@ public class Node : MonoBehaviour
 {
     public Node cameFrom;
     public List<Node> connections;
+    [SerializeField] bool showLines = false;
 
     // heuristic to start and end
     // honestly just blackbox this algo its not important to our project
@@ -22,6 +23,7 @@ public class Node : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (!showLines) return;
         Gizmos.color = Color.blue;
         if (connections.Count > 0)
         {

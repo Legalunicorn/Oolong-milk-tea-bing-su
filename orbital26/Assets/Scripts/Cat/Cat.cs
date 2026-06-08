@@ -352,6 +352,10 @@ public class Cat : MonoBehaviour
             Destroy(currentBubble);
             currentBubble = null;
         }
+        // Found a bug through playtesting, cat does not lock
+        // if selected while eating/sleeping aniomatin
+        CancelInvoke(nameof(FinishEating));
+        CancelInvoke(nameof(FinishSleep)); 
         animator.SetBool("isEating", false);
         animator.SetBool("isSleeping", false);
         animator.SetBool("isWalking", false);
