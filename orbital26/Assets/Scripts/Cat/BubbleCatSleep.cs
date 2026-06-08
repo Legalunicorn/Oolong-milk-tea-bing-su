@@ -7,7 +7,6 @@ using UnityEngine.UI;
 // NOTE: consider abstracting to an interface
 public class BubbleCatSleep : MonoBehaviour
 {
-
     private Cat cat;
     [SerializeField] private float holdTime = 0f;
     [SerializeField] private float targetHoldTime = 1.5f;
@@ -29,12 +28,10 @@ public class BubbleCatSleep : MonoBehaviour
     
     void MouseClicked()
     {
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(
-            Mouse.current.position.ReadValue()
-        );
-        float distance = Vector2.Distance(mousePos, (Vector2) transform.position);
-        // estimate radius of bubble ~ 0.5f
-        if (distance < 0.5f) isHolding = true;
+        if (InputUtils.IsMouseInRadius(transform.position))
+        {
+            isHolding = true;
+        }
     }
 
     void MouseLetGo()
@@ -65,16 +62,4 @@ public class BubbleCatSleep : MonoBehaviour
             GetComponent<Collider2D>().enabled = false;
         }
     }
-
-    // // Start is called once before the first execution of Update after the MonoBehaviour is created
-    // void Start()
-    // {
-        
-    // }
-
-    // // Update is called once per frame
-    // void Update()
-    // {
-        
-    // }
 }

@@ -31,27 +31,11 @@ public class BubbleCatFood : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame) MouseClicked();
         if (Mouse.current.leftButton.wasReleasedThisFrame) MouseLetGo();
         if (isHolding) Mouseholding();
-        
-
     }
 
     void MouseClicked()
     {
-        // convert mouse position to world units 
-        // https://discussions.unity.com/t/mouse-position-with-new-input-system/776798/2
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(
-            Mouse.current.position.ReadValue()
-        );
-    
-        // "transform.position" -> pivot point of the bubble, which is the cneter
-        // estimate radius of bubble to be 0.5f
-        // see if mouse is within radius if pivot point 
-        float distance = Vector2.Distance(mousePos, (Vector2)transform.position);
-        if (distance < 0.5f) // 
-        {
-            Debug.Log(gameObject.name + " DETECTED");
-            isHolding = true;
-        }        
+        if (InputUtils.IsMouseInRadius(transform.position)) isHolding = true;
     }
 
     void MouseLetGo()
@@ -59,7 +43,6 @@ public class BubbleCatFood : MonoBehaviour
         isHolding = false;
         holdTime = 0f;
         progressRing.fillAmount = 0f;
-        // MouseHolding() has triggered feeding already
         if (isFeedingTriggered) Destroy(gameObject);
     }
 
@@ -82,6 +65,5 @@ public class BubbleCatFood : MonoBehaviour
             GetComponent<SpriteRenderer>().enabled = false;
             GetComponent<Collider2D>().enabled = false;
         }
-
     }
 }

@@ -5,8 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - WanderArea
-  - fakeEntrance
-  - stopPosition
+  - Entrance
+  - Counter
   layers:
   - Default
   - TransparentFX
@@ -55,6 +55,9 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 384645139
+    locked: 0
+  - name: Cat
+    uniqueID: 2988355381
     locked: 0
   - name: Bubble
     uniqueID: 3256474171

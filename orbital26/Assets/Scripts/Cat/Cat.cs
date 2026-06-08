@@ -1,5 +1,6 @@
 using UnityEngine;
-
+using System.Collections.Generic;
+using UnityEngine.InputSystem;
 /**
  * Script controls CAT behavior in the game 
  * - movement, animation, walking mechanics, hunger  (for now)
@@ -16,23 +17,30 @@ public class Cat : MonoBehaviour
         Hungry,
         Eating,
         Tired,
-        Sleeping
+        Sleeping,
+        Locked, // locked for customer
     }
     [SerializeField] private CatState state;
+    // Scriptable object used for identifying cats
+    // during cat selection mods
+    [SerializeField] private CatData catData;
     
     // [ANIMATION] component (handle x-direction, and current state)
     Animator animator;
     SpriteRenderer spriteRenderer;
     private Vector2 lastPosition; // use last pos to face sprite in the right direciton: left or right
     private float flipSpriteCoolDown = 0f;
-    private float minFlipSpriteInterval = 0.5f; // limit the number of flips
+    private float minFlipSpriteInterval = 0.3f; // limit the number of flips
 
     //  [MOVEMENT]  Related Mechanics 
     [SerializeField] private float speed = 2f;
-    [SerializeField] private BoxCollider2D area; // boundary object
+    // [SerializeField] private BoxCollider2D area; // boundary object
     [SerializeField] private Vector2 targetPos; // position to move towards
     private const float fixedIdleDuration = 1f; // how long to idle between each walk
     private float idleTimeLeft = 0f; // reset to 1f
+    // NOTE: ##### NEW PATH VARIABLES FOR PATH FINDING ##########
+    [SerializeField] private List<Node> currPath;
+    private int pathIdx;
 
     // [HUNGER] variables
     [SerializeField] private float timeBetweenMeal = 10f; 
@@ -59,9 +67,6 @@ public class Cat : MonoBehaviour
 
     void Start()
     {
-        // Search for WanderArea (boundary) by tag
-        area = GameObject.FindWithTag("WanderArea").GetComponent<BoxCollider2D>();
-
         // Initialize variables 
         // find animator component to edit params
         animator = GetComponent<Animator>();
@@ -70,9 +75,7 @@ public class Cat : MonoBehaviour
         // start position 
         lastPosition = transform.position;
         // start walking already
-        PickRandomTargetPos();
-        state = CatState.Walking;
-        UpdateAnimation();
+        SetToIdle(); 
         // Start timer to become hungry 
         timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
         timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
@@ -82,11 +85,32 @@ public class Cat : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        OnMouseClicked();
         HandleHunger();
         HandleSleep();
         HandleMovement();
         OrientateCat();
         HandleDissatisfaction();
+    }
+
+    void OnMouseClicked()
+    {
+        // old input system to detect if mouse is clicked
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            if (LevelManager.instance.IsInCatSelection())
+            {
+                // mouse not in radius
+                if (!InputUtils.IsMouseInRadius(transform.position)) return;
+
+                // handle cat being clicked 
+                // must not be locked, and musts be correct cat type
+                if (state != CatState.Locked && catData == LevelManager.instance.GetRequestedCatData())
+                {
+                    LevelManager.instance.ConfirmCatSelection(this);
+                }
+            }
+        }
     }
 
     void HandleDissatisfaction()
@@ -97,8 +121,6 @@ public class Cat : MonoBehaviour
             currentWaitDuration += Time.deltaTime;
             if (currentWaitDuration >= maxDurationWainting)
             {
-                // ######################################################################
-                // TODO: { call LevelManager decrease satisfaction here, when implemented}
                 LevelManager.instance.DecreaseSatisfaction(10);
                 Debug.Log(gameObject.name + " is Unsatisfied!");
                 currentWaitDuration = 0f;
@@ -106,7 +128,6 @@ public class Cat : MonoBehaviour
                 timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
                 timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
                 if (currentBubble != null) Destroy(currentBubble);
-
                 SetToIdle();
             }
         }
@@ -143,10 +164,7 @@ public class Cat : MonoBehaviour
         animator.SetBool("isSleeping", true);
         UpdateAnimation();
 
-        // Just incase there was multiple invocations from overclicking
-        // just defensive measure, probably not needed 
         CancelInvoke(nameof(FinishSleep));
-        // call finish eating
         Invoke(nameof(FinishSleep), sleepDuration);     
     }
 
@@ -203,12 +221,7 @@ public class Cat : MonoBehaviour
         animator.SetBool("isEating", true);
         UpdateAnimation();
 
-        
-
-        // Just incase there was multiple invocations from overclicking
-        // just defensive measure, probably not needed
         CancelInvoke(nameof(FinishEating));
-        // call finish eating
         Invoke(nameof(FinishEating), eatDuration);
     }
 
@@ -267,32 +280,34 @@ public class Cat : MonoBehaviour
 
     void HandleMovement()
     {
-        // no movement when hungry or eating ,so that user can click and hold  on hungry bubble 
-        if (state == CatState.Hungry || state == CatState.Eating) return; 
-        if (state == CatState.Sleeping || state == CatState.Tired) return;
         if (state == CatState.Idle)
         {
-            // minus the duration since the last Frame
             idleTimeLeft -= Time.deltaTime;
             if (idleTimeLeft <= 0f)
             {
-                // cat has idled long enough, time to start walking
                 state = CatState.Walking;
                 UpdateAnimation();
                 PickRandomTargetPos();
             }
-        } 
+        }
         else if (state == CatState.Walking)
         {
-            // move towards the target position 
+            if (currPath == null || pathIdx >= currPath.Count)
+            {
+                // done walking 
+                SetToIdle();
+                return;
+            }
+            Vector2 next = currPath[pathIdx].transform.position;
             transform.position = Vector2.MoveTowards(
                 transform.position,
-                targetPos,
+                next,
                 speed * Time.deltaTime
             );
-
-            // reached the target position 
-            if (Vector2.Distance(transform.position, targetPos) < 0.1f) SetToIdle();
+            if (Vector2.Distance(transform.position, next) <= 0.1f)
+            {
+                pathIdx++;
+            }
         }
     }
 
@@ -314,15 +329,59 @@ public class Cat : MonoBehaviour
 
     void PickRandomTargetPos()
     {
-        Bounds bound = area.bounds;
-        // select random point within bound
-        float x = Random.Range(bound.min.x, bound.max.x);
-        float y = Random.Range(bound.min.y, bound.max.y);
-        targetPos = new Vector2(x, y);
+        Node target = AStar.instance.GetRandomNode();
+        currPath = AStar.instance.GeneratePath(
+            transform.position, // current cat position
+            target.transform.position // selected target pos
+        );
+        pathIdx = 0;
     }
-
+    
     public int GetFeedCost()
     {
         return feedCost;
+    }
+
+    // #### METHODS FOR CAT SELECTION ## 
+    public void LockForCustomer()
+    {
+        // remove all activities from the cat
+        // make cat keep still
+        if (currentBubble != null)
+        {
+            Destroy(currentBubble);
+            currentBubble = null;
+        }
+        // Found a bug through playtesting, cat does not lock
+        // if selected while eating/sleeping aniomatin
+        CancelInvoke(nameof(FinishEating));
+        CancelInvoke(nameof(FinishSleep)); 
+        animator.SetBool("isEating", false);
+        animator.SetBool("isSleeping", false);
+        animator.SetBool("isWalking", false);
+        state = CatState.Locked;
+    }
+
+    public CatData GetCatData()
+    {
+        return catData;
+    }
+
+    public void InteractWithCustomer()
+    {
+        // cat was previous locked we just need to queue animation
+        // TODO: create animation state transtion AND animation
+        // for now : eating aniomation 
+        animator.SetBool("isPet", true);
+        Invoke(nameof(FinishCustomerInteraction), 4f);
+    }
+
+    public void FinishCustomerInteraction()
+    {
+        // TOD: customer add cash as well
+        animator.SetBool("isPet", false);
+        HandleSatisfaction(10); 
+        SetToIdle();
+        // UnlockFromCustomer();
     }
 }

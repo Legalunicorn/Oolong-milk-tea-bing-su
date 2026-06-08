@@ -82,8 +82,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 384645139
-  m_SortingLayer: 4
+  m_SortingLayerID: -1306611915
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1593486516139116798, guid: 09b0c344368b6674999db1970b4e1a0f, type: 3}
@@ -109,9 +109,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   state: 0
+  catData: {fileID: 11400000, guid: 2c35c2d94ced0754785f14dafa3bea77, type: 2}
   speed: 2
-  area: {fileID: 0}
   targetPos: {x: 0, y: 0}
+  currPath: []
   timeBetweenMeal: 8
   foodBubblePrefab: {fileID: 7748677934914827185, guid: abb735364261b9345ba7f81acf62b10a, type: 3}
   eatDuration: 4
@@ -176,7 +177,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7196350137628518048}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}

@@ -1,13 +1,20 @@
 // restart level -> call same scene
 using UnityEngine.SceneManagement;
 using UnityEngine;
-
+using System.Collections.Generic;
 
 // SINGLETON: 
 // https://www.youtube.com/watch?v=yhlyoQ2F-NM
 public class LevelManager : MonoBehaviour
 {
-
+    // CAT SELECTION INTERACTION
+    // we need new variavles to handle from the level
+    public enum LevelState { Normal, CatSelection}
+    private LevelState state;
+    private CatData requestedCatData;
+    private CustomerController pendingCustomer;
+    // when go into selection, hide these UI buttons
+    [SerializeField] private List<GameObject> hideOnCatSelection;
     // Singletone
     public static LevelManager instance {get; private set;}
 
@@ -38,14 +45,13 @@ public class LevelManager : MonoBehaviour
     public SatisfactionBar satisfactionBar;
 
     // #### Customer Spawn Logic #### 
-    // #### plan first because Customer Prefab not completed
     public GameObject CustomerPrefab;
-    // fake Entrnece
     public Transform CustomerspawnPoint;
     [SerializeField] private float CustomerspawnInterval = 6f;
     public float CustomerspawnTimer = 0f;
  
-
+    // Manage chairs 
+    private ChairSlot[] chairSlots;
 
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
@@ -67,6 +73,8 @@ public class LevelManager : MonoBehaviour
         cash = GameManager.instance.cash;
         timeLeft = timeLimit;
         satisfactionBar.SetMaxSatisfaction(maxSatisfaction);
+        //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Object.FindObjectsByType.html
+        chairSlots = FindObjectsByType<ChairSlot>(FindObjectsSortMode.None);
     }
 
     // // Update is called once per frame
@@ -86,8 +94,6 @@ public class LevelManager : MonoBehaviour
             TriggerEndGame("YOU LOSE");
         }
 
-        
-
         // 2. manage spawn of customers 
         // TODO: make spawn interval vary by randomness
         CustomerspawnTimer += Time.deltaTime;
@@ -95,11 +101,13 @@ public class LevelManager : MonoBehaviour
         {
             CustomerspawnTimer = 0f;
             SpawnCustomer();
-            // TODO: spawn customer prefab
         }
-
-
-        // [potential] 3. add decay to satisfactoin
+        
+        // escape out of selection mode 
+        if (Input.GetKeyDown(KeyCode.Escape) && state == LevelState.CatSelection)
+        {
+            CancelCatSelection();
+        }
     }
 
     void SpawnCustomer()
@@ -115,6 +123,17 @@ public class LevelManager : MonoBehaviour
 
 
     // ############ PUBLIC Methods ############### 
+
+    public ChairSlot GetAvailableChair()
+    {
+        foreach(ChairSlot chair in chairSlots)
+        {
+            if (!chair.isOccupied) return chair;
+        }
+        Debug.Log("Chair not found.");
+        return null;
+    }
+
     // Mainly interaction with satisfaction bar 
     // For the sake of separation of layers, we
     // decrease this method here, as the "middle" man 
@@ -152,7 +171,6 @@ public class LevelManager : MonoBehaviour
     }
 
     // Restart level 
-    // TODO: add button/UI to restart rather that automatically 
     public void RestartLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -170,5 +188,47 @@ public class LevelManager : MonoBehaviour
     public void SpawnCat(GameObject catPrefab)
     {
         Instantiate(catPrefab, catSpawnPoint.position, Quaternion.identity);
+    }
+
+
+    // # CAT SELECTION FUNCTIONS, STATE MANAGEMENT
+    public void EnterCatSelection(CatData catData, CustomerController customer)
+    {
+        state = LevelState.CatSelection;
+        requestedCatData = catData;
+        pendingCustomer = customer;
+        foreach(GameObject ui in hideOnCatSelection) ui.SetActive(false);
+    }
+
+    // Match the cat to the customer = )
+    // then cancel out of selection mode
+    // method only called when a valid cat was selected
+    public void ConfirmCatSelection(Cat cat)
+    {
+        if (state!=LevelState.CatSelection) return;
+        cat.LockForCustomer();
+        pendingCustomer.WalkToCat(cat);
+        // remove the bubble as well 
+        pendingCustomer.ClearBubble();
+        CancelCatSelection();
+    }
+
+    // Exit out of selection mode 
+    public void CancelCatSelection()
+    {
+        state = LevelState.Normal;
+        requestedCatData = null;
+        pendingCustomer = null;  
+        foreach(GameObject ui in hideOnCatSelection) ui.SetActive(true);
+    }
+
+    public bool IsInCatSelection()
+    {
+        return state == LevelState.CatSelection;
+    }
+
+    public CatData GetRequestedCatData()
+    {
+        return requestedCatData;
     }
 }
