@@ -193,7 +193,6 @@ public class CustomerController : MonoBehaviour
             );
         }
         Vector2 dir = ((Vector2)nxt - (Vector2)transform.position).normalized;
-        Debug.Log(dir);
         animator.SetBool("isWalking", true);
         if (dir.magnitude > 0.01f)
         {

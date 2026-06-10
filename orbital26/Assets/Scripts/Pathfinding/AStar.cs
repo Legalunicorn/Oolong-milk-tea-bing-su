@@ -15,6 +15,7 @@ public class AStar : MonoBehaviour
         //TOD: singleton pattern
         instance = this;
         nodes = FindObjectsOfType<Node>();
+
     }
 
     // find closest movement node to given position
@@ -65,6 +66,8 @@ public class AStar : MonoBehaviour
     public List<Node> GeneratePath(Node start, Node end)
     {
         List<Node> open = new List<Node>();
+        // Bug in algorithm lmao oops 
+        HashSet<Node> closed = new HashSet<Node>();
         foreach(Node n in nodes)
         {
             n.gScore = float.MaxValue;
@@ -83,7 +86,9 @@ public class AStar : MonoBehaviour
                 }
             }
             Node curr = open[lowerestF];
-            open.Remove(curr);
+            open.RemoveAt(lowerestF);
+            closed.Add(curr);
+            // open.Remove(curr);
 
             if (curr == end)
             {
@@ -93,11 +98,13 @@ public class AStar : MonoBehaviour
                     path.Add(curr);
                     curr = curr.cameFrom;
                 }
+                path.Add(start);
                 path.Reverse();
                 return path;
             }
             foreach(Node v in curr.connections)
             {
+                if(closed.Contains(v)) continue;
                 float held = curr.gScore + Vector2.Distance(curr.transform.position, v.transform.position);
                 if (held < v.gScore)
                 {

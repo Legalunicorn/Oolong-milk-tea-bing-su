@@ -1907,8 +1907,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
+      propertyPath: showLines
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: connections.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: 'connections.Array.data[0]'
@@ -1929,7 +1933,7 @@ PrefabInstance:
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: 'connections.Array.data[4]'
       value: 
-      objectReference: {fileID: 749725729}
+      objectReference: {fileID: 1513413389}
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: 'connections.Array.data[5]'
       value: 
@@ -2906,6 +2910,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
+      propertyPath: showLines
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: connections.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -3269,8 +3277,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
+      propertyPath: showLines
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: connections.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: 'connections.Array.data[0]'
@@ -3288,6 +3300,10 @@ PrefabInstance:
       propertyPath: 'connections.Array.data[3]'
       value: 
       objectReference: {fileID: 2122298695}
+    - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
+      propertyPath: 'connections.Array.data[4]'
+      value: 
+      objectReference: {fileID: 1513413389}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9620,6 +9636,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameAssembly::CatSpot
   spotType: 1
   isOccupied: 0
+--- !u!114 &1513413389 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
+  m_PrefabInstance: {fileID: 12445425}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513413387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5e810a9af612b41a0d788518e432fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Node
 --- !u!1 &1517249656
 GameObject:
   m_ObjectHideFlags: 0
@@ -9722,8 +9749,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
+      propertyPath: showLines
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: connections.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: 'connections.Array.data[0]'
@@ -9737,6 +9768,10 @@ PrefabInstance:
       propertyPath: 'connections.Array.data[2]'
       value: 
       objectReference: {fileID: 243472763}
+    - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
+      propertyPath: 'connections.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1513413389}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12030,7 +12065,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: connections.Array.size
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
       propertyPath: 'connections.Array.data[0]'
@@ -12052,6 +12087,10 @@ PrefabInstance:
       propertyPath: 'connections.Array.data[4]'
       value: 
       objectReference: {fileID: 518111029}
+    - target: {fileID: 8657385723981623674, guid: 3e59321e1a1694944a4307e9b11ba86c, type: 3}
+      propertyPath: 'connections.Array.data[5]'
+      value: 
+      objectReference: {fileID: 1513413389}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

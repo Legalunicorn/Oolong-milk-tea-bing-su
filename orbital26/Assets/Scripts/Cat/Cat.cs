@@ -175,6 +175,7 @@ public class Cat : MonoBehaviour
             CatSpotType.Sleep,
             transform.position
         );
+        Debug.Log(currentSpot);
 
         if (currentSpot == null)
         {

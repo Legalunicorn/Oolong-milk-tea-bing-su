@@ -14,6 +14,7 @@ public class CatSpotManager : MonoBehaviour
 
     public CatSpot GetAvailableSpot(CatSpotType type, Vector3 catPosition)
     {
+        Debug.Log("Searching for spot: ");
         CatSpot closestSpot = null;
         float shortestDistance = Mathf.Infinity;
 
@@ -30,10 +31,19 @@ public class CatSpotManager : MonoBehaviour
                 }
             }
         }
+        if (closestSpot != null) Debug.Log(closestSpot.spotType + " " +  closestSpot.isOccupied);
 
         if (closestSpot != null)
         {
             closestSpot.isOccupied = true;
+        }
+        else
+        {
+            Debug.Log("No spot FOUND");
+            foreach (CatSpot spot in allSpots)
+            {
+                Debug.Log(spot.spotType + " " + spot.isOccupied);
+            }
         }
 
         return closestSpot;
