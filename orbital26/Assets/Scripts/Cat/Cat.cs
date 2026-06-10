@@ -163,49 +163,54 @@ public class Cat : MonoBehaviour
 
     public void SleepCat()
     {
-        // remove Prefab Instance of any bubble
-        if (currentBubble != null) Destroy(currentBubble);
-        currentBubble = null;
-
         currentWaitDuration = 0f;
         timeLeftToSleep = Random.Range(timeBetweenSleep / 2, timeBetweenSleep);
 
-        // get one available sleep spot from CatSpotManager
         currentSpot = CatSpotManager.Instance.GetAvailableSpot(
             CatSpotType.Sleep,
             transform.position
         );
 
+        Debug.Log(gameObject.name + " selected sleep spot: " +
+            (currentSpot == null ? "NONE" : currentSpot.name));
+
         if (currentSpot == null)
         {
-            Debug.Log("No available sleep spot. Cat will sleep at current position.");
-            StartSleepingNow();
+            Debug.Log(gameObject.name + " has no available sleep spot.");
             return;
         }
 
-        // Generate path from current cat position to selected sleep spot
         currPath = AStar.instance.GeneratePath(
             transform.position,
             currentSpot.transform.position
         );
 
+        Debug.Log(gameObject.name + " sleep path count: " +
+            (currPath == null ? 0 : currPath.Count));
+
         if (currPath == null || currPath.Count == 0)
         {
-            Debug.Log("No path found to sleep spot. Cat will sleep at current position.");
+            Debug.Log(gameObject.name + " has no path to sleep spot: " + currentSpot.name);
 
             CatSpotManager.Instance.ReleaseSpot(currentSpot);
             currentSpot = null;
-
-            StartSleepingNow();
             return;
         }
 
+        if (currentBubble != null) Destroy(currentBubble);
+        currentBubble = null;
+
         pathIdx = 0;
+
         walkingToSleepSpot = true;
         walkingAwayAfterSleep = false;
+        walkingToEatSpot = false;
+        walkingAwayAfterEat = false;
 
         state = CatState.Walking;
         UpdateAnimation();
+
+        Debug.Log(gameObject.name + " starts walking to sleep spot.");
     }
 
     void StartSleepingNow()
@@ -433,12 +438,12 @@ public class Cat : MonoBehaviour
                 UpdateAnimation();
                 PickRandomTargetPos();
             }
+            
         }
         else if (state == CatState.Walking)
         {
             if (currPath == null || pathIdx >= currPath.Count)
             {
-                // Finished walking to sleep spot
                 if (walkingToSleepSpot)
                 {
                     walkingToSleepSpot = false;
@@ -446,7 +451,6 @@ public class Cat : MonoBehaviour
                     return;
                 }
 
-                // Finished walking to eat spot
                 if (walkingToEatSpot)
                 {
                     walkingToEatSpot = false;
@@ -454,7 +458,6 @@ public class Cat : MonoBehaviour
                     return;
                 }
 
-                // Finished walking away after sleeping
                 if (walkingAwayAfterSleep)
                 {
                     walkingAwayAfterSleep = false;
@@ -462,7 +465,6 @@ public class Cat : MonoBehaviour
                     return;
                 }
 
-                // Finished walking away after eating
                 if (walkingAwayAfterEat)
                 {
                     walkingAwayAfterEat = false;
@@ -470,7 +472,6 @@ public class Cat : MonoBehaviour
                     return;
                 }
 
-                // Normal random walking finished
                 SetToIdle();
                 return;
             }
@@ -489,8 +490,8 @@ public class Cat : MonoBehaviour
             }
         }
     }
+               
     
-
     void UpdateAnimation()
     {
         // just to be safe update everything
@@ -535,7 +536,7 @@ public class Cat : MonoBehaviour
         walkingAwayAfterSleep = false;
         walkingToEatSpot = false;
         walkingAwayAfterEat = false;
-        
+
         // remove all activities from the cat
         // make cat keep still
         if (currentBubble != null)
