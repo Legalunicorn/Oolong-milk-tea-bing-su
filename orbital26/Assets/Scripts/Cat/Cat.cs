@@ -41,6 +41,10 @@ public class Cat : MonoBehaviour
     // NOTE: ##### NEW PATH VARIABLES FOR PATH FINDING ##########
     [SerializeField] private List<Node> currPath;
     private int pathIdx;
+    // [SPECIAL MOVEMENT] for walking to eat/sleep spots
+    private CatSpot currentSpot;
+    private bool walkingToSleepSpot = false;
+    private bool walkingAwayAfterSleep = false;
 
     // [HUNGER] variables
     [SerializeField] private float timeBetweenMeal = 10f; 
@@ -141,6 +145,8 @@ public class Cat : MonoBehaviour
     // Hunger takes priorty over Sleep
     void HandleSleep()
     {
+        if (walkingToSleepSpot || walkingAwayAfterSleep) return;
+
         // Update sleep only if cat is IDLE or WALKING
         if (state != CatState.Idle && state != Cat.CatState.Walking ) return;
 
@@ -158,23 +164,88 @@ public class Cat : MonoBehaviour
         // remove Prefab Instance of any bubble
         if (currentBubble != null) Destroy(currentBubble);
         currentBubble = null;
+
         currentWaitDuration = 0f;
-        timeLeftToSleep = Random.Range(timeBetweenSleep/2,timeBetweenSleep);
+        timeLeftToSleep = Random.Range(timeBetweenSleep / 2, timeBetweenSleep);
+
+        // get one available sleep spot from CatSpotManager
+        currentSpot = CatSpotManager.Instance.GetAvailableSpot(
+            CatSpotType.Sleep,
+            transform.position
+        );
+
+        if (currentSpot == null)
+        {
+            Debug.Log("No available sleep spot. Cat will sleep at current position.");
+            StartSleepingNow();
+            return;
+        }
+
+        // Generate path from current cat position to selected sleep spot
+        currPath = AStar.instance.GeneratePath(
+            transform.position,
+            currentSpot.transform.position
+        );
+
+        if (currPath == null || currPath.Count == 0)
+        {
+            Debug.Log("No path found to sleep spot. Cat will sleep at current position.");
+
+            CatSpotManager.Instance.ReleaseSpot(currentSpot);
+            currentSpot = null;
+
+            StartSleepingNow();
+            return;
+        }
+
+        pathIdx = 0;
+        walkingToSleepSpot = true;
+        walkingAwayAfterSleep = false;
+
+        state = CatState.Walking;
+        UpdateAnimation();
+    }
+
+    void StartSleepingNow()
+    {
         state = CatState.Sleeping;
+
         animator.SetBool("isSleeping", true);
         UpdateAnimation();
 
         CancelInvoke(nameof(FinishSleep));
-        Invoke(nameof(FinishSleep), sleepDuration);     
+        Invoke(nameof(FinishSleep), sleepDuration);
     }
 
     void FinishSleep()
     {
         animator.SetBool("isSleeping", false);
+
+        // Release the sleep spot so another cat can use it
+        if (currentSpot != null)
+        {
+            CatSpotManager.Instance.ReleaseSpot(currentSpot);
+            currentSpot = null;
+        }
+
         // TODO: this is currently hardcoded (!!) 
         // Different cats might have different benefits when happen
-        HandleSatisfaction(5); 
-        SetToIdle();      
+        HandleSatisfaction(5);
+
+        // after sleeping, walk away to a random node
+        walkingAwayAfterSleep = true;
+        walkingToSleepSpot = false;
+
+        state = CatState.Walking;
+        UpdateAnimation();
+
+        PickRandomTargetPos();
+
+        if (currPath == null || currPath.Count == 0)
+        {
+            walkingAwayAfterSleep = false;
+            SetToIdle();
+        }
     }
 
     void SpawnSleepBubble()
@@ -198,6 +269,8 @@ public class Cat : MonoBehaviour
 
     void HandleHunger()
     {
+        if (walkingToSleepSpot || walkingAwayAfterSleep) return;
+        
         // Update hunger only if cat is IDLE or WALKING
         if (state != CatState.Idle && state != Cat.CatState.Walking ) return;        
         // reduce time left to hungry by duration since last frame
@@ -294,16 +367,35 @@ public class Cat : MonoBehaviour
         {
             if (currPath == null || pathIdx >= currPath.Count)
             {
-                // done walking 
+                // finished walking to sleep spot
+                if (walkingToSleepSpot)
+                {
+                      walkingToSleepSpot = false;
+                    StartSleepingNow();
+                    return;
+                }
+
+                // finished walking away after sleeping
+                if (walkingAwayAfterSleep)
+                {
+                    walkingAwayAfterSleep = false;
+                    SetToIdle();
+                    return;
+                }
+
+                // normal random walking finished
                 SetToIdle();
                 return;
             }
+
             Vector2 next = currPath[pathIdx].transform.position;
+
             transform.position = Vector2.MoveTowards(
                 transform.position,
                 next,
                 speed * Time.deltaTime
             );
+
             if (Vector2.Distance(transform.position, next) <= 0.1f)
             {
                 pathIdx++;
