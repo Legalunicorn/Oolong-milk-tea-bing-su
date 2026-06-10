@@ -45,6 +45,8 @@ public class Cat : MonoBehaviour
     private CatSpot currentSpot;
     private bool walkingToSleepSpot = false;
     private bool walkingAwayAfterSleep = false;
+    private bool walkingToEatSpot = false;
+    private bool walkingAwayAfterEat = false;
 
     // [HUNGER] variables
     [SerializeField] private float timeBetweenMeal = 10f; 
@@ -145,7 +147,7 @@ public class Cat : MonoBehaviour
     // Hunger takes priorty over Sleep
     void HandleSleep()
     {
-        if (walkingToSleepSpot || walkingAwayAfterSleep) return;
+        if (walkingToSleepSpot || walkingAwayAfterSleep || walkingToEatSpot || walkingAwayAfterEat) return;
 
         // Update sleep only if cat is IDLE or WALKING
         if (state != CatState.Idle && state != Cat.CatState.Walking ) return;
@@ -269,8 +271,8 @@ public class Cat : MonoBehaviour
 
     void HandleHunger()
     {
-        if (walkingToSleepSpot || walkingAwayAfterSleep) return;
-        
+        if (walkingToSleepSpot || walkingAwayAfterSleep || walkingToEatSpot || walkingAwayAfterEat) return;
+
         // Update hunger only if cat is IDLE or WALKING
         if (state != CatState.Idle && state != Cat.CatState.Walking ) return;        
         // reduce time left to hungry by duration since last frame
@@ -286,11 +288,58 @@ public class Cat : MonoBehaviour
     public void FeedCat()
     {
         // remove Prefab Instance of any bubble
-        if (currentBubble != null) Destroy(currentBubble); 
+        if (currentBubble != null) Destroy(currentBubble);
         currentBubble = null;
+
         currentWaitDuration = 0f;
-        timeLeftToHungry = Random.Range(timeBetweenMeal/2,timeBetweenMeal);
+        timeLeftToHungry = Random.Range(timeBetweenMeal / 2, timeBetweenMeal);
+
+        // Get one available eating spot from CatSpotManager
+        currentSpot = CatSpotManager.Instance.GetAvailableSpot(
+            CatSpotType.Eat,
+            transform.position
+        );
+
+        if (currentSpot == null)
+        {
+            Debug.Log("No available eat spot. Cat will eat at current position.");
+            StartEatingNow();
+            return;
+        }
+
+        // Generate path from current cat position to selected eat spot
+        currPath = AStar.instance.GeneratePath(
+            transform.position,
+            currentSpot.transform.position
+        );
+
+        if (currPath == null || currPath.Count == 0)
+        {
+            Debug.Log("No path found to eat spot. Cat will eat at current position.");
+
+            CatSpotManager.Instance.ReleaseSpot(currentSpot);
+            currentSpot = null;
+
+            StartEatingNow();
+            return;
+        }
+
+        pathIdx = 0;
+
+        walkingToEatSpot = true;
+        walkingAwayAfterEat = false;
+
+        walkingToSleepSpot = false;
+        walkingAwayAfterSleep = false;
+
+        state = CatState.Walking;
+        UpdateAnimation();
+    }
+
+    void StartEatingNow()
+    {
         state = CatState.Eating;
+
         animator.SetBool("isEating", true);
         UpdateAnimation();
 
@@ -301,10 +350,32 @@ public class Cat : MonoBehaviour
     void FinishEating()
     {
         animator.SetBool("isEating", false);
-        //TODO: this is current hard coded, leave it for now
+
+        // Release the eating spot so another cat can use it
+        if (currentSpot != null)
+        {
+            CatSpotManager.Instance.ReleaseSpot(currentSpot);
+            currentSpot = null;
+        }
+
+        // TODO: this is current hard coded, leave it for now
         // when we expand to more cats with personalities change
-        HandleSatisfaction(8); 
-        SetToIdle();
+        HandleSatisfaction(8);
+
+        // After eating, walk away to a random node
+        walkingAwayAfterEat = true;
+        walkingToEatSpot = false;
+
+        state = CatState.Walking;
+        UpdateAnimation();
+
+        PickRandomTargetPos();
+
+        if (currPath == null || currPath.Count == 0)
+        {
+            walkingAwayAfterEat = false;
+            SetToIdle();
+        }
     }
 
     void SpawnHungerBubble()
@@ -367,15 +438,23 @@ public class Cat : MonoBehaviour
         {
             if (currPath == null || pathIdx >= currPath.Count)
             {
-                // finished walking to sleep spot
+                // Finished walking to sleep spot
                 if (walkingToSleepSpot)
                 {
-                      walkingToSleepSpot = false;
+                    walkingToSleepSpot = false;
                     StartSleepingNow();
                     return;
                 }
 
-                // finished walking away after sleeping
+                // Finished walking to eat spot
+                if (walkingToEatSpot)
+                {
+                    walkingToEatSpot = false;
+                    StartEatingNow();
+                    return;
+                }
+
+                // Finished walking away after sleeping
                 if (walkingAwayAfterSleep)
                 {
                     walkingAwayAfterSleep = false;
@@ -383,7 +462,15 @@ public class Cat : MonoBehaviour
                     return;
                 }
 
-                // normal random walking finished
+                // Finished walking away after eating
+                if (walkingAwayAfterEat)
+                {
+                    walkingAwayAfterEat = false;
+                    SetToIdle();
+                    return;
+                }
+
+                // Normal random walking finished
                 SetToIdle();
                 return;
             }
@@ -402,6 +489,7 @@ public class Cat : MonoBehaviour
             }
         }
     }
+    
 
     void UpdateAnimation()
     {
@@ -437,6 +525,17 @@ public class Cat : MonoBehaviour
     // #### METHODS FOR CAT SELECTION ## 
     public void LockForCustomer()
     {
+        if (currentSpot != null)
+        {
+            CatSpotManager.Instance.ReleaseSpot(currentSpot);
+            currentSpot = null;
+        }
+
+        walkingToSleepSpot = false;
+        walkingAwayAfterSleep = false;
+        walkingToEatSpot = false;
+        walkingAwayAfterEat = false;
+        
         // remove all activities from the cat
         // make cat keep still
         if (currentBubble != null)
