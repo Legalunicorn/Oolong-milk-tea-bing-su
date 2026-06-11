@@ -41,6 +41,7 @@ public class Cat : MonoBehaviour
     // NOTE: ##### NEW PATH VARIABLES FOR PATH FINDING ##########
     [SerializeField] private List<Node> currPath;
     private int pathIdx;
+    private Vector2 destination; // for walking to bowl/sleep spot 
     // [SPECIAL MOVEMENT] for walking to eat/sleep spots
     private CatSpot currentSpot;
     private bool walkingToSleepSpot = false;
@@ -200,7 +201,7 @@ public class Cat : MonoBehaviour
             StartSleepingNow();
             return;
         }
-
+        destination = currentSpot.transform.position;
         pathIdx = 0;
         walkingToSleepSpot = true;
         walkingAwayAfterSleep = false;
@@ -327,6 +328,7 @@ public class Cat : MonoBehaviour
         }
 
         pathIdx = 0;
+        destination = currentSpot.transform.position;
 
         walkingToEatSpot = true;
         walkingAwayAfterEat = false;
@@ -439,7 +441,8 @@ public class Cat : MonoBehaviour
         }
         else if (state == CatState.Walking)
         {
-            if (currPath == null || pathIdx >= currPath.Count)
+            // FIX: only if pathIdx > currPath, if they are equal still need to do some walking
+            if (currPath == null || pathIdx > currPath.Count)
             {
                 if (walkingToSleepSpot)
                 {
@@ -472,14 +475,27 @@ public class Cat : MonoBehaviour
                 SetToIdle();
                 return;
             }
+            Vector2 next;
+            if (pathIdx < currPath.Count)
+            {
+                next = currPath[pathIdx].transform.position;
 
-            Vector2 next = currPath[pathIdx].transform.position;
-
-            transform.position = Vector2.MoveTowards(
-                transform.position,
-                next,
-                speed * Time.deltaTime
-            );
+                transform.position = Vector2.MoveTowards(
+                    transform.position,
+                    next,
+                    speed * Time.deltaTime
+                );
+            }
+            else
+            {
+                //  walk direction to destinateion
+                next = destination;
+                transform.position = Vector2.MoveTowards(
+                    transform.position,
+                    destination,
+                    speed * Time.deltaTime
+                );
+            }
 
             if (Vector2.Distance(transform.position, next) <= 0.1f)
             {
