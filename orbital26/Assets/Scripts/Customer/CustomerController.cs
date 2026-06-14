@@ -18,8 +18,10 @@ public class CustomerController : MonoBehaviour
 
     private CustomerState state;
     private Cat assignedCat;
+    // NOTE: these are hardcoded for now 
+    // TODO: the customner request from the level manager to get the prefab instead
     [SerializeField] private GameObject catRequestBubblePrefab;
-    [SerializeField] private CatData requestedCatData;
+    // [SerializeField] private CatData requestedCatData;
 
     [Header("Movement Points")]
     public Transform entrance;
@@ -116,6 +118,10 @@ public class CustomerController : MonoBehaviour
     {
         if (currentBubble != null) Destroy(currentBubble);
         state = CustomerState.RequestCat;
+
+        // use level manager to request rand cat 
+        CatData requestedCatData = LevelManager.instance.GetRandomRequestableCatData();
+
         // position and spawn bubble 
         currentBubble = Instantiate(
             catRequestBubblePrefab,

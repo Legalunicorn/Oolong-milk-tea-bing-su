@@ -11,8 +11,8 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb7bf1608b06b4944b8857b3094bdc11, type: 3}
   m_Name: ' purchased!'
-  m_EditorClassIdentifier: Assembly-CSharp::CatData
-  catName: Brown Cat
-  prefab: {fileID: 7196350137628518048, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
-  icon: {fileID: 1593486516139116798, guid: 09b0c344368b6674999db1970b4e1a0f, type: 3}
-  price: 15
+  m_EditorClassIdentifier: GameAssembly::CatData
+  catName: Cookie Cat
+  prefab: {fileID: 4662520777912786322, guid: b744bf771370adf4a960a24bcc633e0e, type: 3}
+  icon: {fileID: 2117381834473272202, guid: 036fd9c48a3f6fe4390db1d4a3ff02bc, type: 3}
+  price: 30

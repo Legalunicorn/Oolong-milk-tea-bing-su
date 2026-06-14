@@ -62,6 +62,9 @@ TagManager:
   - name: Bubble
     uniqueID: 3256474171
     locked: 0
+  - name: BubbleIcon
+    uniqueID: 1358886581
+    locked: 0
   - name: WalkBehind
     uniqueID: 3690668933
     locked: 0
