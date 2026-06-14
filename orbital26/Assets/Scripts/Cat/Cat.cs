@@ -528,6 +528,8 @@ public class Cat : MonoBehaviour
             transform.position, // current cat position
             target.transform.position // selected target pos
         );
+        // bug fix: update destination even though its also jsut the last node pos
+        destination = target.transform.position;
         pathIdx = 0;
     }
     
