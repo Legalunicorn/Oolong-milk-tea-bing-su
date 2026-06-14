@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 1170219524669324987}
   - component: {fileID: 8843928732268910126}
   - component: {fileID: 5955748547855006902}
-  - component: {fileID: 8322200494633528870}
   - component: {fileID: 2519469830900738834}
   m_Layer: 0
   m_Name: customer1 (1)
@@ -175,18 +174,6 @@ MonoBehaviour:
   m_DefaultActionMap: 
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &8322200494633528870
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4072920595052017153}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50683b200644e4a05b86f740d1d4034f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!114 &2519469830900738834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,8 +186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 453fcbf06522b4cc194a241892afb5a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  catRequestBubblePrefab: {fileID: 6690692462034092085, guid: daa8ac0c0cb53694ab3cc781c1b12105, type: 3}
-  requestedCatData: {fileID: 11400000, guid: 2c35c2d94ced0754785f14dafa3bea77, type: 2}
+  catRequestBubblePrefab: {fileID: 4324078567972272688, guid: b09b9cb6d53a42146a84e03a09ab6f9b, type: 3}
   entrance: {fileID: 0}
   stopPosition: {fileID: 0}
   moveSpeed: 1.2

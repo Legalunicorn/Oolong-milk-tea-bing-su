@@ -53,6 +53,10 @@ public class LevelManager : MonoBehaviour
     // Manage chairs 
     private ChairSlot[] chairSlots;
 
+    // Cats customer can request in this level
+    [SerializeField] private List<CatData> requestableCats;
+    [SerializeField] private int allowedCatCount = 1; // higher level = more cat variants 
+
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
     // Start: called before first frame update 
@@ -123,6 +127,15 @@ public class LevelManager : MonoBehaviour
 
 
     // ############ PUBLIC Methods ############### 
+
+    public CatData GetRandomRequestableCatData()
+    {
+        // c# random is exclusive on upper bound
+        int idx = Random.Range(0, allowedCatCount);
+        idx = Mathf.Min(idx, requestableCats.Count); // just preventive measure to avoid RTE 
+        return requestableCats[idx];
+    }
+
 
     public ChairSlot GetAvailableChair()
     {
