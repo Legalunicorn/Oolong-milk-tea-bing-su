@@ -186,9 +186,11 @@ public class Cat : MonoBehaviour
         }
 
         // Generate path from current cat position to selected sleep spot
+        // NOTE: added bed sprite-> need to offset position slighjtly
+        Vector3 bedOffset = new Vector3(0f,0.4f,0f);
         currPath = AStar.instance.GeneratePath(
             transform.position,
-            currentSpot.transform.position
+            currentSpot.transform.position + bedOffset
         );
 
         if (currPath == null || currPath.Count == 0)
@@ -201,7 +203,7 @@ public class Cat : MonoBehaviour
             StartSleepingNow();
             return;
         }
-        destination = currentSpot.transform.position;
+        destination = currentSpot.transform.position + bedOffset;
         pathIdx = 0;
         walkingToSleepSpot = true;
         walkingAwayAfterSleep = false;
