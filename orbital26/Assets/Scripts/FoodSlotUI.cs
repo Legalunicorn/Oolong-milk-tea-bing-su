@@ -14,6 +14,8 @@ public class FoodSlotUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI foodNameText;
     [SerializeField] private TextMeshProUGUI countText;
     [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private TextMeshProUGUI costText;
+    [SerializeField] private TextMeshProUGUI price; // revenue
     [SerializeField] private Button cookButton;
     [SerializeField] private Image cookFillImage;
     private bool isCooking = false;
@@ -27,18 +29,23 @@ public class FoodSlotUI : MonoBehaviour
     {
         foodIcon.sprite = foodData.icon;
         foodNameText.text= foodData.foodName;
+        costText.text = "Cook: $" + foodData.cookCost;
+
         // idk if timer should be static information like (5s)
         // timerText.gameObject.SetActive(false);
         cookButton.onClick.AddListener(OnCookClicked);
     }
     void OnCookClicked()
     {
+        costText.text = "Cooking...";
         if (isCooking) return;
+        Debug.Log("Cash bef:" + GameManager.instance.cash + "Cost: " + foodData.cookCost);
         if (!GameManager.instance.SpendCash(foodData.cookCost))
         {
             Debug.Log("not enough to cook food" + foodData.foodName);
             return;
         }
+        Debug.Log("cook success: " + GameManager.instance.cash);
         StartCoroutine(Cook());
     }
     //IEnumarator -> an interface 
@@ -64,6 +71,7 @@ public class FoodSlotUI : MonoBehaviour
             // skip ahead until rem is done then proceed below
             yield return null;
         }
+        costText.text = "Cook: $" + foodData.cookCost;
         cookFillImage.fillAmount =1f;
         cookFillImage.gameObject.SetActive(false);
         FoodManager.instance.IncreaseStock(foodData);

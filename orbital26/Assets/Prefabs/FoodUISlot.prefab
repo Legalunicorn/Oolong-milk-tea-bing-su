@@ -615,6 +615,8 @@ MonoBehaviour:
   foodNameText: {fileID: 2543214110109614210}
   countText: {fileID: 4438367512842689800}
   timerText: {fileID: 4652201130149094074}
+  costText: {fileID: 5411049561186875033}
+  price: {fileID: 0}
   cookButton: {fileID: 8863529533374689383}
   cookFillImage: {fileID: 6104409286381828319}
 --- !u!114 &6771160751819564012
