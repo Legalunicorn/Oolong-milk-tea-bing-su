@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     public CatData brownCat;
     public int minBrownCat;
 
-
     // SINGLETON logic handled in awake
     void Awake()
     {
