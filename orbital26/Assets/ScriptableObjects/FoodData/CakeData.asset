@@ -15,5 +15,5 @@ MonoBehaviour:
   foodName: Cake
   icon: {fileID: 21300000, guid: d547c3274ea3581488037534ff7260d1, type: 3}
   cookCost: 2
-  cookTime: 2
+  cookTime: 1
   price: 7

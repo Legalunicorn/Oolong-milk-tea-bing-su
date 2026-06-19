@@ -30,6 +30,7 @@ public class FoodSlotUI : MonoBehaviour
         foodIcon.sprite = foodData.icon;
         foodNameText.text= foodData.foodName;
         costText.text = "Cook: $" + foodData.cookCost;
+        timerText.text = "Cook time: " + foodData.cookTime + "s";
 
         // idk if timer should be static information like (5s)
         // timerText.gameObject.SetActive(false);

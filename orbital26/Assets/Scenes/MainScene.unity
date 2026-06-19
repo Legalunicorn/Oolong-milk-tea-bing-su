@@ -6662,7 +6662,7 @@ MonoBehaviour:
   satisfactionBar: {fileID: 439154819}
   CustomerPrefab: {fileID: 4072920595052017153, guid: c9747c4cf8379a14d8d08338d08bf793, type: 3}
   CustomerspawnPoint: {fileID: 2067653629}
-  CustomerspawnInterval: 8
+  CustomerspawnInterval: 15
   CustomerspawnTimer: 0
   requestableCats:
   - {fileID: 11400000, guid: 2c35c2d94ced0754785f14dafa3bea77, type: 2}
