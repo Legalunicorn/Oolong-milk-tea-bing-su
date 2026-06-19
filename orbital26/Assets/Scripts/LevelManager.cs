@@ -45,7 +45,7 @@ public class LevelManager : MonoBehaviour
     public SatisfactionBar satisfactionBar;
 
     // #### Customer Spawn Logic #### 
-    public GameObject CustomerPrefab;
+    public GameObject[] CustomerPrefabs;
     public Transform CustomerspawnPoint;
     [SerializeField] private float CustomerspawnInterval = 6f;
     public float CustomerspawnTimer = 0f;
@@ -114,11 +114,15 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    void SpawnCustomer()
+   void SpawnCustomer()
     {
-        if (CustomerPrefab == null || CustomerspawnPoint == null) return;
+        if (CustomerPrefabs == null || CustomerPrefabs.Length == 0 || CustomerspawnPoint == null) return;
+
+        int randomIndex = Random.Range(0, CustomerPrefabs.Length);
+        GameObject selectedCustomerPrefab = CustomerPrefabs[randomIndex];
+
         GameObject customer = Instantiate(
-            CustomerPrefab,
+            selectedCustomerPrefab,
             CustomerspawnPoint.position,
             Quaternion.identity
         );
