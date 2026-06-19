@@ -5932,7 +5932,9 @@ MonoBehaviour:
   isGameOver: 0
   catSpawnPoint: {fileID: 1352012134}
   satisfactionBar: {fileID: 439154819}
-  CustomerPrefab: {fileID: 4072920595052017153, guid: c9747c4cf8379a14d8d08338d08bf793, type: 3}
+  CustomerPrefabs:
+  - {fileID: 4072920595052017153, guid: c9747c4cf8379a14d8d08338d08bf793, type: 3}
+  - {fileID: 4072920595052017153, guid: ce7c9a53f31934407ab245b636e8e605, type: 3}
   CustomerspawnPoint: {fileID: 2067653629}
   CustomerspawnInterval: 8
   CustomerspawnTimer: 0
