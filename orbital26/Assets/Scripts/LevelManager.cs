@@ -57,6 +57,12 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private List<CatData> requestableCats;
     [SerializeField] private int allowedCatCount = 1; // higher level = more cat variants 
 
+    // Food customers can request in this level
+    // [Cake, Matcha, Main] 
+    [SerializeField] private List<FoodData> requestableFoods;
+    [SerializeField] private int allowedFoodCount = 1;
+
+
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
     // Start: called before first frame update 
@@ -132,11 +138,22 @@ public class LevelManager : MonoBehaviour
 
     // ############ PUBLIC Methods ############### 
 
+    // return random food data that a customer can requests
+    // for this given level
+    // TODO: run unit tests
+    public FoodData GetRandomRequestableFoodData()
+    {
+        int idx = Random.Range(0, allowedFoodCount);
+        idx = Mathf.Min(idx, requestableFoods.Count - 1); // shouldnt happen but just in case 
+        return requestableFoods[idx];
+    }
+
+    // TODO: add unit tests
     public CatData GetRandomRequestableCatData()
     {
         // c# random is exclusive on upper bound
         int idx = Random.Range(0, allowedCatCount);
-        idx = Mathf.Min(idx, requestableCats.Count); // just preventive measure to avoid RTE 
+        idx = Mathf.Min(idx, requestableCats.Count - 1); // just preventive measure to avoid RTE 
         return requestableCats[idx];
     }
 

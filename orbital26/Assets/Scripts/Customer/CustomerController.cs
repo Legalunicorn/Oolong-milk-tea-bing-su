@@ -33,6 +33,9 @@ public class CustomerController : MonoBehaviour
     [Header("References")]
     public Animator animator;
 
+    private FoodData requestedFood;
+    // NOTE: this prefab has changed to an empty bubbl
+    // we have to assign foodData object to it
     public GameObject hungryBubblePrefab;
     public GameObject currentBubble;
 
@@ -273,13 +276,13 @@ public class CustomerController : MonoBehaviour
         if (state != CustomerState.WaitingAtCounter) return;
         if (currentBubble != null) Destroy(currentBubble);
 
-        // right now we only have one food, we extend in the future 
-        // to have more food 
+        requestedFood = LevelManager.instance.GetRandomRequestableFoodData();
+
         currentBubble = Instantiate(hungryBubblePrefab, transform.position, Quaternion.identity);
         currentBubble.transform.SetParent(transform);
         currentBubble.transform.localPosition = new Vector3(-1f,1f,0);
         HungryBubbleClick bubble = currentBubble.GetComponent<HungryBubbleClick>();
-        if (bubble != null) bubble.Setup(this);
+        if (bubble != null) bubble.Setup(this, requestedFood);
     }
 
     void HandleWaiting()
@@ -294,7 +297,8 @@ public class CustomerController : MonoBehaviour
         }
     }
 
-    // public method called by bubble script 
+    // Serve food to customer
+    // triggered when interaction by player is successful
     public void ServeFood()
     {
         if (currentBubble != null) Destroy(currentBubble);
@@ -314,6 +318,16 @@ public class CustomerController : MonoBehaviour
         // move slightly higher
         Vector3 chairOffset = new Vector3(0f, 0.5f,  0f); // mannually adjust
         SetPath(chair.transform.position + chairOffset,  CustomerState.WalkingToChair);
+    }
+
+    // checker before actually serviing food
+    // can combine with function above but its easier to just extend like this
+    public bool TryServeFood(FoodData food)
+    {
+        if (state != CustomerState.WaitingAtCounter) return false;
+        if (food != requestedFood) return false;
+        ServeFood();
+        return true;
     }
 
     public void ClearBubble()
