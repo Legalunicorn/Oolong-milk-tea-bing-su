@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb7bf1608b06b4944b8857b3094bdc11, type: 3}
-  m_Name: CookieCat
+  m_Name: ' purchased!'
   m_EditorClassIdentifier: GameAssembly::CatData
   catName: Cookie Cat
   prefab: {fileID: 4662520777912786322, guid: b744bf771370adf4a960a24bcc633e0e, type: 3}

@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 public class FridgeClickable : MonoBehaviour
 {
 
-    [SerializeField] private FoodMenuUI foodMenuUI;
+    // [SerializeField] private FoodMenuUI foodMenuUI;
     private BoxCollider2D boxCollider;
 
     void Awake()
@@ -29,7 +29,9 @@ public class FridgeClickable : MonoBehaviour
             Vector2 pos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             if (boxCollider.OverlapPoint(pos))
             {
-                foodMenuUI.Toggle();
+                // transformed foodmenuui to singletone
+                FoodMenuUI.instance.Toggle();
+                // foodMenuUI.Toggle();
             }
         }
     }

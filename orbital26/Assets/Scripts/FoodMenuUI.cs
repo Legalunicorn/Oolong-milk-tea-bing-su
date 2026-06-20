@@ -9,8 +9,11 @@ public class FoodMenuUI : MonoBehaviour
     // Bug fix to not pause timer
     // instead of set active false, we just make it invisible, and not interactable
 
+    public static FoodMenuUI instance;
     void Awake()
     {
+        // Edit: ill make this a singleton as well, then canvas elements can be preabs with no refernece
+        instance = this;
         canvasGroup = panel.GetComponent<CanvasGroup>();
         if (canvasGroup == null) canvasGroup = panel.AddComponent<CanvasGroup>();
     }
