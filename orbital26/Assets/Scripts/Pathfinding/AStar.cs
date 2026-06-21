@@ -12,10 +12,16 @@ public class AStar : MonoBehaviour
 
     private void Awake()
     {
-        //TOD: singleton pattern
         instance = this;
+        //BUG: this Awwake runs before Level manager Start, which disables room2 nodes
+        // we need a an extension to refresh all nodes 
         nodes = FindObjectsOfType<Node>();
 
+    }
+
+    public void RefreshNodes()
+    {
+        nodes = FindObjectsOfType<Node>();
     }
 
     // find closest movement node to given position
