@@ -63,6 +63,15 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private int allowedFoodCount = 1;
 
 
+    // FEATURES FOR ROOM 2 
+    // folder with all the waypoints, chairs, nodes etc to disable for room 2
+    [SerializeField] private GameObject room2Objects;
+    // NOTE: this HAS to be manually wired from the canvas prefab
+    // we only have to do it once for each level which is okay for now 
+    // i think its unnecessary complicated to spam tags for now
+    [SerializeField] private GameObject switchRoomUI;
+    [SerializeField] private bool hasSecondRoom = false;
+
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
     // Start: called before first frame update 
@@ -85,6 +94,14 @@ public class LevelManager : MonoBehaviour
         satisfactionBar.SetMaxSatisfaction(maxSatisfaction);
         //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Object.FindObjectsByType.html
         chairSlots = FindObjectsByType<ChairSlot>(FindObjectsSortMode.None);
+
+        // hide room2 ELEMENTS if needed
+        if (room2Objects != null) room2Objects.SetActive(hasSecondRoom);
+        if (switchRoomUI != null) switchRoomUI.SetActive(hasSecondRoom);
+
+        // find all nodes again, and ignore room2 nodes
+        // there was an issue where it found the nodes before level manager disabled them
+        AStar.instance.RefreshNodes();
     }
 
     // // Update is called once per frame
@@ -231,6 +248,8 @@ public class LevelManager : MonoBehaviour
         state = LevelState.CatSelection;
         requestedCatData = catData;
         pendingCustomer = customer;
+
+        // TODO: wired manually, consider switching to TAGS
         foreach(GameObject ui in hideOnCatSelection) ui.SetActive(false);
     }
 
@@ -253,6 +272,8 @@ public class LevelManager : MonoBehaviour
         state = LevelState.Normal;
         requestedCatData = null;
         pendingCustomer = null;  
+        
+        //TODO: wired manually consider switched tags
         foreach(GameObject ui in hideOnCatSelection) ui.SetActive(true);
     }
 
