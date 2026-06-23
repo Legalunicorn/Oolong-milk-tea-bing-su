@@ -37,6 +37,7 @@ public class LevelResultUI : MonoBehaviour
         {
             headerText.text = "GAME COMPLETED!";
             nextLevelButton.gameObject.SetActive(false);
+
         }
         else
         {

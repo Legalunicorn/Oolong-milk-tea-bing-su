@@ -72,6 +72,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject switchRoomUI;
     [SerializeField] private bool hasSecondRoom = false;
 
+
+    [SerializeField] private GameObject catSelectionUI;
+
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
     // Start: called before first frame update 
@@ -98,10 +101,29 @@ public class LevelManager : MonoBehaviour
         // hide room2 ELEMENTS if needed
         if (room2Objects != null) room2Objects.SetActive(hasSecondRoom);
         if (switchRoomUI != null) switchRoomUI.SetActive(hasSecondRoom);
-
+        if (catSelectionUI != null) catSelectionUI.SetActive(false);
         // find all nodes again, and ignore room2 nodes
         // there was an issue where it found the nodes before level manager disabled them
         AStar.instance.RefreshNodes();
+        SpawnCatsFromInventory();
+    }
+
+    void SpawnCatsFromInventory()
+    {
+        Debug.Log("spawning cats");
+        // iterate map of cat counts
+        foreach(var entry in GameManager.instance.ownedCats)
+        {
+            CatData catData = entry.Key;
+            for (int i = 0; i < entry.Value; i++)
+            {
+                Instantiate(
+                    catData.prefab,
+                    catSpawnPoint.position,
+                    Quaternion.identity
+                );
+            }
+        }
     }
 
     // // Update is called once per frame
@@ -115,11 +137,12 @@ public class LevelManager : MonoBehaviour
             timeLeft = 0;
             // TriggerEndGame("YOU WIN!");
             TriggerEndGame(true);
-            // TODO: trigger game over mechanic
+            return;
         }
         if (satisfaction <= 0)
         {
             TriggerEndGame(false);
+            return;
             // TriggerEndGame("YOU LOSE");
         }
 
@@ -238,6 +261,10 @@ public class LevelManager : MonoBehaviour
     void TriggerEndGame(bool res)
     {
         isGameOver = true;
+        if (LevelResultUI.instance == null)
+        {
+            Debug.Log("LevelUI NULL");
+        }
         if (res) LevelResultUI.instance.ShowWin();
         else LevelResultUI.instance.ShowLose();
         // Debug.Log("Game over: " + msg);
@@ -259,6 +286,9 @@ public class LevelManager : MonoBehaviour
 
         // TODO: wired manually, consider switching to TAGS
         foreach(GameObject ui in hideOnCatSelection) ui.SetActive(false);
+
+        // enable UI during select 
+        if (catSelectionUI != null) catSelectionUI.SetActive(true);
     }
 
     // Match the cat to the customer = )
@@ -283,6 +313,8 @@ public class LevelManager : MonoBehaviour
         
         //TODO: wired manually consider switched tags
         foreach(GameObject ui in hideOnCatSelection) ui.SetActive(true);
+
+        if (catSelectionUI != null) catSelectionUI.SetActive(false);
     }
 
     public bool IsInCatSelection()

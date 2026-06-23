@@ -26,6 +26,7 @@ public class FridgeClickable : MonoBehaviour
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
+            Debug.Log("fridge clicked");
             Vector2 pos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             if (boxCollider.OverlapPoint(pos))
             {
