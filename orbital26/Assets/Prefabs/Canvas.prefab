@@ -112,7 +112,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -377.5, y: 239.07}
+  m_AnchoredPosition: {x: -376.7, y: 236.77}
   m_SizeDelta: {x: 56.5459, y: 56.6929}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1668410045672343564
@@ -285,8 +285,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7555610827318001272}
-  - {fileID: 1467751824174380614}
   - {fileID: 5434009248051158163}
+  - {fileID: 1467751824174380614}
   m_Father: {fileID: 7439245987649469411}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -726,8 +726,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -44.759}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 88.5, y: 199.2}
-  m_SizeDelta: {x: 28.9752, y: 28.9752}
+  m_AnchoredPosition: {x: 94.3, y: 201.1}
+  m_SizeDelta: {x: 32.0121, y: 30.6741}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1416796935705386396
 CanvasRenderer:
@@ -811,9 +811,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7464268181653393317}
-        m_TargetAssemblyTypeName: FoodMenuUI, GameAssembly
-        m_MethodName: Toggle
+      - m_Target: {fileID: 5933003051007467233}
+        m_TargetAssemblyTypeName: FoodMenuUIBridge, GameAssembly
+        m_MethodName: Hide
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1236,8 +1236,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -129.87497, y: 236.77}
-  m_SizeDelta: {x: 289.7001, y: 17.6667}
+  m_AnchoredPosition: {x: -144.85007, y: 236.77}
+  m_SizeDelta: {x: 289.7001, y: 18.09}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &159080754534375376
 MonoBehaviour:
@@ -1286,7 +1286,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 100
   m_WholeNumbers: 1
-  m_Value: 97
+  m_Value: 100
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1777,8 +1777,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 19.9415, y: -9.2077}
-  m_SizeDelta: {x: 266.8138, y: 349.9645}
+  m_AnchoredPosition: {x: 19, y: -45}
+  m_SizeDelta: {x: 266.8138, y: 386.3706}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4253725463048567847
 MonoBehaviour:
@@ -1920,8 +1920,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 5.577194, y: 1.1634998}
-  m_SizeDelta: {x: 26.6126, y: 14.6372}
+  m_AnchoredPosition: {x: 2.203003, y: 1.115}
+  m_SizeDelta: {x: 19.8641, y: 14.5402}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1904294983959194274
 CanvasRenderer:
@@ -1971,6 +1971,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7194560135852940340}
   - component: {fileID: 7464268181653393317}
+  - component: {fileID: 5933003051007467233}
   m_Layer: 0
   m_Name: FoodUIManager
   m_TagString: Untagged
@@ -2006,6 +2007,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameAssembly::FoodMenuUI
   panel: {fileID: 446018478590810215}
+--- !u!114 &5933003051007467233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5013594570663234176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cf619bd17567c945ad5a35589b2755c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameAssembly::FoodMenuUIBridge
 --- !u!1 &5142049895313597479
 GameObject:
   m_ObjectHideFlags: 0
@@ -2115,7 +2128,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000024319, y: 199.2}
+  m_AnchoredPosition: {x: 6.2326, y: 199.2}
   m_SizeDelta: {x: 193.51, y: 46.755}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4328520271035321559
@@ -2155,8 +2168,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4279510094
-  m_fontColor: {r: 0.3056603, g: 0.13998505, b: 0.07785684, a: 1}
+    rgba: 4279506460
+  m_fontColor: {r: 0.10943389, g: 0.08745455, b: 0.07908147, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3438,8 +3451,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -444.5, y: 239.07}
-  m_SizeDelta: {x: 63.7707, y: 63.77}
+  m_AnchoredPosition: {x: -443.1, y: 236.69}
+  m_SizeDelta: {x: 58.3863, y: 56.861}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3121371064672990874
 CanvasRenderer:

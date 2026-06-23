@@ -11,7 +11,7 @@ public abstract class BubbleCatInteraction : MonoBehaviour
 
     protected Cat cat;
     [SerializeField] private float holdTIme = 0f;
-    [SerializeField] private  float targetHoldTime = 1.5f;
+    [SerializeField] private  float targetHoldTime = 0.75f;
     [SerializeField] private Image progressRing;
     private bool isHolding = false;
     // action -> sleep or eat

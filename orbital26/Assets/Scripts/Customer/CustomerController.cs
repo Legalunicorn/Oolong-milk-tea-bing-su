@@ -250,8 +250,6 @@ public class CustomerController : MonoBehaviour
         Invoke(nameof(FinishEating), 5f);
     }
 
-    // TODO: probalby bug wioth how the animation shifts 
-    // will figure that out later
      void FinishEating()
     {
         // if we flipped the customer when sitting
@@ -315,9 +313,11 @@ public class CustomerController : MonoBehaviour
             return;
         }
         chair.isOccupied = true;
-        // move slightly higher
         Vector3 chairOffset = new Vector3(0f, 0.5f,  0f); // mannually adjust
         SetPath(chair.transform.position + chairOffset,  CustomerState.WalkingToChair);
+
+        // Experimental: close the food menu automatically 
+        FoodMenuUI.instance.Hide();
     }
 
     // checker before actually serviing food

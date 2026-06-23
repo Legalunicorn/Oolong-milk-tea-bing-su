@@ -29,7 +29,8 @@ public class FoodSlotUI : MonoBehaviour
     {
         foodIcon.sprite = foodData.icon;
         foodNameText.text= foodData.foodName;
-        costText.text = "Cook: $" + foodData.cookCost;
+        //costText.text = "Cook: $" + foodData.cookCost;
+        costText.text = ""+foodData.cookCost;
         timerText.text = "Cook time: " + foodData.cookTime + "s";
 
         // idk if timer should be static information like (5s)
@@ -38,7 +39,7 @@ public class FoodSlotUI : MonoBehaviour
     }
     void OnCookClicked()
     {
-        costText.text = "Cooking...";
+        //costText.text = "Cooking...";
         if (isCooking) return;
         Debug.Log("Cash bef:" + GameManager.instance.cash + "Cost: " + foodData.cookCost);
         if (!GameManager.instance.SpendCash(foodData.cookCost))
@@ -72,7 +73,8 @@ public class FoodSlotUI : MonoBehaviour
             // skip ahead until rem is done then proceed below
             yield return null;
         }
-        costText.text = "Cook: $" + foodData.cookCost;
+        // costText.text = "Cook: $" + foodData.cookCost;
+        costText.text =  ""+foodData.cookCost;
         cookFillImage.fillAmount =1f;
         cookFillImage.gameObject.SetActive(false);
         FoodManager.instance.IncreaseStock(foodData);

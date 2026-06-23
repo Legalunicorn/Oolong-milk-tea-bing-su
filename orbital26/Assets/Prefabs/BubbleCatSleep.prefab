@@ -259,7 +259,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1038493125
-  m_SortingLayer: 5
+  m_SortingLayer: 7
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -4648090811935276385, guid: 70f3be02b2973544db1dc8b27d2d17f1, type: 3}
@@ -306,8 +306,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bc49ae1dc0bfcc4fb845a991ff455c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BubbleCatSleep
-  holdTime: 0
-  targetHoldTime: 1.5
+  holdTIme: 0
+  targetHoldTime: 0.75
   progressRing: {fileID: 6008874034423774630}
 --- !u!58 &6581175549450201779
 CircleCollider2D:

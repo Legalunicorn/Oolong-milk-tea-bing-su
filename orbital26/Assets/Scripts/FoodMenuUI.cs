@@ -26,12 +26,12 @@ public class FoodMenuUI : MonoBehaviour
 
     public void Toggle()
     {
-        if (canvasGroup.alpha == 0) Show();
+        if (canvasGroup.alpha == 0f) Show();
         else Hide();
         // panel.SetActive(!panel.activeSelf);
     }
 
-    void Show()
+    public void Show()
     {
         // change from toggling SetActive
         // to let the timers keep running
@@ -40,8 +40,9 @@ public class FoodMenuUI : MonoBehaviour
         canvasGroup.blocksRaycasts = true;
     }
 
-    void Hide()
+    public void Hide()
     {
+        Debug.Log("Hide food triggered");
         canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;

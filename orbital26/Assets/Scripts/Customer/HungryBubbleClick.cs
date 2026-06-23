@@ -31,6 +31,12 @@ public class HungryBubbleClick : MonoBehaviour
         // {
         //     customerController.ServeFood();
         // }
+        
+        // Add an onclick to open food menu as well, seems more intuitive
+        if (InputUtils.IsLeftClickInRadius(transform.position))
+        {
+            FoodMenuUI.instance.Show();
+        }
     }
 
     // just extra incase we need 
