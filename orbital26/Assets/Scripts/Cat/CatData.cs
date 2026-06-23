@@ -10,5 +10,10 @@ public class CatData : ScriptableObject
     // shop 
     public Sprite icon;
     public int price;
+
+    public int satisfactionGain;
+    public int customerTips;
+    
+    public float catSpeed;
     //[TextArea] public string description
 }

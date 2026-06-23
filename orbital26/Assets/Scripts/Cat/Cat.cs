@@ -75,6 +75,7 @@ public class Cat : MonoBehaviour
     void Start()
     {
         // Initialize variables 
+        speed = catData.catSpeed;
         // find animator component to edit params
         animator = GetComponent<Animator>();
         // find the sprite renderer to flip it 
@@ -129,6 +130,12 @@ public class Cat : MonoBehaviour
             if (currentWaitDuration >= maxDurationWainting)
             {
                 LevelManager.instance.DecreaseSatisfaction(10);
+                if (FloatingTextManager.instance != null)
+                { 
+                    //TODO: this is hardcoded for now, remove later
+                    string val = "- 10";
+                    FloatingTextManager.instance.SpawnHeartText(val, transform.position + Vector3.up);
+                }
                 Debug.Log(gameObject.name + " is Unsatisfied!");
                 currentWaitDuration = 0f;
                 // Rest cat to fresh
@@ -235,9 +242,12 @@ public class Cat : MonoBehaviour
             currentSpot = null;
         }
 
-        // TODO: this is currently hardcoded (!!) 
-        // Different cats might have different benefits when happen
-        HandleSatisfaction(5);
+        HandleSatisfaction(catData.satisfactionGain);
+        if (FloatingTextManager.instance != null)
+        { 
+            string val = "+" + catData.satisfactionGain;
+            FloatingTextManager.instance.SpawnHeartText(val, transform.position + Vector3.up);
+        }
 
         // after sleeping, walk away to a random node
         walkingAwayAfterSleep = true;
@@ -366,7 +376,12 @@ public class Cat : MonoBehaviour
 
         // TODO: this is current hard coded, leave it for now
         // when we expand to more cats with personalities change
-        HandleSatisfaction(8);
+        HandleSatisfaction(catData.satisfactionGain);
+        if (FloatingTextManager.instance != null)
+        { 
+            string val = "+" + catData.satisfactionGain;
+            FloatingTextManager.instance.SpawnHeartText(val, transform.position + Vector3.up);
+        }   HandleSatisfaction(8);
 
         // After eating, walk away to a random node
         walkingAwayAfterEat = true;

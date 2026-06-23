@@ -25,7 +25,11 @@ public class CustomerController : MonoBehaviour
 
     [Header("Movement Points")]
     public Transform entrance;
+    // this is hardcoded, i will switch to finding stop position from level manager 
     public Transform stopPosition;
+    private GameObject[] stopPositions;
+    public Transform stopPositionLeft;
+    public Transform stopPositionRight;
 
     [Header("Movement Settings")]
     public float moveSpeed = 0.5f;
@@ -60,13 +64,29 @@ public class CustomerController : MonoBehaviour
     void Awake()
     {
         entrance = GameObject.FindWithTag("Entrance").transform;
+        // un needed already
         stopPosition = GameObject.FindWithTag("Counter").transform;
+
+        stopPositionLeft = GameObject.FindWithTag("stopLeft").transform;
+        stopPositionRight = GameObject.FindWithTag("stopRight").transform;
+
     }
 
     void Start()
     {
         transform.position = entrance.position;
-        SetPath(stopPosition.position, CustomerState.WalkingToCounter);
+        // actually i dont like this, randomn is not good enough 
+        // change to any position between two points
+        // find random counter instead
+        // Transform randomStop = stopPositions[Random.Range(0, stopPositions.Length)].transform;
+        // SetPath(randomStop.position, CustomerState.WalkingToCounter);
+
+        Vector3 randpos = new Vector3(
+            Random.Range(stopPositionLeft.position.x, stopPositionRight.position.x),
+            Random.Range(stopPositionLeft.position.y, stopPositionRight.position.y),
+            stopPositionLeft.position.z // both z same
+        );
+        SetPath(randpos, CustomerState.WalkingToCounter);
     }
 
     void Update()
@@ -297,10 +317,16 @@ public class CustomerController : MonoBehaviour
 
     // Serve food to customer
     // triggered when interaction by player is successful
-    public void ServeFood()
+    public void ServeFood(int price)
     {
         if (currentBubble != null) Destroy(currentBubble);
         if (GameManager.instance != null) GameManager.instance.AddCash(10);
+        // spawn visual UIk
+        if (FloatingTextManager.instance != null)
+        {
+            string msg = "+" + price;
+            FloatingTextManager.instance.SpawnCoinText(msg, transform.position + Vector3.up);
+        }
         hungryTime = 0f;
         timeSinceLastComplain = 0f;
         chair = LevelManager.instance.GetAvailableChair();
@@ -326,7 +352,7 @@ public class CustomerController : MonoBehaviour
     {
         if (state != CustomerState.WaitingAtCounter) return false;
         if (food != requestedFood) return false;
-        ServeFood();
+        ServeFood(food.price);
         return true;
     }
 
