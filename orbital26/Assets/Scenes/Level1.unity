@@ -442,7 +442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameAssembly::ChairSlot
   isOccupied: 0
-  isFaceRight: 1
+  isFaceRight: 0
 --- !u!212 &92553929
 SpriteRenderer:
   serializedVersion: 2
@@ -7014,7 +7014,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameAssembly::ChairSlot
   isOccupied: 0
-  isFaceRight: 1
+  isFaceRight: 0
 --- !u!212 &823595432
 SpriteRenderer:
   serializedVersion: 2
@@ -7421,7 +7421,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameAssembly::ChairSlot
   isOccupied: 0
-  isFaceRight: 1
+  isFaceRight: 0
 --- !u!212 &918589596
 SpriteRenderer:
   serializedVersion: 2
@@ -7527,7 +7527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameAssembly::ChairSlot
   isOccupied: 0
-  isFaceRight: 1
+  isFaceRight: 0
 --- !u!212 &933855772
 SpriteRenderer:
   serializedVersion: 2
@@ -9277,7 +9277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameAssembly::ChairSlot
   isOccupied: 0
-  isFaceRight: 1
+  isFaceRight: 0
 --- !u!212 &1247144895
 SpriteRenderer:
   serializedVersion: 2
@@ -13058,7 +13058,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameAssembly::ChairSlot
   isOccupied: 0
-  isFaceRight: 1
+  isFaceRight: 0
 --- !u!212 &1595278130
 SpriteRenderer:
   serializedVersion: 2
@@ -16693,7 +16693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameAssembly::ChairSlot
   isOccupied: 0
-  isFaceRight: 1
+  isFaceRight: 0
 --- !u!212 &2015623292
 SpriteRenderer:
   serializedVersion: 2
