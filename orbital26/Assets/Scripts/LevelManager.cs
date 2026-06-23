@@ -113,12 +113,14 @@ public class LevelManager : MonoBehaviour
         if (timeLeft <= 0f)
         {
             timeLeft = 0;
-            TriggerEndGame("YOU WIN!");
+            // TriggerEndGame("YOU WIN!");
+            TriggerEndGame(true);
             // TODO: trigger game over mechanic
         }
         if (satisfaction <= 0)
         {
-            TriggerEndGame("YOU LOSE");
+            TriggerEndGame(false);
+            // TriggerEndGame("YOU LOSE");
         }
 
         // 2. manage spawn of customers 
@@ -191,6 +193,10 @@ public class LevelManager : MonoBehaviour
     // between our NPC and UI 
     public void DecreaseSatisfaction(int val)
     {
+        // NOTE: dont decrease is game over 
+        // otherwise, the player can still "lose" after winning 
+        if (isGameOver) return;
+
         satisfaction -= val;
         satisfactionBar.DecreaseSatisfaction(val);
     }
@@ -229,11 +235,13 @@ public class LevelManager : MonoBehaviour
 
 
     // ############## PRIVATE METHODS ############## 
-    void TriggerEndGame(string msg)
+    void TriggerEndGame(bool res)
     {
         isGameOver = true;
-        Debug.Log("Game over: " + msg);
-        RestartLevel();
+        if (res) LevelResultUI.instance.ShowWin();
+        else LevelResultUI.instance.ShowLose();
+        // Debug.Log("Game over: " + msg);
+        // RestartLevel();
     }
 
     public void SpawnCat(GameObject catPrefab)

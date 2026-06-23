@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 // Another SINGLETON (like level manager)
 public class GameManager : MonoBehaviour
@@ -9,12 +10,17 @@ public class GameManager : MonoBehaviour
     public static GameManager instance {get; private set;}
 
     public int cash; 
+    [SerializeField] private int startingCash = 50;
     // Hash Map to store Cats 
     // right now its only one cat but this will expand 
     public Dictionary<CatData, int> ownedCats = new Dictionary<CatData,int>();
 
     public CatData brownCat;
     public int minBrownCat;
+
+    //TODO: Test level managers 
+    public int currLevel = 1;
+    public const int totalLevels = 3;
 
     // SINGLETON logic handled in awake
     void Awake()
@@ -26,7 +32,7 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             // TODO: uncomment when inventory is fully in place
             //InitInventory();
-            cash = 145;
+            cash = startingCash;
             
         }
         else
@@ -45,6 +51,39 @@ public class GameManager : MonoBehaviour
             ownedCats[brownCat] = minBrownCat;
         }
     }
+
+
+
+    /**
+    * Reset the game from level 1 
+    */
+    public void StartNewGame()
+    {
+        currLevel = 1;
+        cash = startingCash;
+        ownedCats.Clear();
+        SceneManager.LoadScene(1);
+    }
+
+    public void GoNextLevel()
+    {
+        currLevel++;
+        // if exeed max level (which should not happen)
+        // just load the start menu again 
+        if (currLevel > totalLevels) SceneManager.LoadScene(0); // 0 -> start menu 
+        else SceneManager.LoadScene(currLevel);
+    }
+
+    public void GoToStartMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+    
+    public bool IsAtFinalLevel()
+    {
+        return currLevel >= totalLevels;
+    }
+        
 
     public void AddCash(int amt)
     {
