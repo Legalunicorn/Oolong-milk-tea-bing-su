@@ -50,7 +50,7 @@ public class Cat : MonoBehaviour
     private bool walkingAwayAfterEat = false;
 
     // [HUNGER] variables
-    [SerializeField] private float timeBetweenMeal = 10f; 
+    [SerializeField] private float timeBetweenMeal = 14f; 
     private float timeLeftToHungry;
     [SerializeField] private GameObject foodBubblePrefab;
     [SerializeField] private float eatDuration = 4f;
@@ -59,7 +59,7 @@ public class Cat : MonoBehaviour
     [SerializeField] private int feedCost = 1;
     
     // [SLEEP] variables
-    [SerializeField] private float timeBetweenSleep = 10f;
+    [SerializeField] private float timeBetweenSleep = 14f;
     private float timeLeftToSleep;
     [SerializeField] private GameObject sleepBubblePrefab;
     [SerializeField] private float sleepDuration = 4f;
@@ -85,8 +85,8 @@ public class Cat : MonoBehaviour
         // start walking already
         SetToIdle(); 
         // Start timer to become hungry 
-        timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
-        timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
+        timeLeftToHungry = Random.Range(timeBetweenMeal/2, timeBetweenMeal);
+        timeLeftToSleep = Random.Range(timeBetweenSleep/2,  timeBetweenSleep);
         currentWaitDuration = 0f;
     }
 
@@ -139,8 +139,8 @@ public class Cat : MonoBehaviour
                 Debug.Log(gameObject.name + " is Unsatisfied!");
                 currentWaitDuration = 0f;
                 // Rest cat to fresh
-                timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
-                timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
+                timeLeftToHungry = Random.Range(timeBetweenMeal/2,  timeBetweenMeal);
+                timeLeftToSleep = Random.Range(timeBetweenSleep/2,  timeBetweenSleep);
                 if (currentBubble != null) Destroy(currentBubble);
                 SetToIdle();
             }
@@ -176,7 +176,7 @@ public class Cat : MonoBehaviour
         currentBubble = null;
 
         currentWaitDuration = 0f;
-        timeLeftToSleep = Random.Range(timeBetweenSleep / 2, timeBetweenSleep);
+        timeLeftToSleep = Random.Range(timeBetweenSleep/2, timeBetweenSleep );
 
         // Get one available sleep spot from CatSpotManager
         currentSpot = CatSpotManager.Instance.GetAvailableSpot(
@@ -381,7 +381,7 @@ public class Cat : MonoBehaviour
         { 
             string val = "+" + catData.satisfactionGain;
             FloatingTextManager.instance.SpawnHeartText(val, transform.position + Vector3.up);
-        }   HandleSatisfaction(8);
+        }
 
         // After eating, walk away to a random node
         walkingAwayAfterEat = true;

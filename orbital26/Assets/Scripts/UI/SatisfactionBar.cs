@@ -20,13 +20,13 @@ public class SatisfactionBar : MonoBehaviour
     {
         // decrease health but dont make it negative;
         //slider.value = Mathf.max(0, slider.value - decreaseBy);
-        slider.value = slider.value - decreaseBy;
+        slider.value = Mathf.Max(0,slider.value - decreaseBy);
         fill.color = gradient.Evaluate(slider.normalizedValue);
     }
 
     public void IncreaseSatisfaction(int increaseBy)
     {
-        slider.value = slider.value + increaseBy;
+        slider.value = Mathf.Min(slider.maxValue, slider.value + increaseBy);
         fill.color = gradient.Evaluate(slider.normalizedValue);
         //slider.value = Mathf.min(slider.maxValue, slider.value + increaseBy);
     }

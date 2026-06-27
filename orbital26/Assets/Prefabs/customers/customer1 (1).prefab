@@ -190,16 +190,18 @@ MonoBehaviour:
   catRequestBubblePrefab: {fileID: 4324078567972272688, guid: b09b9cb6d53a42146a84e03a09ab6f9b, type: 3}
   entrance: {fileID: 0}
   stopPosition: {fileID: 0}
-  moveSpeed: 1.2
+  stopPositionLeft: {fileID: 0}
+  stopPositionRight: {fileID: 0}
+  moveSpeed: 1.35
   animator: {fileID: 1170219524669324987}
   hungryBubblePrefab: {fileID: 6146627127509063364, guid: 815942f26f3c66741b86aa2b1e700784, type: 3}
   currentBubble: {fileID: 0}
   hungryTime: 0
-  maxWaitDuration: 5
+  maxWaitDuration: 12
   complainInterval: 1
   timeSinceLastComplain: 0
-  catWaitingTIme: 0
-  maxCatWaitTime: 0
+  catWaitingTime: 0
+  maxCatWaitTime: 10
   catComplainInterval: 0
   timeSinceLastCatComplain: 0
 --- !u!61 &-6452164649752525915

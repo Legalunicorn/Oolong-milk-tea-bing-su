@@ -80,7 +80,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1306611915
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 2117381834473272202, guid: 036fd9c48a3f6fe4390db1d4a3ff02bc, type: 3}
@@ -110,11 +110,11 @@ MonoBehaviour:
   speed: 2
   targetPos: {x: 0, y: 0}
   currPath: []
-  timeBetweenMeal: 10
+  timeBetweenMeal: 20
   foodBubblePrefab: {fileID: 7748677934914827185, guid: abb735364261b9345ba7f81acf62b10a, type: 3}
   eatDuration: 4
   feedCost: 1
-  timeBetweenSleep: 10
+  timeBetweenSleep: 20
   sleepBubblePrefab: {fileID: 5528474114536450980, guid: 6a0bff1e3aa5931489fa280a0220fbd6, type: 3}
   sleepDuration: 4
   maxDurationWainting: 10
