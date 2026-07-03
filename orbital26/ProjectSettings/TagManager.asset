@@ -7,6 +7,8 @@ TagManager:
   - WanderArea
   - Entrance
   - Counter
+  - stopRight
+  - stopLeft
   layers:
   - Default
   - TransparentFX

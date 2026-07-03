@@ -25,7 +25,11 @@ public class CustomerController : MonoBehaviour
 
     [Header("Movement Points")]
     public Transform entrance;
+    // this is hardcoded, i will switch to finding stop position from level manager 
     public Transform stopPosition;
+    private GameObject[] stopPositions;
+    public Transform stopPositionLeft;
+    public Transform stopPositionRight;
 
     [Header("Movement Settings")]
     public float moveSpeed = 0.5f;
@@ -44,15 +48,15 @@ public class CustomerController : MonoBehaviour
 
     // when the customer starts being unhappy 
     [SerializeField] private float hungryTime = 0f;
-    [SerializeField] private float maxWaitDuration = 5f;
+    [SerializeField] private float maxWaitDuration = 20f;
     // howoften to decrease the satisfaction
-    [SerializeField] private float complainInterval = 1f;
-    [SerializeField] private float timeSinceLastComplain = 0f;
+    [SerializeField] private float complainInterval = 1f; //TODO: remoe
+    [SerializeField] private float timeSinceLastComplain = 0f; //TODO: remove
     // timers for waiting for catsd
-    [SerializeField] private float catWaitingTIme = 0f;
-    [SerializeField] private float maxCatWaitTime =  9f;
-    [SerializeField] private float catComplainInterval =  1f;
-    [SerializeField] private float timeSinceLastCatComplain =  0f;
+    [SerializeField] private float catWaitingTime = 0f;
+    [SerializeField] private float maxCatWaitTime =  20f;
+    [SerializeField] private float catComplainInterval =  1f; //TODO: remove
+    [SerializeField] private float timeSinceLastCatComplain =  0f; //TODO: remove
 
     private Vector3 currDest;
     private ChairSlot chair;
@@ -60,13 +64,29 @@ public class CustomerController : MonoBehaviour
     void Awake()
     {
         entrance = GameObject.FindWithTag("Entrance").transform;
+        // un needed already
         stopPosition = GameObject.FindWithTag("Counter").transform;
+
+        stopPositionLeft = GameObject.FindWithTag("stopLeft").transform;
+        stopPositionRight = GameObject.FindWithTag("stopRight").transform;
+
     }
 
     void Start()
     {
         transform.position = entrance.position;
-        SetPath(stopPosition.position, CustomerState.WalkingToCounter);
+        // actually i dont like this, randomn is not good enough 
+        // change to any position between two points
+        // find random counter instead
+        // Transform randomStop = stopPositions[Random.Range(0, stopPositions.Length)].transform;
+        // SetPath(randomStop.position, CustomerState.WalkingToCounter);
+
+        Vector3 randpos = new Vector3(
+            Random.Range(stopPositionLeft.position.x, stopPositionRight.position.x),
+            Random.Range(stopPositionLeft.position.y, stopPositionRight.position.y),
+            stopPositionLeft.position.z // both z same
+        );
+        SetPath(randpos, CustomerState.WalkingToCounter);
     }
 
     void Update()
@@ -88,21 +108,9 @@ public class CustomerController : MonoBehaviour
             // the animation is cued and finish eating is called
         } else if (state == CustomerState.RequestCat)
         {
-            // I USE THIS LOGIC ALOT, maybe abstrqact it as well 
-            // catWaitingTIme += Time.deltaTime;
-            // if (catWaitingTIme >= maxCatWaitTime)
-            // {
-            //     timeSinceLastCatComplain += Time.deltaTime;
-            //     if (timeSinceLastCatComplain >= catComplainInterval)
-            //     {
-            //         LevelManager.instance.DecreaseSatisfaction(1);
-            //         timeSinceLastCatComplain = 0f;
-            //     }
-            // }
-            // TODO : 
+            HandleCatWaiting();
         } else if (state == CustomerState.WalkingToCat)
         {
-            // TODO: 
             MoveTowards(currDest);
             if (HasReachedDestination(currDest)) OnReachCat();
         } else if (state == CustomerState.InteractingWithCat)
@@ -115,6 +123,16 @@ public class CustomerController : MonoBehaviour
             MoveTowards(currDest);
             if (HasReachedDestination(currDest)) Destroy(gameObject);
         }
+    }
+
+    private void HandleCatWaiting()
+    {
+        catWaitingTime += Time.deltaTime;
+        if (catWaitingTime <= maxCatWaitTime) return;
+        if (LevelManager.instance != null) LevelManager.instance.DecreaseSatisfaction(10);
+        if(FloatingTextManager.instance != null) FloatingTextManager.instance.SpawnHeartText("-10", transform.position+Vector3.up);
+        if (currentBubble != null) Destroy(currentBubble);
+        StartExiting();
     }
 
     public void RequestCat()
@@ -265,6 +283,8 @@ public class CustomerController : MonoBehaviour
 
     void StartExiting()
     {
+        CancelInvoke(nameof(BecomeHungry));
+        CancelInvoke(nameof(RequestCat));
         SetPath(entrance.position, CustomerState.Exiting);
     }
 
@@ -275,7 +295,7 @@ public class CustomerController : MonoBehaviour
         if (currentBubble != null) Destroy(currentBubble);
 
         requestedFood = LevelManager.instance.GetRandomRequestableFoodData();
-
+        hungryTime = 0f;
         currentBubble = Instantiate(hungryBubblePrefab, transform.position, Quaternion.identity);
         currentBubble.transform.SetParent(transform);
         currentBubble.transform.localPosition = new Vector3(-1f,1f,0);
@@ -287,20 +307,37 @@ public class CustomerController : MonoBehaviour
     {
         hungryTime +=Time.deltaTime;
         if (hungryTime < maxWaitDuration) return;
-        timeSinceLastComplain += Time.deltaTime;
-        if (timeSinceLastComplain >= complainInterval && LevelManager.instance != null)
+        // instead of constantly compaining the cusomter just leaves immediatel
+
+        // TODO:   
+        // Right now im hardcoding the decrease amount
+        // Later ti should refererence from the level manager
+        // so for now all 3 levels has same peanlioty 
+        // i think its fine bc we already increase customer frequency  
+        if (LevelManager.instance != null)
         {
-            LevelManager.instance.DecreaseSatisfaction(1);
-            timeSinceLastComplain = 0f; // reset complain timer
+            LevelManager.instance.DecreaseSatisfaction(8);
         }
+        if (FloatingTextManager.instance != null)
+        {
+            FloatingTextManager.instance.SpawnHeartText("-8", transform.position + Vector3.up);
+        }
+        if (currentBubble != null) Destroy(currentBubble);
+        StartExiting(); // transition state to exit -> and walk out
     }
 
     // Serve food to customer
     // triggered when interaction by player is successful
-    public void ServeFood()
+    public void ServeFood(int price)
     {
         if (currentBubble != null) Destroy(currentBubble);
-        if (GameManager.instance != null) GameManager.instance.AddCash(10);
+        if (GameManager.instance != null) GameManager.instance.AddCash(price);
+        // spawn visual UIk
+        if (FloatingTextManager.instance != null)
+        {
+            string msg = "+" + price;
+            FloatingTextManager.instance.SpawnCoinText(msg, transform.position + Vector3.up);
+        }
         hungryTime = 0f;
         timeSinceLastComplain = 0f;
         chair = LevelManager.instance.GetAvailableChair();
@@ -326,7 +363,7 @@ public class CustomerController : MonoBehaviour
     {
         if (state != CustomerState.WaitingAtCounter) return false;
         if (food != requestedFood) return false;
-        ServeFood();
+        ServeFood(food.price);
         return true;
     }
 

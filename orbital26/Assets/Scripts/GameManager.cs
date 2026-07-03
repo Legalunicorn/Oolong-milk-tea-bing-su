@@ -1,20 +1,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 // Another SINGLETON (like level manager)
 public class GameManager : MonoBehaviour
 {
+
+    private static readonly string[] levelScenes = {"Level1", "Level2","Level3"};
+
+
     // static instance accessible globbally 
     public static GameManager instance {get; private set;}
 
     public int cash; 
+    [SerializeField] private int startingCash = 50;
     // Hash Map to store Cats 
     // right now its only one cat but this will expand 
     public Dictionary<CatData, int> ownedCats = new Dictionary<CatData,int>();
 
     public CatData brownCat;
-    public int minBrownCat;
+    public CatData cookieCat;
+    // public int minBrownCat;
+
+    //TODO: Test level managers 
+    public int currLevel = 1;
+    public const int totalLevels = 3;
 
     // SINGLETON logic handled in awake
     void Awake()
@@ -24,13 +35,16 @@ public class GameManager : MonoBehaviour
             instance = this;
             // dont destroy, must persist betwene levels
             DontDestroyOnLoad(gameObject);
+            InitInventory();
             // TODO: uncomment when inventory is fully in place
             //InitInventory();
-            cash = 145;
+            Debug.Log("Game manager restarted new");
+            cash = startingCash;
             
         }
         else
         {
+            Debug.Log("Game manager dup destroyed, cash is: " + instance.cash);
             Destroy(gameObject);
         }
     }
@@ -38,13 +52,54 @@ public class GameManager : MonoBehaviour
     // TODO: this is never called 
     private void InitInventory()
     {
-        // ensure brown cats is enough
-        // TODO: in the future: retrieve cat data from file storage
-        if (brownCat != null && ownedCats[brownCat] < minBrownCat)
-        {
-            ownedCats[brownCat] = minBrownCat;
-        }
+        // For now, lets default 2 brown cat and 1 cookie cat 
+        if (brownCat != null) ownedCats[brownCat] = 2;
+        if (cookieCat != null) ownedCats[cookieCat] = 1;
+
+        // // ensure brown cats is enough
+        // // TODO: in the future: retrieve cat data from file storage
+        // if (brownCat != null && ownedCats[brownCat] < minBrownCat)
+        // {
+        //     ownedCats[brownCat] = minBrownCat;
+        // }
     }
+
+
+
+    /**
+    * Reset the game from level 1 
+    */
+    public void StartNewGame()
+    {
+        currLevel = 1;
+        cash = startingCash;
+        ownedCats.Clear();
+        InitInventory();
+        SceneManager.LoadScene("Level1");
+    }
+
+    public void GoNextLevel()
+    {
+        currLevel++;
+        // if exeed max level (which should not happen)
+        // just load the start menu again 
+        if (currLevel > totalLevels) {
+            currLevel = totalLevels;
+            SceneManager.LoadScene("StartMenu"); // 0 -> start menu 
+        }
+        else SceneManager.LoadScene(levelScenes[currLevel - 1]);
+    }
+
+    public void GoToStartMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+    
+    public bool IsAtFinalLevel()
+    {
+        return currLevel >= totalLevels;
+    }
+        
 
     public void AddCash(int amt)
     {
@@ -69,7 +124,7 @@ public class GameManager : MonoBehaviour
     {
         // TODO: temporary measure to test 
         // if adding cash works, since customer prefab not read 
-        if (Keyboard.current.qKey.wasPressedThisFrame) cash += 15;
+        // if (Keyboard.current.qKey.wasPressedThisFrame) cash += 15;
         
     }
 }

@@ -83,7 +83,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 384645139
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -1162717841, guid: 7a17ba3c6d11b46c78a62b5790ea74b9, type: 3}
@@ -190,16 +190,18 @@ MonoBehaviour:
   catRequestBubblePrefab: {fileID: 4324078567972272688, guid: b09b9cb6d53a42146a84e03a09ab6f9b, type: 3}
   entrance: {fileID: 0}
   stopPosition: {fileID: 0}
-  moveSpeed: 1.2
+  stopPositionLeft: {fileID: 0}
+  stopPositionRight: {fileID: 0}
+  moveSpeed: 1.4
   animator: {fileID: 1170219524669324987}
   hungryBubblePrefab: {fileID: 6146627127509063364, guid: 815942f26f3c66741b86aa2b1e700784, type: 3}
   currentBubble: {fileID: 0}
   hungryTime: 0
-  maxWaitDuration: 5
+  maxWaitDuration: 10
   complainInterval: 1
   timeSinceLastComplain: 0
-  catWaitingTIme: 0
-  maxCatWaitTime: 0
+  catWaitingTime: 0
+  maxCatWaitTime: 10
   catComplainInterval: 0
   timeSinceLastCatComplain: 0
 --- !u!61 &-1931089796889933924
@@ -236,7 +238,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.02292484, y: 0}
+  m_Offset: {x: -0.003465414, y: 0.1831646}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -246,5 +248,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.1833953, y: 2}
+  m_Size: {x: 2.4162025, y: 2.8238964}
   m_EdgeRadius: 0

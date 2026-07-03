@@ -16,4 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: d052f0e4621252d49a11c24d51af280b, type: 3}
   cookCost: 3
   cookTime: 2
-  price: 10
+  price: 15

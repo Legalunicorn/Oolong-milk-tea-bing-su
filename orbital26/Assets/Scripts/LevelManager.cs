@@ -39,6 +39,9 @@ public class LevelManager : MonoBehaviour
 
     // Singlular spawn point in a level for now
     public Transform catSpawnPoint;
+    // TODO: create MULTIPLE cat spawn points
+    [SerializeField] private List<Transform> catSpawnPoints;
+
 
 
     // #### UI #### 
@@ -72,6 +75,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject switchRoomUI;
     [SerializeField] private bool hasSecondRoom = false;
 
+
+    [SerializeField] private GameObject catSelectionUI;
+
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
     // Start: called before first frame update 
@@ -89,36 +95,78 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        isGameOver = false;
         cash = GameManager.instance.cash;
         timeLeft = timeLimit;
         satisfactionBar.SetMaxSatisfaction(maxSatisfaction);
+
+        if (room2Objects != null) room2Objects.SetActive(hasSecondRoom);
         //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Object.FindObjectsByType.html
         chairSlots = FindObjectsByType<ChairSlot>(FindObjectsSortMode.None);
 
         // hide room2 ELEMENTS if needed
-        if (room2Objects != null) room2Objects.SetActive(hasSecondRoom);
         if (switchRoomUI != null) switchRoomUI.SetActive(hasSecondRoom);
-
+        if (catSelectionUI != null) catSelectionUI.SetActive(false);
         // find all nodes again, and ignore room2 nodes
         // there was an issue where it found the nodes before level manager disabled them
         AStar.instance.RefreshNodes();
+        SpawnCatsFromInventory();
+    }
+
+    void SpawnCatsFromInventory()
+    {
+        Debug.Log("spawning cats");
+        // iterate map of cat counts
+        foreach(var entry in GameManager.instance.ownedCats)
+        {
+            CatData catData = entry.Key;
+            for (int i = 0; i < entry.Value; i++)
+            {
+                Transform point = GetRandomCatSpawnPoint();
+                // fall back to old verion -> single spawn points
+                if (point == null)
+                {
+                    Instantiate(
+                        catData.prefab,
+                        catSpawnPoint.position,
+                        Quaternion.identity
+                    );
+                }
+                else
+                {
+                    Instantiate(
+                        catData.prefab,
+                        point.position,
+                        Quaternion.identity
+                    );
+                }
+            }
+        }
     }
 
     // // Update is called once per frame
     void Update()
     {
+
         // 1. check and update gameoverstatus 
-        if (isGameOver) return;
+        if (isGameOver)
+        {
+            Debug.Log("GAME IS OVER");
+            return;
+        }
         timeLeft -= Time.deltaTime;
         if (timeLeft <= 0f)
         {
             timeLeft = 0;
-            TriggerEndGame("YOU WIN!");
-            // TODO: trigger game over mechanic
+            // TriggerEndGame("YOU WIN!");
+            TriggerEndGame(true);
+            return;
         }
         if (satisfaction <= 0)
         {
-            TriggerEndGame("YOU LOSE");
+            TriggerEndGame(false);
+            return;
+            // TriggerEndGame("YOU LOSE");
         }
 
         // 2. manage spawn of customers 
@@ -139,7 +187,11 @@ public class LevelManager : MonoBehaviour
 
    void SpawnCustomer()
     {
-        if (CustomerPrefabs == null || CustomerPrefabs.Length == 0 || CustomerspawnPoint == null) return;
+        if (CustomerPrefabs == null || CustomerPrefabs.Length == 0 || CustomerspawnPoint == null)
+        {
+            Debug.Log(" no customer spawn point, or prefab is NULL!");
+            return;
+        }
 
         int randomIndex = Random.Range(0, CustomerPrefabs.Length);
         GameObject selectedCustomerPrefab = CustomerPrefabs[randomIndex];
@@ -152,8 +204,20 @@ public class LevelManager : MonoBehaviour
     }
 
 
+    private Transform GetRandomCatSpawnPoint()
+    {
+        if (catSpawnPoints == null || catSpawnPoints.Count == 0) return null;
+        // choose a random one       
+        // TODO: for customer counter wait points as well
+        return catSpawnPoints[Random.Range(0, catSpawnPoints.Count)];
+    }
 
     // ############ PUBLIC Methods ############### 
+
+    public bool HasSecondRoom()
+    {
+        return hasSecondRoom;
+    }
 
     // return random food data that a customer can requests
     // for this given level
@@ -191,6 +255,10 @@ public class LevelManager : MonoBehaviour
     // between our NPC and UI 
     public void DecreaseSatisfaction(int val)
     {
+        // NOTE: dont decrease is game over 
+        // otherwise, the player can still "lose" after winning 
+        if (isGameOver) return;
+
         satisfaction -= val;
         satisfactionBar.DecreaseSatisfaction(val);
     }
@@ -229,18 +297,33 @@ public class LevelManager : MonoBehaviour
 
 
     // ############## PRIVATE METHODS ############## 
-    void TriggerEndGame(string msg)
+    void TriggerEndGame(bool res)
     {
         isGameOver = true;
-        Debug.Log("Game over: " + msg);
-        RestartLevel();
+        if (LevelResultUI.instance == null)
+        {
+            Debug.Log("LevelUI NULL");
+        }
+        if (res) LevelResultUI.instance.ShowWin();
+        else LevelResultUI.instance.ShowLose();
+        // Debug.Log("Game over: " + msg);
+        // RestartLevel();
     }
 
     public void SpawnCat(GameObject catPrefab)
     {
-        Instantiate(catPrefab, catSpawnPoint.position, Quaternion.identity);
-    }
+        Transform randPoint = GetRandomCatSpawnPoint();
+        if (randPoint == null)
+        {
+            // fall back to single spawn point 
+            Instantiate(catPrefab, catSpawnPoint.position, Quaternion.identity);
+        }
+        else
+        {
 
+            Instantiate(catPrefab, randPoint.position, Quaternion.identity);
+        }
+    }
 
     // # CAT SELECTION FUNCTIONS, STATE MANAGEMENT
     public void EnterCatSelection(CatData catData, CustomerController customer)
@@ -251,6 +334,9 @@ public class LevelManager : MonoBehaviour
 
         // TODO: wired manually, consider switching to TAGS
         foreach(GameObject ui in hideOnCatSelection) ui.SetActive(false);
+
+        // enable UI during select 
+        if (catSelectionUI != null) catSelectionUI.SetActive(true);
     }
 
     // Match the cat to the customer = )
@@ -275,6 +361,8 @@ public class LevelManager : MonoBehaviour
         
         //TODO: wired manually consider switched tags
         foreach(GameObject ui in hideOnCatSelection) ui.SetActive(true);
+
+        if (catSelectionUI != null) catSelectionUI.SetActive(false);
     }
 
     public bool IsInCatSelection()

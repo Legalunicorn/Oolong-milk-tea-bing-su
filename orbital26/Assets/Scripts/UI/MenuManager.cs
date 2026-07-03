@@ -19,9 +19,13 @@ public class MenuManager : MonoBehaviour
 
     public void QuitApplication()
     {
-        Debug.Log("Quit was called");
-        //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Application.Quit.html
-        Application.Quit();
+        // we will host on web games, so there is no quit 
+        /// it will go back to start menu 
+        GameManager.instance.GoToStartMenu();
+
+        // Debug.Log("Quit was called");
+        // //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Application.Quit.html
+        // Application.Quit();
     }
 
     public void OpenMenu()

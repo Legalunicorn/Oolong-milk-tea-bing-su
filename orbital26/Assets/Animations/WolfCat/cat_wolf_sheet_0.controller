@@ -32,7 +32,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SleepCat
+  m_Name: Sleep
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -144,7 +144,7 @@ AnimatorStateMachine:
     m_Position: {x: 160, y: 170, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -5739323229207292635}
-    m_Position: {x: 400, y: 270, z: 0}
+    m_Position: {x: 390, y: 250, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1418802215252659891}
     m_Position: {x: 570, y: 30, z: 0}
@@ -156,9 +156,9 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 50, y: 20, z: 0}
-  m_EntryPosition: {x: 50, y: 120, z: 0}
-  m_ExitPosition: {x: 800, y: 120, z: 0}
+  m_AnyStatePosition: {x: -130, y: -140, z: 0}
+  m_EntryPosition: {x: 120, y: 70, z: 0}
+  m_ExitPosition: {x: 920, y: 450, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 3935412735860781723}
 --- !u!1101 &-1827963320244497706
@@ -193,7 +193,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: EatWolfCat
+  m_Name: Eat
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -220,7 +220,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PetWolfCat
+  m_Name: Pet
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -318,7 +318,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: RunWolfCat
+  m_Name: Run
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -447,7 +447,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: IdleWolfCat
+  m_Name: Idle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:

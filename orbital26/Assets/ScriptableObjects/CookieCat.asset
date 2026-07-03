@@ -16,3 +16,6 @@ MonoBehaviour:
   prefab: {fileID: 4662520777912786322, guid: b744bf771370adf4a960a24bcc633e0e, type: 3}
   icon: {fileID: 2117381834473272202, guid: 036fd9c48a3f6fe4390db1d4a3ff02bc, type: 3}
   price: 30
+  satisfactionGain: 10
+  customerTips: 20
+  catSpeed: 1.75

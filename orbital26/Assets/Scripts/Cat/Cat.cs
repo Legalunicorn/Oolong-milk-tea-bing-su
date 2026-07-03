@@ -50,7 +50,7 @@ public class Cat : MonoBehaviour
     private bool walkingAwayAfterEat = false;
 
     // [HUNGER] variables
-    [SerializeField] private float timeBetweenMeal = 10f; 
+    [SerializeField] private float timeBetweenMeal = 14f; 
     private float timeLeftToHungry;
     [SerializeField] private GameObject foodBubblePrefab;
     [SerializeField] private float eatDuration = 4f;
@@ -59,7 +59,7 @@ public class Cat : MonoBehaviour
     [SerializeField] private int feedCost = 1;
     
     // [SLEEP] variables
-    [SerializeField] private float timeBetweenSleep = 10f;
+    [SerializeField] private float timeBetweenSleep = 14f;
     private float timeLeftToSleep;
     [SerializeField] private GameObject sleepBubblePrefab;
     [SerializeField] private float sleepDuration = 4f;
@@ -75,6 +75,7 @@ public class Cat : MonoBehaviour
     void Start()
     {
         // Initialize variables 
+        speed = catData.catSpeed;
         // find animator component to edit params
         animator = GetComponent<Animator>();
         // find the sprite renderer to flip it 
@@ -84,8 +85,8 @@ public class Cat : MonoBehaviour
         // start walking already
         SetToIdle(); 
         // Start timer to become hungry 
-        timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
-        timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
+        timeLeftToHungry = Random.Range(timeBetweenMeal/2, timeBetweenMeal);
+        timeLeftToSleep = Random.Range(timeBetweenSleep/2,  timeBetweenSleep);
         currentWaitDuration = 0f;
     }
 
@@ -129,11 +130,17 @@ public class Cat : MonoBehaviour
             if (currentWaitDuration >= maxDurationWainting)
             {
                 LevelManager.instance.DecreaseSatisfaction(10);
+                if (FloatingTextManager.instance != null)
+                { 
+                    //TODO: this is hardcoded for now, remove later
+                    string val = "- 10";
+                    FloatingTextManager.instance.SpawnHeartText(val, transform.position + Vector3.up);
+                }
                 Debug.Log(gameObject.name + " is Unsatisfied!");
                 currentWaitDuration = 0f;
                 // Rest cat to fresh
-                timeLeftToHungry = Random.Range(timeBetweenMeal, 2 * timeBetweenMeal);
-                timeLeftToSleep = Random.Range(timeBetweenSleep, 2 * timeBetweenSleep);
+                timeLeftToHungry = Random.Range(timeBetweenMeal/2,  timeBetweenMeal);
+                timeLeftToSleep = Random.Range(timeBetweenSleep/2,  timeBetweenSleep);
                 if (currentBubble != null) Destroy(currentBubble);
                 SetToIdle();
             }
@@ -169,7 +176,7 @@ public class Cat : MonoBehaviour
         currentBubble = null;
 
         currentWaitDuration = 0f;
-        timeLeftToSleep = Random.Range(timeBetweenSleep / 2, timeBetweenSleep);
+        timeLeftToSleep = Random.Range(timeBetweenSleep/2, timeBetweenSleep );
 
         // Get one available sleep spot from CatSpotManager
         currentSpot = CatSpotManager.Instance.GetAvailableSpot(
@@ -235,9 +242,12 @@ public class Cat : MonoBehaviour
             currentSpot = null;
         }
 
-        // TODO: this is currently hardcoded (!!) 
-        // Different cats might have different benefits when happen
-        HandleSatisfaction(5);
+        HandleSatisfaction(catData.satisfactionGain);
+        if (FloatingTextManager.instance != null)
+        { 
+            string val = "+" + catData.satisfactionGain;
+            FloatingTextManager.instance.SpawnHeartText(val, transform.position + Vector3.up);
+        }
 
         // after sleeping, walk away to a random node
         walkingAwayAfterSleep = true;
@@ -366,7 +376,12 @@ public class Cat : MonoBehaviour
 
         // TODO: this is current hard coded, leave it for now
         // when we expand to more cats with personalities change
-        HandleSatisfaction(8);
+        HandleSatisfaction(catData.satisfactionGain);
+        if (FloatingTextManager.instance != null)
+        { 
+            string val = "+" + catData.satisfactionGain;
+            FloatingTextManager.instance.SpawnHeartText(val, transform.position + Vector3.up);
+        }
 
         // After eating, walk away to a random node
         walkingAwayAfterEat = true;
