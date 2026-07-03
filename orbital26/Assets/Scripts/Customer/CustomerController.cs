@@ -74,6 +74,8 @@ public class CustomerController : MonoBehaviour
 
     void Start()
     {
+        maxWaitDuration = LevelManager.instance.customerWaitCounterDuration;
+        maxCatWaitTime = LevelManager.instance.customerWaitForCatDuration;
         transform.position = entrance.position;
         // actually i dont like this, randomn is not good enough 
         // change to any position between two points
@@ -139,6 +141,9 @@ public class CustomerController : MonoBehaviour
     {
         if (currentBubble != null) Destroy(currentBubble);
         state = CustomerState.RequestCat;
+
+        // tutotial call back
+        TutorialManager.instance?.OnCustomerStartedCatReq();
 
         // use level manager to request rand cat 
         CatData requestedCatData = LevelManager.instance.GetRandomRequestableCatData();
@@ -245,6 +250,7 @@ public class CustomerController : MonoBehaviour
 
     void OnReachCounter()
     {
+        TutorialManager.instance?.OnReachCounter();
         // start to request for food
         state = CustomerState.WaitingAtCounter;
         StopWalking();
@@ -265,13 +271,16 @@ public class CustomerController : MonoBehaviour
         }
 
         animator.SetBool("isEating", true);
-        Invoke(nameof(FinishEating), 5f);
+        Invoke(nameof(FinishEating), 3.5f);
     }
 
      void FinishEating()
     {
         // if we flipped the customer when sitting
         // we need to flip back or else he would walk backwards
+
+        TutorialManager.instance?.OnFinishEating();
+
         SpriteRenderer render = GetComponent<SpriteRenderer>();
         if (render.flipX) render.flipX = false;
 
@@ -330,6 +339,9 @@ public class CustomerController : MonoBehaviour
     // triggered when interaction by player is successful
     public void ServeFood(int price)
     {
+        // tutorial call back
+        TutorialManager.instance?.OnFoodServed();
+
         if (currentBubble != null) Destroy(currentBubble);
         if (GameManager.instance != null) GameManager.instance.AddCash(price);
         // spawn visual UIk

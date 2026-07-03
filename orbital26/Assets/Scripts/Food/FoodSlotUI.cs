@@ -39,6 +39,10 @@ public class FoodSlotUI : MonoBehaviour
     }
     void OnCookClicked()
     {
+        // for tutorial call back which is cake 
+        TutorialManager.instance?.OnFoodCooked(foodData.foodName);
+
+
         //costText.text = "Cooking...";
         if (isCooking) return;
         Debug.Log("Cash bef:" + GameManager.instance.cash + "Cost: " + foodData.cookCost);

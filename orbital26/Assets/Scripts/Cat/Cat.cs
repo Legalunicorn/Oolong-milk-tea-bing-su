@@ -608,4 +608,61 @@ public class Cat : MonoBehaviour
         SetToIdle();
         // UnlockFromCustomer();
     }
+
+
+    // ### methods added for tutorial 
+    public void SkipToHungry()
+    {
+        currPath  = null;
+        pathIdx = 0;
+        destination = transform.position;
+        // reset every timer 
+        // set cat back to just hungr
+        timeLeftToHungry = 0f;
+        currentWaitDuration = 0;
+        walkingAwayAfterEat = false;
+        walkingAwayAfterSleep = false; 
+        walkingToEatSpot = false;
+        walkingToSleepSpot = false;
+        CancelInvoke(nameof(FinishEating));
+        CancelInvoke(nameof(FinishSleep));
+        animator.SetBool("isEating", false);
+        animator.SetBool("isSleeping", false);
+        if (currentBubble != null) Destroy(currentBubble);
+        state = CatState.Idle;
+        UpdateAnimation();
+        state = CatState.Hungry;
+        UpdateAnimation();
+        SpawnHungerBubble();
+
+    }
+
+    public void SkipToTired()
+    {
+        Debug.Log("skip to tired called");
+        state = CatState.Tired;
+
+        currPath  = null;
+        pathIdx = 0;
+        destination = transform.position;
+        walkingAwayAfterEat = false;
+        walkingAwayAfterSleep = false; 
+        walkingToEatSpot = false;
+        walkingToSleepSpot = false;
+
+        if (currentSpot!=null) currentSpot = null;
+
+        CancelInvoke(nameof(FinishEating));
+        CancelInvoke(nameof(FinishSleep));
+
+        timeLeftToSleep = 0f;
+        currentWaitDuration = 0;
+
+
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isEating", false);
+        animator.SetBool("isSleeping", false);
+        if (currentBubble != null) Destroy(currentBubble);
+        SpawnSleepBubble();
+    }
 }

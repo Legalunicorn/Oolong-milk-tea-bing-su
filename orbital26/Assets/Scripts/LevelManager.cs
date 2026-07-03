@@ -64,6 +64,8 @@ public class LevelManager : MonoBehaviour
     // [Cake, Matcha, Main] 
     [SerializeField] private List<FoodData> requestableFoods;
     [SerializeField] private int allowedFoodCount = 1;
+    [SerializeField] public float customerWaitCounterDuration = 20f;
+    [SerializeField] public float customerWaitForCatDuration = 20f;
 
 
     // FEATURES FOR ROOM 2 
@@ -77,6 +79,8 @@ public class LevelManager : MonoBehaviour
 
 
     [SerializeField] private GameObject catSelectionUI;
+
+    [SerializeField] private bool isTutorialLevel = false;
 
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
@@ -110,7 +114,8 @@ public class LevelManager : MonoBehaviour
         // find all nodes again, and ignore room2 nodes
         // there was an issue where it found the nodes before level manager disabled them
         AStar.instance.RefreshNodes();
-        SpawnCatsFromInventory();
+    
+        if (!isTutorialLevel) SpawnCatsFromInventory();
     }
 
     void SpawnCatsFromInventory()
@@ -185,7 +190,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-   void SpawnCustomer()
+   public void SpawnCustomer()
     {
         if (CustomerPrefabs == null || CustomerPrefabs.Length == 0 || CustomerspawnPoint == null)
         {
@@ -345,6 +350,8 @@ public class LevelManager : MonoBehaviour
     public void ConfirmCatSelection(Cat cat)
     {
         if (state!=LevelState.CatSelection) return;
+        // tutorial callback 
+        TutorialManager.instance?.OnCustomerCatReqMet();
         cat.LockForCustomer();
         pendingCustomer.WalkToCat(cat);
         // remove the bubble as well 

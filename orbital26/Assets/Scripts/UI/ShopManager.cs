@@ -55,6 +55,10 @@ public class ShopManager : MonoBehaviour
 
     public void OpenShopUI()
     {
+        //tutorial call back
+        TutorialManager.instance?.OnShopOpen();
+        
+
         shopPanel.SetActive(true);
         feedbackText.text = "";
     }

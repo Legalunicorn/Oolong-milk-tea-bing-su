@@ -23,6 +23,10 @@ public class RequestCatBubble : MonoBehaviour
     {
         if (InputUtils.IsLeftClickInRadius(transform.position))
         {
+            Debug.Log("cat req was clicked");
+            //tutorial  callback
+            TutorialManager.instance?.OnCustomerCatReqClicked();
+        
             LevelManager.instance.EnterCatSelection(requestedCatData, customer);
         }
         // if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -32,16 +36,4 @@ public class RequestCatBubble : MonoBehaviour
         // }
     }
 
-    // void OnMouseClicked()
-    // {
-    //     // same logic again 
-    //     // im thinking of abstracting this to some utility class function
-    //     // then refactor the code 
-    //     Vector2 pos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-    //     float dist = Vector2.Distance(pos, (Vector2)transform.position);
-    //     if (dist > 0.5f) return;
-    //     LevelManager.instance.EnterCatSelection(requestedCatData, customer);
-    //     // dont destroy the bubble yet 
-    //     // when the match is success ful destroy the bubblre 
-    // }
 }

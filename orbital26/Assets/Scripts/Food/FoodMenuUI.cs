@@ -35,6 +35,7 @@ public class FoodMenuUI : MonoBehaviour
     {
         // change from toggling SetActive
         // to let the timers keep running
+        TutorialManager.instance?.OnFoodMenuOpened();
         canvasGroup.alpha = 1f; 
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
