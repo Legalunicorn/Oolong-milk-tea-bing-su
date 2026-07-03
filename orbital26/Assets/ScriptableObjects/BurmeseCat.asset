@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb7bf1608b06b4944b8857b3094bdc11, type: 3}
-  m_Name: ' purchased!'
+  m_Name: BurmeseCat
   m_EditorClassIdentifier: GameAssembly::CatData
   catName: Burmese
   prefab: {fileID: 5456834237982370135, guid: 4feb175c33f27cd4e946d521d4d0823b, type: 3}
   icon: {fileID: 339967196, guid: 7377c3c2cfbbe4cd08065ac0dff2fb28, type: 3}
-  price: 25
+  price: 20
   satisfactionGain: 10
   customerTips: 15
   catSpeed: 1.75

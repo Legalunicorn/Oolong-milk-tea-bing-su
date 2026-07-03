@@ -8289,10 +8289,10 @@ MonoBehaviour:
   requestableCats:
   - {fileID: 11400000, guid: 2c35c2d94ced0754785f14dafa3bea77, type: 2}
   - {fileID: 11400000, guid: cbe163956450c4645a5933c8f2954713, type: 2}
+  - {fileID: 11400000, guid: d0242f565087082479f4b840b6acb262, type: 2}
   - {fileID: 11400000, guid: 522b5c1eb9cca5343acc956956b7ee40, type: 2}
   - {fileID: 11400000, guid: ba18dd2181f6cf443baf8baeef363fcf, type: 2}
-  - {fileID: 11400000, guid: d0242f565087082479f4b840b6acb262, type: 2}
-  allowedCatCount: 1
+  allowedCatCount: 3
   requestableFoods:
   - {fileID: 11400000, guid: b525e86f736767942bdc076b6f3140c4, type: 2}
   - {fileID: 11400000, guid: 937b699f7277b0a48a1e0311ba022c29, type: 2}
@@ -18236,6 +18236,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7467669736324282586, guid: bd1acbea268ed1549a7c2b2fd28d4fd1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7467669736324282586, guid: bd1acbea268ed1549a7c2b2fd28d4fd1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9210683857154388364, guid: bd1acbea268ed1549a7c2b2fd28d4fd1, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -20696,6 +20704,50 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &1952916517
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1952916519}
+  - component: {fileID: 1952916518}
+  m_Layer: 0
+  m_Name: GlobalInputManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1952916518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1952916517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca85afadc69a7ca4e881dc0585f1be63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameAssembly::GlobalInputManager
+--- !u!4 &1952916519
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1952916517}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -19.5672, y: 0.0117, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1960037974
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22175,3 +22227,4 @@ SceneRoots:
   - {fileID: 2079703619}
   - {fileID: 657668280}
   - {fileID: 394940006}
+  - {fileID: 1952916519}

@@ -214,6 +214,11 @@ public class LevelManager : MonoBehaviour
 
     // ############ PUBLIC Methods ############### 
 
+    public bool HasSecondRoom()
+    {
+        return hasSecondRoom;
+    }
+
     // return random food data that a customer can requests
     // for this given level
     // TODO: run unit tests

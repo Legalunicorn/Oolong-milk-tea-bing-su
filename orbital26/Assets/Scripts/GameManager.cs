@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour
     {
         // TODO: temporary measure to test 
         // if adding cash works, since customer prefab not read 
-        if (Keyboard.current.qKey.wasPressedThisFrame) cash += 15;
+        // if (Keyboard.current.qKey.wasPressedThisFrame) cash += 15;
         
     }
 }

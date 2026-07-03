@@ -48,13 +48,13 @@ public class CustomerController : MonoBehaviour
 
     // when the customer starts being unhappy 
     [SerializeField] private float hungryTime = 0f;
-    [SerializeField] private float maxWaitDuration = 18f;
+    [SerializeField] private float maxWaitDuration = 20f;
     // howoften to decrease the satisfaction
     [SerializeField] private float complainInterval = 1f; //TODO: remoe
     [SerializeField] private float timeSinceLastComplain = 0f; //TODO: remove
     // timers for waiting for catsd
     [SerializeField] private float catWaitingTime = 0f;
-    [SerializeField] private float maxCatWaitTime =  9f;
+    [SerializeField] private float maxCatWaitTime =  20f;
     [SerializeField] private float catComplainInterval =  1f; //TODO: remove
     [SerializeField] private float timeSinceLastCatComplain =  0f; //TODO: remove
 

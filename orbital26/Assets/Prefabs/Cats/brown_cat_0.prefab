@@ -112,7 +112,7 @@ MonoBehaviour:
   speed: 2
   targetPos: {x: 0, y: 0}
   currPath: []
-  timeBetweenMeal: 20
+  timeBetweenMeal: 16
   foodBubblePrefab: {fileID: 7748677934914827185, guid: abb735364261b9345ba7f81acf62b10a, type: 3}
   eatDuration: 4
   feedCost: 1
