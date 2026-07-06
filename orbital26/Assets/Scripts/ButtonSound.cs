@@ -10,6 +10,11 @@ public class ButtonSound : MonoBehaviour
     // TODO: refactor game manager to match this 
     public string sceneName;
 
+    public void PlaySoundANdLoadTutorial()
+    {
+        StartCoroutine(LoadTutorial());
+    } 
+
     public void PlaySoundAndLoadScene()
     {
         // StartCoroutine(PlaySoundThenLoad());
@@ -23,8 +28,15 @@ public class ButtonSound : MonoBehaviour
     IEnumerator NewGameThenLoad()
     {
         audioSource.PlayOneShot(clickSound);
-        yield return new WaitForSeconds(clickSound.length);
+        yield return new WaitForSeconds(clickSound.length/2);
         GameManager.instance.StartNewGame();
+    }
+
+    IEnumerator LoadTutorial()
+    {
+        audioSource.PlayOneShot(clickSound);
+        yield return new WaitForSeconds(clickSound.length/2);
+        GameManager.instance.StartTutorial();
     }
 
     // IEnumerator PlaySoundThenLoad()

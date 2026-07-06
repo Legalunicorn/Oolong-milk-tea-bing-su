@@ -101,18 +101,18 @@ public class TutorialManager : MonoBehaviour
                 break;
             case 6:
                 CatBubbleArrow.SetActive(false);
-                SetMessage("This cat is sleepy zzz... Click and hold the bubble to put it to sleep");
+                SetMessage("Nice! Now this cat is sleepy zzz... Click and hold the bubble to put it to sleep.");
                 ShowNextButton(false);
                 tutorialCat.SkipToTired();
                 Invoke(nameof(SetCatArrow), 0.5f);
                 break;
             case 7:
                 CatBubbleArrow.SetActive(false);
-                SetMessage("Taking care of cats keep your satisfaction high. Ignoring them deduct satisfaction points");
+                SetMessage("Taking care of cats keeps your satisfaction high. Ignoring them deduct satisfaction points! ");
                 ShowNextButton(true);
                 break;
             case 8:
-                SetMessage("A customer has arrived. Let's see what they want");
+                SetMessage("A customer has arrived. Let's see what they want...");
                 ShowNextButton(false);
                 LevelManager.instance.SpawnCustomer();
                 break;
@@ -151,7 +151,7 @@ public class TutorialManager : MonoBehaviour
             case 14:
                 // CustomerBubbleArrow.SetActive(true);   
                 SetCustomerArrow();
-                SetMessage("click the customer's request bubble to enter a Cat selection mode.");
+                SetMessage("Click the customer's request bubble to enter a Cat selection mode.");
                 ShowNextButton(false);
                 break;
             case 15:
@@ -161,7 +161,7 @@ public class TutorialManager : MonoBehaviour
                 break;
             case 16:
                 ShopmenuArrow.SetActive(true);
-                SetMessage("Customers may request cats you dont own. Click the shop menu.");
+                SetMessage("Great job! Sometimes customers may request cats you dont own. Click the cat shop menu.");
                 ShowNextButton(false);
                 break;
             case 17: 
@@ -176,7 +176,7 @@ public class TutorialManager : MonoBehaviour
                 ShowNextButton(true);
                 break;
             default:
-                GameManager.instance.StartNewGame();
+                GameManager.instance.GoToStartMenu();
                 break;
         }
     }
