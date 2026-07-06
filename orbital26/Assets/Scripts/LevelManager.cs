@@ -381,4 +381,10 @@ public class LevelManager : MonoBehaviour
     {
         return requestedCatData;
     }
+
+    // accessor method, no modifier so we dont accidentally change 
+    public bool IsTutorialLevel()
+    {
+        return isTutorialLevel;
+    }
 }
