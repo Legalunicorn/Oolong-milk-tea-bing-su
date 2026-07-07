@@ -30,6 +30,8 @@ public class MenuManager : MonoBehaviour
 
     public void OpenMenu()
     {
+        // click sound effect
+        AudioManager.instance?.PlayUIClickSound(); 
         menuPanel.SetActive(true);
     }
 

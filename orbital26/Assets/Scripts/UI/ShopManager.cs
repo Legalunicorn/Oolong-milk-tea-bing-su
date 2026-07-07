@@ -55,6 +55,9 @@ public class ShopManager : MonoBehaviour
 
     public void OpenShopUI()
     {
+        // Shop and menu buttons
+        // click sound effect
+        AudioManager.instance?.PlayUIClickSound();
         //tutorial call back
         TutorialManager.instance?.OnShopOpen();
         

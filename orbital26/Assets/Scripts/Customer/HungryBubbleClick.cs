@@ -35,6 +35,7 @@ public class HungryBubbleClick : MonoBehaviour
         // Add an onclick to open food menu as well, seems more intuitive
         if (InputUtils.IsLeftClickInRadius(transform.position))
         {
+            AudioManager.instance?.PlayCustomerBubbleClickSound();
             // TutorialManager.instance?.OnCustomerCatReqClicked();
             FoodMenuUI.instance.Show();
         }
