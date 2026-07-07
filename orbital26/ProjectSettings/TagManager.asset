@@ -76,5 +76,8 @@ TagManager:
   - name: Decoration
     uniqueID: 1654823005
     locked: 0
+  - name: TutorialUI
+    uniqueID: 2495924555
+    locked: 0
   m_RenderingLayers:
   - Default

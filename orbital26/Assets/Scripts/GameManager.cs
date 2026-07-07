@@ -13,7 +13,9 @@ public class GameManager : MonoBehaviour
     // static instance accessible globbally 
     public static GameManager instance {get; private set;}
 
-    public int cash; 
+    public int cash = 50; 
+    public int tempCash; // store here during tutorial
+    public int tutorialCash;
     [SerializeField] private int startingCash = 50;
     // Hash Map to store Cats 
     // right now its only one cat but this will expand 
@@ -78,6 +80,14 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Level1");
     }
 
+    public void StartTutorial()
+    {
+        // cache the actual cash for now 
+        // later reset back when tutorial ends
+        tempCash = cash;
+        SceneManager.LoadScene("tutorial");
+    }
+
     public void GoNextLevel()
     {
         currLevel++;
@@ -92,6 +102,11 @@ public class GameManager : MonoBehaviour
 
     public void GoToStartMenu()
     {
+        if (LevelManager.instance.IsTutorialLevel())
+        {
+            // reset the cash back to the proper level
+            cash = tempCash;
+        }
         SceneManager.LoadScene(0);
     }
     

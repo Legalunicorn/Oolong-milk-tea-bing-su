@@ -8,6 +8,8 @@ public class BubbleCatFood: BubbleCatInteraction
             Debug.Log("Insufficient cash to feed cat");
             return;
         }
+        //if (TutorialManager.instance != null) TutorialManager.instance.OnFeedCat();
+        TutorialManager.instance?.OnFeedCat();
         cat.FeedCat();
     }
 }

@@ -40,18 +40,18 @@ public class Cat : MonoBehaviour
     private float idleTimeLeft = 0f; // reset to 1f
     // NOTE: ##### NEW PATH VARIABLES FOR PATH FINDING ##########
     [SerializeField] private List<Node> currPath;
-    private int pathIdx;
+    [SerializeField] private int pathIdx;
     private Vector2 destination; // for walking to bowl/sleep spot 
     // [SPECIAL MOVEMENT] for walking to eat/sleep spots
     private CatSpot currentSpot;
-    private bool walkingToSleepSpot = false;
-    private bool walkingAwayAfterSleep = false;
-    private bool walkingToEatSpot = false;
-    private bool walkingAwayAfterEat = false;
+    [SerializeField] private bool walkingToSleepSpot = false;
+    [SerializeField] private bool walkingAwayAfterSleep = false;
+    [SerializeField] private bool walkingToEatSpot = false;
+    [SerializeField] private bool walkingAwayAfterEat = false;
 
     // [HUNGER] variables
     [SerializeField] private float timeBetweenMeal = 14f; 
-    private float timeLeftToHungry;
+    [SerializeField] private float timeLeftToHungry;
     [SerializeField] private GameObject foodBubblePrefab;
     [SerializeField] private float eatDuration = 4f;
     // SerializeField -> draw from cat prefab type
@@ -60,7 +60,7 @@ public class Cat : MonoBehaviour
     
     // [SLEEP] variables
     [SerializeField] private float timeBetweenSleep = 14f;
-    private float timeLeftToSleep;
+    [SerializeField] private float timeLeftToSleep;
     [SerializeField] private GameObject sleepBubblePrefab;
     [SerializeField] private float sleepDuration = 4f;
 
@@ -157,7 +157,22 @@ public class Cat : MonoBehaviour
     {
         if (walkingToSleepSpot || walkingAwayAfterSleep || walkingToEatSpot || walkingAwayAfterEat) return;
 
-        // Update sleep only if cat is IDLE or WALKING
+        // if (state == CatState.Idle || state == CatState.Walking)
+        // {
+        //     timeLeftToSleep -= Time.deltaTime;
+        //     if (timeLeftToSleep <= 0)
+        //     {
+        //         state = CatState.Tired;
+        //         UpdateAnimation();
+        //         SpawnSleepBubble();
+        //     }
+        // } else if (state == CatState.Tired)
+        // {
+        //     if (currentBubble == null) SpawnSleepBubble();
+        // }
+
+        // TODO: change the code to handle state specifically instead
+        // // Update sleep only if cat is IDLE or WALKING
         if (state != CatState.Idle && state != Cat.CatState.Walking ) return;
 
         timeLeftToSleep -= Time.deltaTime;
@@ -210,6 +225,7 @@ public class Cat : MonoBehaviour
             StartSleepingNow();
             return;
         }
+
         destination = currentSpot.transform.position + bedOffset;
         pathIdx = 0;
         walkingToSleepSpot = true;
@@ -217,6 +233,7 @@ public class Cat : MonoBehaviour
 
         state = CatState.Walking;
         UpdateAnimation();
+        Debug.Log("end call of sleep cat");
     }      
          
 
@@ -342,6 +359,9 @@ public class Cat : MonoBehaviour
         pathIdx = 0;
         destination = currentSpot.transform.position;
 
+        // this code probably caused a couple of bugs 
+        // not ideal to keep a set of bools like this 
+        // ill see if this affects the forced tired thing
         walkingToEatSpot = true;
         walkingAwayAfterEat = false;
 
@@ -607,5 +627,90 @@ public class Cat : MonoBehaviour
         HandleSatisfaction(10); 
         SetToIdle();
         // UnlockFromCustomer();
+    }
+
+
+    // ### methods added for tutorial 
+    public void SkipToHungry()
+    {
+        currPath  = null;
+        pathIdx = 0;
+        destination = transform.position;
+        // reset every timer 
+        // set cat back to just hungr
+        timeLeftToHungry = 0f;
+        currentWaitDuration = 0;
+        walkingAwayAfterEat = false;
+        walkingAwayAfterSleep = false; 
+        walkingToEatSpot = false;
+        walkingToSleepSpot = false;
+        CancelInvoke(nameof(FinishEating));
+        CancelInvoke(nameof(FinishSleep));
+        animator.SetBool("isEating", false);
+        animator.SetBool("isSleeping", false);
+        if (currentBubble != null) Destroy(currentBubble);
+        state = CatState.Idle;
+        UpdateAnimation();
+        state = CatState.Hungry;
+        UpdateAnimation();
+        SpawnHungerBubble();
+
+    }
+
+    // BUG: cat not switching to tired mode
+
+    public void SkipToTired()
+    {
+        Invoke(nameof(DelayedSkipToTired), 0.5f); // try to fix bug with a delay
+    } 
+    public void DelayedSkipToTired()
+    {
+        // im trying a different method instead of set to tired 
+        // i set the timer to tired to be very small and try to trigger the tired naturally 
+        state = CatState.Idle;
+        CancelInvoke(nameof(FinishEating));
+        CancelInvoke(nameof(FinishSleep));
+        UpdateAnimation();
+        walkingAwayAfterEat = false;
+        walkingAwayAfterSleep = false; 
+        walkingToEatSpot = false;
+        walkingToSleepSpot = false;
+
+        timeLeftToSleep = 0.1f;
+        currentWaitDuration = 0f;
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isEating", false);
+        animator.SetBool("isSleeping", false);
+        if (currentBubble != null) Destroy(currentBubble);
+        currPath = null;
+        pathIdx = 0;
+        Debug.Log("Skip to tired completed?");
+
+        // Debug.Log("skip to tired called");
+        // state = CatState.Tired;
+
+        // currPath  = null;
+        // pathIdx = 0;
+        // destination = transform.position;
+        // walkingAwayAfterEat = false;
+        // walkingAwayAfterSleep = false; 
+        // walkingToEatSpot = false;
+        // walkingToSleepSpot = false;
+
+        // if (currentSpot!=null) currentSpot = null;
+
+        // CancelInvoke(nameof(FinishEating));
+        // CancelInvoke(nameof(FinishSleep));
+
+        // timeLeftToSleep = 0f;
+        // currentWaitDuration = 0;
+
+
+        // animator.SetBool("isWalking", false);
+        // animator.SetBool("isEating", false);
+        // animator.SetBool("isSleeping", false);
+        // if (currentBubble != null) Destroy(currentBubble);
+        // SpawnSleepBubble();
+        // Debug.Log("Spaned sleep bubble");
     }
 }
