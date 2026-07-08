@@ -23,6 +23,7 @@ public class RequestCatBubble : MonoBehaviour
     {
         if (InputUtils.IsLeftClickInRadius(transform.position))
         {
+            AudioManager.instance?.PlayCustomerBubbleClickSound();
             Debug.Log("cat req was clicked");
             //tutorial  callback
             TutorialManager.instance?.OnCustomerCatReqClicked();

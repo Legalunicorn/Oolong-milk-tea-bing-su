@@ -14,11 +14,15 @@ public class MenuManager : MonoBehaviour
 
     public void RestartLevel()
     {
+        // click sound effect
+        AudioManager.instance?.PlayUIClickSound(); 
         LevelManager.instance.RestartLevel();
     }
 
     public void QuitApplication()
     {
+        // click sound effect
+        AudioManager.instance?.PlayUIClickSound(); 
         // we will host on web games, so there is no quit 
         /// it will go back to start menu 
         GameManager.instance.GoToStartMenu();
@@ -37,6 +41,8 @@ public class MenuManager : MonoBehaviour
 
     public void CloseMenu()
     {
+        // click sound effect
+        AudioManager.instance?.PlayUIClickSound(); 
         menuPanel.SetActive(false);
     }
 }

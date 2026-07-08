@@ -42,6 +42,7 @@ public class FoodManager : MonoBehaviour
     public void IncreaseStock(FoodData ft)
     {
         if (!stock.ContainsKey(ft)) stock[ft] = 0;
+         AudioManager.instance?.PlaySpendMoneySound();
         stock[ft]++;
         // TODO: update UI of food increment
         // or maybe assign responsibility to who everr cllaed this

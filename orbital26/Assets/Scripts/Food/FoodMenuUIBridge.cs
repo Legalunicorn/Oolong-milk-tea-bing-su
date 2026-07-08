@@ -10,6 +10,8 @@ public class FoodMenuUIBridge : MonoBehaviour
 
     public void Hide()
     {
+        // click sound effect
+        AudioManager.instance?.PlayUIClickSound(); 
         FoodMenuUI.instance.Hide();
     }
  

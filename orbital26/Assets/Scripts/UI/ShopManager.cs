@@ -43,6 +43,8 @@ public class ShopManager : MonoBehaviour
         // SpendCash returns bool (success status), True => auto spends it
         if (GameManager.instance.SpendCash(catData.price))
         {
+            // play sound effect if the purchase is successful
+            AudioManager.instance?.PlaySpendMoneySound();
             GameManager.instance.AddCat(catData);
             LevelManager.instance.SpawnCat(catData.prefab);
             feedbackText.text = catData.name = " purchased!";
@@ -68,6 +70,8 @@ public class ShopManager : MonoBehaviour
 
     public void CloseShopUI()
     {
+        // click sound effect
+        AudioManager.instance?.PlayUIClickSound(); 
         shopPanel.SetActive(false);
     }
 

@@ -11,7 +11,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip catBubbleClickSound;
     [SerializeField] private AudioClip customerBubbleClickSound;
     [SerializeField] private AudioClip uiClickSound;
-
+    [SerializeField] private AudioClip earnMoneySound;
+    [SerializeField] private AudioClip spendMoneySound;
+    [SerializeField] private AudioClip pettingSound;
     void Awake()
     {
         if (instance == null)
@@ -41,5 +43,20 @@ public class AudioManager : MonoBehaviour
     public void PlayUIClickSound()
     {
         sfxSource.PlayOneShot(uiClickSound);
+    }
+
+     public void PlayEarnMoneySound()
+    {
+        sfxSource.PlayOneShot(earnMoneySound);
+    }
+
+ public void PlaySpendMoneySound()
+    {
+        sfxSource.PlayOneShot(spendMoneySound);
+    }
+
+    public void PlayPettingSound()
+    {
+        sfxSource.PlayOneShot(pettingSound);
     }
 }

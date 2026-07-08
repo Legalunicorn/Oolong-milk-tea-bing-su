@@ -199,6 +199,8 @@ MonoBehaviour:
   catBubbleClickSound: {fileID: 8300000, guid: 9b1c5bd577d04479a88acd19095bde14, type: 3}
   customerBubbleClickSound: {fileID: 8300000, guid: bab96891db6874a24badef038c1b59f6, type: 3}
   uiClickSound: {fileID: 8300000, guid: 660ac2aac31ad4b2d8e1266364cde9fb, type: 3}
+  earnMoneySound: {fileID: 8300000, guid: 9cf5df09b6bbf4bd087c2c40deff30e6, type: 3}
+  spendMoneySound: {fileID: 8300000, guid: d9b48c6dad46b473eb7a0a34a60ade2a, type: 3}
 --- !u!82 &1496724
 AudioSource:
   m_ObjectHideFlags: 0

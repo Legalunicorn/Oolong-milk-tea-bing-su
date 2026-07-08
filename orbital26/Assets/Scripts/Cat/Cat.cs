@@ -115,6 +115,7 @@ public class Cat : MonoBehaviour
                 // must not be locked, and musts be correct cat type
                 if (state != CatState.Locked && catData == LevelManager.instance.GetRequestedCatData())
                 {
+                    AudioManager.instance?.PlayCustomerBubbleClickSound();
                     LevelManager.instance.ConfirmCatSelection(this);
                 }
             }
@@ -613,6 +614,8 @@ public class Cat : MonoBehaviour
 
     public void InteractWithCustomer()
     {
+        //Sound effect for petting the cat
+        AudioManager.instance?.PlayPettingSound();
         // cat was previous locked we just need to queue animation
         // TODO: create animation state transtion AND animation
         // for now : eating aniomation 

@@ -349,6 +349,7 @@ public class CustomerController : MonoBehaviour
         {
             string msg = "+" + price;
             FloatingTextManager.instance.SpawnCoinText(msg, transform.position + Vector3.up);
+            AudioManager.instance?.PlayEarnMoneySound();
         }
         hungryTime = 0f;
         timeSinceLastComplain = 0f;
