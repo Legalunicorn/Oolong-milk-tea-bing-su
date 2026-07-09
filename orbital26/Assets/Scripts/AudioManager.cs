@@ -14,6 +14,11 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip earnMoneySound;
     [SerializeField] private AudioClip spendMoneySound;
     [SerializeField] private AudioClip pettingSound;
+    [SerializeField] private AudioClip doorBellSound; // when customer enters
+    [SerializeField] private AudioClip winLevelSound;
+    [SerializeField] private AudioClip loseLevelSound; 
+    [SerializeField] private AudioClip gibberishSound; // when customer order haha sounds goofy
+    [SerializeField] private AudioClip meowOnce; 
     void Awake()
     {
         if (instance == null)
@@ -57,6 +62,29 @@ public class AudioManager : MonoBehaviour
 
     public void PlayPettingSound()
     {
-        sfxSource.PlayOneShot(pettingSound);
+        sfxSource.PlayOneShot(pettingSound, 0.6f); // softer, its a bit startling
     }
+
+    public void PlayDoorBellSound()
+    {
+        sfxSource.PlayOneShot(doorBellSound);
+    }
+
+    public void PlayWinLevelSound()
+    {
+        sfxSource.PlayOneShot(winLevelSound);
+    }
+    public void PlayLoseLevelSound()
+    {
+        sfxSource.PlayOneShot(loseLevelSound);
+    }
+    public void PlayGibberishSound()
+    {
+        sfxSource.PlayOneShot(gibberishSound, 1.5f); // 150% volume
+    }
+    public void PlayMeowOnceSound()
+    {
+        sfxSource.PlayOneShot(meowOnce);
+    }
+    
 }

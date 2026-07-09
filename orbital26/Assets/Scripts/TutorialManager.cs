@@ -57,6 +57,7 @@ public class TutorialManager : MonoBehaviour
 
     public void NextStep()
     {
+        AudioManager.instance?.PlayUIClickSound();
         currStep++;
         ShowCurrentStep();
     }

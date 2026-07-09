@@ -303,6 +303,9 @@ public class CustomerController : MonoBehaviour
         if (state != CustomerState.WaitingAtCounter) return;
         if (currentBubble != null) Destroy(currentBubble);
 
+        // Customer order with gibbersh sounds;
+        AudioManager.instance?.PlayGibberishSound();
+
         requestedFood = LevelManager.instance.GetRandomRequestableFoodData();
         hungryTime = 0f;
         currentBubble = Instantiate(hungryBubblePrefab, transform.position, Quaternion.identity);

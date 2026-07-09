@@ -206,6 +206,8 @@ public class LevelManager : MonoBehaviour
             CustomerspawnPoint.position,
             Quaternion.identity
         );
+        AudioManager.instance?.PlayDoorBellSound();
+
     }
 
 
@@ -309,8 +311,14 @@ public class LevelManager : MonoBehaviour
         {
             Debug.Log("LevelUI NULL");
         }
-        if (res) LevelResultUI.instance.ShowWin();
-        else LevelResultUI.instance.ShowLose();
+        if (res) {
+            LevelResultUI.instance.ShowWin();
+            AudioManager.instance?.PlayWinLevelSound();
+        }
+        else {
+            LevelResultUI.instance.ShowLose();
+            AudioManager.instance?.PlayLoseLevelSound();
+        }
         // Debug.Log("Game over: " + msg);
         // RestartLevel();
     }

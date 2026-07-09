@@ -99,6 +99,7 @@ public class Cat : MonoBehaviour
         HandleMovement();
         OrientateCat();
         HandleDissatisfaction();
+        HandleCatClick();
     }
 
     void OnMouseClicked()
@@ -689,31 +690,14 @@ public class Cat : MonoBehaviour
         pathIdx = 0;
         Debug.Log("Skip to tired completed?");
 
-        // Debug.Log("skip to tired called");
-        // state = CatState.Tired;
-
-        // currPath  = null;
-        // pathIdx = 0;
-        // destination = transform.position;
-        // walkingAwayAfterEat = false;
-        // walkingAwayAfterSleep = false; 
-        // walkingToEatSpot = false;
-        // walkingToSleepSpot = false;
-
-        // if (currentSpot!=null) currentSpot = null;
-
-        // CancelInvoke(nameof(FinishEating));
-        // CancelInvoke(nameof(FinishSleep));
-
-        // timeLeftToSleep = 0f;
-        // currentWaitDuration = 0;
+    }
 
 
-        // animator.SetBool("isWalking", false);
-        // animator.SetBool("isEating", false);
-        // animator.SetBool("isSleeping", false);
-        // if (currentBubble != null) Destroy(currentBubble);
-        // SpawnSleepBubble();
-        // Debug.Log("Spaned sleep bubble");
+    public void HandleCatClick()
+    {
+        if (InputUtils.IsLeftClickInRadius(transform.position))
+        {
+            AudioManager.instance?.PlayMeowOnceSound();
+        }
     }
 }

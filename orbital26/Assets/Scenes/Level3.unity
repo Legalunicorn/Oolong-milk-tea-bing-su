@@ -14488,6 +14488,11 @@ MonoBehaviour:
   earnMoneySound: {fileID: 8300000, guid: 9cf5df09b6bbf4bd087c2c40deff30e6, type: 3}
   spendMoneySound: {fileID: 8300000, guid: d9b48c6dad46b473eb7a0a34a60ade2a, type: 3}
   pettingSound: {fileID: 8300000, guid: 8b0479566fe5641179fbe2affbde9dd6, type: 3}
+  doorBellSound: {fileID: 8300000, guid: e1888e5ad8c4ddd4fbef7b8e98320fdb, type: 3}
+  winLevelSound: {fileID: 8300000, guid: 95d47a5959a1ead408f6aa5bc19c7053, type: 3}
+  loseLevelSound: {fileID: 8300000, guid: 53b0e6bc6b78b9c4694d4b489b2b39d4, type: 3}
+  gibberishSound: {fileID: 8300000, guid: 34f608999cd5f8a48805cdda74cb44ca, type: 3}
+  meowOnce: {fileID: 8300000, guid: 1c22aeafeeb3d254ab55c74c807fd532, type: 3}
 --- !u!82 &1384010391
 AudioSource:
   m_ObjectHideFlags: 0
@@ -18129,6 +18134,10 @@ PrefabInstance:
     - target: {fileID: 426977921563523539, guid: bd1acbea268ed1549a7c2b2fd28d4fd1, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 426977921563523539, guid: bd1acbea268ed1549a7c2b2fd28d4fd1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.05039978
       objectReference: {fileID: 0}
     - target: {fileID: 763677549739328796, guid: bd1acbea268ed1549a7c2b2fd28d4fd1, type: 3}
       propertyPath: m_text
