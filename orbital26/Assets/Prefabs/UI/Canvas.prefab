@@ -2105,7 +2105,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8232889330919725758}
         m_TargetAssemblyTypeName: LevelResultUI, GameAssembly
-        m_MethodName: OnNextLevel
+        m_MethodName: OnMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

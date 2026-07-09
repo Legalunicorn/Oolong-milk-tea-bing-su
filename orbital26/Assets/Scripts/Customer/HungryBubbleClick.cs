@@ -13,6 +13,9 @@ public class HungryBubbleClick : MonoBehaviour
 
     // the child
     [SerializeField] private SpriteRenderer foodIcon;
+    
+
+    [SerializeField] private  CustomerTimer timer;
  
     // once this object has been instantiated by customer
     // it will call the set up to link tofether
@@ -39,6 +42,13 @@ public class HungryBubbleClick : MonoBehaviour
             // TutorialManager.instance?.OnCustomerCatReqClicked();
             FoodMenuUI.instance.Show();
         }
+
+        float left = customerController.GetTimerLeft();
+        if (left >=0f && left <= 1.0f)
+        {
+            timer.SetProgress(left);
+        }
+
     }
 
     // just extra incase we need 

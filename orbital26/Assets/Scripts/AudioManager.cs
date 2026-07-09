@@ -80,7 +80,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayGibberishSound()
     {
-        sfxSource.PlayOneShot(gibberishSound, 1.5f); // 150% volume
+        sfxSource.PlayOneShot(gibberishSound, 2f); // 150% volume
     }
     public void PlayMeowOnceSound()
     {

@@ -11,6 +11,8 @@ public class RequestCatBubble : MonoBehaviour
     // Cat sprite icon based on cat data!
     [SerializeField] private SpriteRenderer catIcon;
 
+    [SerializeField] private  CustomerTimer timer;
+
     public void Setup(CustomerController customerRef, CatData data)
     {
         customer = customerRef;
@@ -30,6 +32,15 @@ public class RequestCatBubble : MonoBehaviour
         
             LevelManager.instance.EnterCatSelection(requestedCatData, customer);
         }
+
+        float left = customer.GetTimerLeft();
+        if (left >=0f && left <= 1.0f)
+        {
+            timer.SetProgress(left);
+        }
+
+
+
         // if (Mouse.current.leftButton.wasPressedThisFrame)
         // {
         //     Debug.Log("CAT REQ BUBBLE CLICKED");

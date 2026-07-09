@@ -388,4 +388,12 @@ public class CustomerController : MonoBehaviour
         if (currentBubble != null) Destroy(currentBubble);
         currentBubble = null;
     }
+
+
+    public float GetTimerLeft()
+    {
+        if (state == CustomerState.WaitingAtCounter) return 1f - (hungryTime/maxWaitDuration);
+        else if (state == CustomerState.RequestCat) return 1f - (catWaitingTime/maxCatWaitTime);
+        else return 0f; // invalid/negated value
+    }
 }
