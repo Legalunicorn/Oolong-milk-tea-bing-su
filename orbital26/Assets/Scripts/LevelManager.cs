@@ -116,6 +116,10 @@ public class LevelManager : MonoBehaviour
         AStar.instance.RefreshNodes();
     
         if (!isTutorialLevel) SpawnCatsFromInventory();
+
+        // bug fix: always make cursor on top 
+        CursorUI cursor = FindFirstObjectByType<CursorUI>();
+        if (cursor != null) cursor.transform.SetAsLastSibling();
     }
 
     void SpawnCatsFromInventory()
@@ -350,6 +354,8 @@ public class LevelManager : MonoBehaviour
 
         // enable UI during select 
         if (catSelectionUI != null) catSelectionUI.SetActive(true);
+
+        CursorUI.instance?.ShowSelectionCursor();
     }
 
     // Match the cat to the customer = )
@@ -378,6 +384,9 @@ public class LevelManager : MonoBehaviour
         foreach(GameObject ui in hideOnCatSelection) ui.SetActive(true);
 
         if (catSelectionUI != null) catSelectionUI.SetActive(false);
+
+        CursorUI.instance?.ShowDefaultCursor();
+
     }
 
     public bool IsInCatSelection()

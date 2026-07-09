@@ -62,10 +62,13 @@ public class FoodItemDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler,
         }
 
         Vector2 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+
+        // if our customers overlap, it will cause issues
         // search for the customer pos
         Collider2D collider = Physics2D.OverlapPoint(pos);
         if (collider == null) return;
         
+        // BUG: this one finds one customer
         CustomerController customer = collider.GetComponent<CustomerController>();
         if (customer == null) return;
 
