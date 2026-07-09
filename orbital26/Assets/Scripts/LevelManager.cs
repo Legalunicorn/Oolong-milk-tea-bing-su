@@ -82,6 +82,9 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private bool isTutorialLevel = false;
 
+
+    private bool isPaused = false;
+
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
     // Start: called before first frame update 
@@ -99,6 +102,7 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        isPaused = false;
         isGameOver = false;
         cash = GameManager.instance.cash;
         timeLeft = timeLimit;
@@ -191,6 +195,14 @@ public class LevelManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && state == LevelState.CatSelection)
         {
             CancelCatSelection();
+        }
+
+        // TODO: remove once tested: testing pause unpause system
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            if (isPaused) ResumeLevel();
+            else PauseLevel();
+            Debug.Log("Is paused: " + isPaused);
         }
     }
 
@@ -404,4 +416,23 @@ public class LevelManager : MonoBehaviour
     {
         return isTutorialLevel;
     }
+
+    // Pause Unpause
+    public void PauseLevel()
+    {
+        isPaused = true;
+        Time.timeScale = 0f;
+    }
+
+    public void ResumeLevel()
+    {
+        isPaused = false;
+        Time.timeScale = 1f;
+    }
+
+    public bool IsPaused()
+    {
+        return isPaused;
+    }
+
 }
