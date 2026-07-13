@@ -33,6 +33,7 @@ public abstract class BubbleCatInteraction : MonoBehaviour
     {
         if (InputUtils.IsMouseInRadius(transform.position))
         {
+            AudioManager.instance?.PlayCatBubbleClickSound();
             isHolding = true;
         }
     }

@@ -99,6 +99,7 @@ public class Cat : MonoBehaviour
         HandleMovement();
         OrientateCat();
         HandleDissatisfaction();
+        HandleCatClick();
     }
 
     void OnMouseClicked()
@@ -115,6 +116,7 @@ public class Cat : MonoBehaviour
                 // must not be locked, and musts be correct cat type
                 if (state != CatState.Locked && catData == LevelManager.instance.GetRequestedCatData())
                 {
+                    AudioManager.instance?.PlayCustomerBubbleClickSound();
                     LevelManager.instance.ConfirmCatSelection(this);
                 }
             }
@@ -613,6 +615,8 @@ public class Cat : MonoBehaviour
 
     public void InteractWithCustomer()
     {
+        //Sound effect for petting the cat
+        AudioManager.instance?.PlayPettingSound();
         // cat was previous locked we just need to queue animation
         // TODO: create animation state transtion AND animation
         // for now : eating aniomation 
@@ -686,31 +690,14 @@ public class Cat : MonoBehaviour
         pathIdx = 0;
         Debug.Log("Skip to tired completed?");
 
-        // Debug.Log("skip to tired called");
-        // state = CatState.Tired;
-
-        // currPath  = null;
-        // pathIdx = 0;
-        // destination = transform.position;
-        // walkingAwayAfterEat = false;
-        // walkingAwayAfterSleep = false; 
-        // walkingToEatSpot = false;
-        // walkingToSleepSpot = false;
-
-        // if (currentSpot!=null) currentSpot = null;
-
-        // CancelInvoke(nameof(FinishEating));
-        // CancelInvoke(nameof(FinishSleep));
-
-        // timeLeftToSleep = 0f;
-        // currentWaitDuration = 0;
+    }
 
 
-        // animator.SetBool("isWalking", false);
-        // animator.SetBool("isEating", false);
-        // animator.SetBool("isSleeping", false);
-        // if (currentBubble != null) Destroy(currentBubble);
-        // SpawnSleepBubble();
-        // Debug.Log("Spaned sleep bubble");
+    public void HandleCatClick()
+    {
+        if (InputUtils.IsLeftClickInRadius(transform.position))
+        {
+            AudioManager.instance?.PlayMeowOnceSound();
+        }
     }
 }

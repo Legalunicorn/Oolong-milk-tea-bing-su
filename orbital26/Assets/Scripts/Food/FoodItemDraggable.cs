@@ -62,19 +62,39 @@ public class FoodItemDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler,
         }
 
         Vector2 pos = Camera.main.ScreenToWorldPoint(eventData.position);
-        // search for the customer pos
-        Collider2D collider = Physics2D.OverlapPoint(pos);
-        if (collider == null) return;
-        
-        CustomerController customer = collider.GetComponent<CustomerController>();
-        if (customer == null) return;
 
-        // found customer, try to search food now 
-        if (customer.TryServeFood(foodData))
+        // find all points instead of one
+        Collider2D[] colliders = Physics2D.OverlapPointAll(pos);
+        foreach(Collider2D coll in colliders)
         {
-            // check if this update the UI ? 
-            FoodManager.instance.ServeFood(foodData);
+            CustomerController customer = coll.GetComponent<CustomerController>();
+            if (customer == null) continue;
+            if (customer.TryServeFood(foodData))
+            {
+                FoodManager.instance?.ServeFood(foodData);
+                // serve one customer only
+                break;
+            }
         }
+
+
+        // OLD METHOD: BUG -> only searches for first collider 
+        // if multiple customer overlap we cant feed the bottom customer 
+        // if our customers overlap, it will cause issues
+        // search for the customer pos
+        // Collider2D collider = Physics2D.OverlapPoint(pos);
+        // if (collider == null) return;
+        
+        // // BUG: this one finds one customer
+        // CustomerController customer = collider.GetComponent<CustomerController>();
+        // if (customer == null) return;
+
+        // // found customer, try to search food now 
+        // if (customer.TryServeFood(foodData))
+        // {
+        //     // check if this update the UI ? 
+        //     FoodManager.instance.ServeFood(foodData);
+        // }
     }
 
     void FollowMouse(Vector2 pos)

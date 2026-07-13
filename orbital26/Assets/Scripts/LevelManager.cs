@@ -82,6 +82,9 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private bool isTutorialLevel = false;
 
+
+    private bool isPaused = false;
+
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
     // Start: called before first frame update 
@@ -99,6 +102,7 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        isPaused = false;
         isGameOver = false;
         cash = GameManager.instance.cash;
         timeLeft = timeLimit;
@@ -116,6 +120,10 @@ public class LevelManager : MonoBehaviour
         AStar.instance.RefreshNodes();
     
         if (!isTutorialLevel) SpawnCatsFromInventory();
+
+        // bug fix: always make cursor on top 
+        CursorUI cursor = FindFirstObjectByType<CursorUI>();
+        if (cursor != null) cursor.transform.SetAsLastSibling();
     }
 
     void SpawnCatsFromInventory()
@@ -188,6 +196,14 @@ public class LevelManager : MonoBehaviour
         {
             CancelCatSelection();
         }
+
+        // TODO: remove once tested: testing pause unpause system
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            if (isPaused) ResumeLevel();
+            else PauseLevel();
+            Debug.Log("Is paused: " + isPaused);
+        }
     }
 
    public void SpawnCustomer()
@@ -206,6 +222,8 @@ public class LevelManager : MonoBehaviour
             CustomerspawnPoint.position,
             Quaternion.identity
         );
+        AudioManager.instance?.PlayDoorBellSound();
+
     }
 
 
@@ -309,8 +327,14 @@ public class LevelManager : MonoBehaviour
         {
             Debug.Log("LevelUI NULL");
         }
-        if (res) LevelResultUI.instance.ShowWin();
-        else LevelResultUI.instance.ShowLose();
+        if (res) {
+            LevelResultUI.instance.ShowWin();
+            AudioManager.instance?.PlayWinLevelSound();
+        }
+        else {
+            LevelResultUI.instance.ShowLose();
+            AudioManager.instance?.PlayLoseLevelSound();
+        }
         // Debug.Log("Game over: " + msg);
         // RestartLevel();
     }
@@ -342,6 +366,8 @@ public class LevelManager : MonoBehaviour
 
         // enable UI during select 
         if (catSelectionUI != null) catSelectionUI.SetActive(true);
+
+        CursorUI.instance?.ShowSelectionCursor();
     }
 
     // Match the cat to the customer = )
@@ -370,6 +396,9 @@ public class LevelManager : MonoBehaviour
         foreach(GameObject ui in hideOnCatSelection) ui.SetActive(true);
 
         if (catSelectionUI != null) catSelectionUI.SetActive(false);
+
+        CursorUI.instance?.ShowDefaultCursor();
+
     }
 
     public bool IsInCatSelection()
@@ -387,4 +416,23 @@ public class LevelManager : MonoBehaviour
     {
         return isTutorialLevel;
     }
+
+    // Pause Unpause
+    public void PauseLevel()
+    {
+        isPaused = true;
+        Time.timeScale = 0f;
+    }
+
+    public void ResumeLevel()
+    {
+        isPaused = false;
+        Time.timeScale = 1f;
+    }
+
+    public bool IsPaused()
+    {
+        return isPaused;
+    }
+
 }

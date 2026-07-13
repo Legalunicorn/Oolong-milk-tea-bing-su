@@ -34,6 +34,7 @@ public class CameraController : MonoBehaviour
     // just a small abstraction, maybe we might add third room
     private void PanToRoom(Transform room)
     {
+        AudioManager.instance?.PlayUIClickSound();
         targetPos = new Vector3(
             room.position.x,
             room.position.y,

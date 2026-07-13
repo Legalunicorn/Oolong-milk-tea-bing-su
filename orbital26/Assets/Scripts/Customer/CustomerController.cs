@@ -303,6 +303,9 @@ public class CustomerController : MonoBehaviour
         if (state != CustomerState.WaitingAtCounter) return;
         if (currentBubble != null) Destroy(currentBubble);
 
+        // Customer order with gibbersh sounds;
+        AudioManager.instance?.PlayGibberishSound();
+
         requestedFood = LevelManager.instance.GetRandomRequestableFoodData();
         hungryTime = 0f;
         currentBubble = Instantiate(hungryBubblePrefab, transform.position, Quaternion.identity);
@@ -349,6 +352,7 @@ public class CustomerController : MonoBehaviour
         {
             string msg = "+" + price;
             FloatingTextManager.instance.SpawnCoinText(msg, transform.position + Vector3.up);
+            AudioManager.instance?.PlayEarnMoneySound();
         }
         hungryTime = 0f;
         timeSinceLastComplain = 0f;
@@ -383,5 +387,13 @@ public class CustomerController : MonoBehaviour
     {
         if (currentBubble != null) Destroy(currentBubble);
         currentBubble = null;
+    }
+
+
+    public float GetTimerLeft()
+    {
+        if (state == CustomerState.WaitingAtCounter) return 1f - (hungryTime/maxWaitDuration);
+        else if (state == CustomerState.RequestCat) return 1f - (catWaitingTime/maxCatWaitTime);
+        else return 0f; // invalid/negated value
     }
 }
