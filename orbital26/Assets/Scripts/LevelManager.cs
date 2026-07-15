@@ -85,6 +85,10 @@ public class LevelManager : MonoBehaviour
 
     private bool isPaused = false;
 
+
+    [SerializeField] private int  spent;
+    [SerializeField] private int earned;
+
     // Ensure one SINGLETON instance
     // Awake: called immediately when object/script is loaded
     // Start: called before first frame update 
@@ -102,6 +106,8 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        spent = 0;
+        earned = 0;
         isPaused = false;
         isGameOver = false;
         cash = GameManager.instance.cash;
@@ -207,7 +213,7 @@ public class LevelManager : MonoBehaviour
         // TODO: FOR TESTING ONLY 
         if (Input.GetKeyDown(KeyCode.M))
         {
-            Time.timeScale = 3.5f;
+            Time.timeScale = 2.0f;
         }
         if (Input.GetKeyDown(KeyCode.N))
         {
@@ -442,6 +448,27 @@ public class LevelManager : MonoBehaviour
     public bool IsPaused()
     {
         return isPaused;
+    }
+
+
+    // getter and setter for spent earned
+    public void AddSpent(int amt)
+    {
+        spent += amt;
+    }
+
+    public void AddEarned(int amt)
+    {
+        earned += amt;
+    }
+
+    public int getSpent()
+    {
+        return spent;
+    }
+    public int getEarned()
+    {
+        return earned;
     }
 
 }
