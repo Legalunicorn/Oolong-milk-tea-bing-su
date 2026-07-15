@@ -204,6 +204,15 @@ public class LevelManager : MonoBehaviour
             else PauseLevel();
             Debug.Log("Is paused: " + isPaused);
         }
+        // TODO: FOR TESTING ONLY 
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            Time.timeScale = 3.5f;
+        }
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            Time.timeScale = 1.0f;
+        }
     }
 
    public void SpawnCustomer()
