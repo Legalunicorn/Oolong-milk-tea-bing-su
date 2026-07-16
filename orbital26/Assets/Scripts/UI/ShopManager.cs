@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
-// Manages the adoption shop and cafe customization menu
+// Manages the cat adoption and cafe customisation pages.
 public class ShopManager : MonoBehaviour
 {
     [Header("Main Menu Panel")]
@@ -10,7 +10,7 @@ public class ShopManager : MonoBehaviour
 
     [Header("Menu Pages")]
     [SerializeField] private GameObject adoptCatPage;
-    [SerializeField] private GameObject customizationPage;
+    [SerializeField] private GameObject customisationPage;
 
     [Header("Cat Shop")]
     [SerializeField] private List<CatData> cats;
@@ -18,22 +18,57 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private GameObject shopItemPrefab;
     [SerializeField] private TextMeshProUGUI feedbackText;
 
+    [Header("Wallpaper Shop")]
+    [SerializeField]
+    private CafeCustomisationManager cafeCustomisationManager;
+
+    [SerializeField] private Transform wallpaperItemContainer;
+    [SerializeField] private GameObject wallpaperItemPrefab;
+
     private void Start()
     {
-        // Prepare the default page before hiding the full menu.
+        // Make the cat adoption page the default page.
         SetPage(adoptCatPage);
 
-        shopPanel.SetActive(false);
+        FillCatShop();
+        FillWallpaperShop();
 
-        FillShop();
+        shopPanel.SetActive(false);
     }
 
-    // Create all cat shop items.
-    private void FillShop()
+    // Creates the cat cards.
+    private void FillCatShop()
     {
+        if (cats == null)
+        {
+            Debug.LogError("Cats list is not assigned.");
+            return;
+        }
+
+        if (itemContainer == null)
+        {
+            Debug.LogError("Cat Item Container is not assigned.");
+            return;
+        }
+
+        if (shopItemPrefab == null)
+        {
+            Debug.LogError("Cat Shop Item Prefab is not assigned.");
+            return;
+        }
+
         foreach (CatData cat in cats)
         {
-            GameObject item = Instantiate(shopItemPrefab, itemContainer);
+            if (cat == null)
+            {
+                Debug.LogWarning("A CatData entry is missing.");
+                continue;
+            }
+
+            GameObject item = Instantiate(
+                shopItemPrefab,
+                itemContainer
+            );
 
             CatShopItem ui = item.GetComponent<CatShopItem>();
 
@@ -44,7 +79,78 @@ public class ShopManager : MonoBehaviour
             else
             {
                 Debug.LogError(
-                    "CatShopItem component is missing from the shop item prefab."
+                    "CatShopItem component is missing from " +
+                    "the cat shop item prefab."
+                );
+            }
+        }
+    }
+
+    // Creates the wallpaper cards.
+    private void FillWallpaperShop()
+    {
+        if (cafeCustomisationManager == null)
+        {
+            Debug.LogError(
+                "Cafe Customisation Manager is not assigned."
+            );
+            return;
+        }
+
+        if (wallpaperItemContainer == null)
+        {
+            Debug.LogError(
+                "Wallpaper Item Container is not assigned."
+            );
+            return;
+        }
+
+        if (wallpaperItemPrefab == null)
+        {
+            Debug.LogError(
+                "Wallpaper Item Prefab is not assigned."
+            );
+            return;
+        }
+
+        for (
+            int index = 0;
+            index < cafeCustomisationManager.WallpaperCount;
+            index++
+        )
+        {
+            CafeCustomisationManager.WallpaperSet wallpaper =
+                cafeCustomisationManager.GetWallpaper(index);
+
+            if (wallpaper == null)
+            {
+                Debug.LogWarning(
+                    "Wallpaper data is missing at index " + index
+                );
+                continue;
+            }
+
+            GameObject item = Instantiate(
+                wallpaperItemPrefab,
+                wallpaperItemContainer
+            );
+
+            WallpaperShopItem ui =
+                item.GetComponent<WallpaperShopItem>();
+
+            if (ui != null)
+            {
+                ui.Setup(
+                    wallpaper,
+                    index,
+                    cafeCustomisationManager
+                );
+            }
+            else
+            {
+                Debug.LogError(
+                    "WallpaperShopItem component is missing " +
+                    "from the wallpaper item prefab."
                 );
             }
         }
@@ -58,20 +164,37 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
-        // SpendCash returns true when the purchase is successful.
+        if (GameManager.instance == null)
+        {
+            Debug.LogError("GameManager instance was not found.");
+            return;
+        }
+
         if (GameManager.instance.SpendCash(catData.price))
         {
             AudioManager.instance?.PlaySpendMoneySound();
 
             GameManager.instance.AddCat(catData);
-            LevelManager.instance.SpawnCat(catData.prefab);
 
-            feedbackText.text = catData.name = " purchased!";
+            if (LevelManager.instance != null)
+            {
+                LevelManager.instance.SpawnCat(catData.prefab);
+            }
+
+            if (feedbackText != null)
+            {
+                feedbackText.text =
+                    catData.catName = " purchased!";
+            }
         }
         else
         {
-            feedbackText.text =
-                "Not enough cash to buy " + catData.name + " :(";
+            if (feedbackText != null)
+            {
+                feedbackText.text =
+                    "Not enough cash to buy " +
+                    catData.catName + " :(";
+            }
         }
     }
 
@@ -83,10 +206,15 @@ public class ShopManager : MonoBehaviour
 
         shopPanel.SetActive(true);
 
-        // Always open the cat adoption page first.
+        // Always show the cat page first.
         SetPage(adoptCatPage);
 
-        feedbackText.text = "";
+        if (feedbackText != null)
+        {
+            feedbackText.text = "";
+        }
+
+        cafeCustomisationManager?.ClearFeedback();
     }
 
     public void CloseShopUI()
@@ -96,25 +224,41 @@ public class ShopManager : MonoBehaviour
         shopPanel.SetActive(false);
     }
 
-    // Called by the Adopt Cat tab button.
     public void ShowAdoptCatPage()
     {
         AudioManager.instance?.PlayUIClickSound();
 
         SetPage(adoptCatPage);
+
+        if (feedbackText != null)
+        {
+            feedbackText.text = "";
+        }
     }
 
-    // Called by the Cafe Customization tab button.
-    public void ShowCustomizationPage()
+    public void ShowCustomisationPage()
     {
         AudioManager.instance?.PlayUIClickSound();
 
-        SetPage(customizationPage);
+        SetPage(customisationPage);
+
+        cafeCustomisationManager?.ClearFeedback();
     }
 
     private void SetPage(GameObject pageToShow)
     {
-        adoptCatPage.SetActive(pageToShow == adoptCatPage);
-        customizationPage.SetActive(pageToShow == customizationPage);
+        if (adoptCatPage != null)
+        {
+            adoptCatPage.SetActive(
+                pageToShow == adoptCatPage
+            );
+        }
+
+        if (customisationPage != null)
+        {
+            customisationPage.SetActive(
+                pageToShow == customisationPage
+            );
+        }
     }
 }

@@ -78,6 +78,8 @@ public class GameManager : MonoBehaviour
         ownedCats.Clear();
         InitInventory();
         SceneManager.LoadScene("Level1");
+        // Reset wallpaper and purchased wallpaper ownership.
+        CafeCustomisationManager.ResetCustomisationData();
     }
 
     public void StartTutorial()
