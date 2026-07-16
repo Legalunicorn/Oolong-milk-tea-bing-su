@@ -66,7 +66,7 @@ public class ShopManager : MonoBehaviour
             GameManager.instance.AddCat(catData);
             LevelManager.instance.SpawnCat(catData.prefab);
 
-            feedbackText.text = catData.name + " purchased!";
+            feedbackText.text = catData.name = " purchased!";
         }
         else
         {
