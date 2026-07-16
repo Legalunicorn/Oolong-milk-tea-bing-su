@@ -1,16 +1,24 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class CafeCustomisationManager : MonoBehaviour
+public class CafeCustomizationManager : MonoBehaviour
 {
+    [System.Serializable]
+    public class WallpaperSet
+    {
+        public string wallpaperName;
+
+        // Keep the tiles in the same order for every wallpaper colour.
+        public TileBase[] tiles;
+    }
+
     [Header("Wallpaper Tilemap")]
     [SerializeField] private Tilemap wallpaperTilemap;
 
-    [Header("Wallpaper Options")]
-    [Tooltip("Element 0 should be the wallpaper painted in the scene.")]
-    [SerializeField] private TileBase[] wallpaperOptions;
+    [Header("Wallpaper Colour Sets")]
+    [SerializeField] private WallpaperSet[] wallpaperOptions;
 
-    [Header("Default Selection")]
+    [Header("Default Wallpaper")]
     [SerializeField] private int defaultWallpaperIndex = 0;
 
     private int currentWallpaperIndex;
@@ -31,60 +39,84 @@ public class CafeCustomisationManager : MonoBehaviour
             return;
         }
 
-        // The scene should initially be painted using this wallpaper.
         currentWallpaperIndex = Mathf.Clamp(
             defaultWallpaperIndex,
             0,
             wallpaperOptions.Length - 1
         );
 
-        // Load the wallpaper previously selected by the player.
-        int savedWallpaperIndex = PlayerPrefs.GetInt(
+        int savedIndex = PlayerPrefs.GetInt(
             WallpaperSaveKey,
             currentWallpaperIndex
         );
 
-        savedWallpaperIndex = Mathf.Clamp(
-            savedWallpaperIndex,
+        savedIndex = Mathf.Clamp(
+            savedIndex,
             0,
             wallpaperOptions.Length - 1
         );
 
-        ApplyWallpaper(savedWallpaperIndex, false);
+        ApplyWallpaper(savedIndex, false);
     }
 
-    public void SelectWallpaper(int wallpaperIndex)
+    public void SelectWallpaper(int newWallpaperIndex)
     {
-        ApplyWallpaper(wallpaperIndex, true);
+        ApplyWallpaper(newWallpaperIndex, true);
     }
 
-    private void ApplyWallpaper(int wallpaperIndex, bool saveSelection)
+    private void ApplyWallpaper(
+        int newWallpaperIndex,
+        bool saveSelection
+    )
     {
-        if (wallpaperIndex < 0 || wallpaperIndex >= wallpaperOptions.Length)
+        if (newWallpaperIndex < 0 ||
+            newWallpaperIndex >= wallpaperOptions.Length)
         {
-            Debug.LogWarning("Invalid wallpaper index: " + wallpaperIndex);
+            Debug.LogWarning(
+                "Invalid wallpaper index: " + newWallpaperIndex
+            );
             return;
         }
 
-        TileBase currentTile = wallpaperOptions[currentWallpaperIndex];
-        TileBase newTile = wallpaperOptions[wallpaperIndex];
+        WallpaperSet currentWallpaper =
+            wallpaperOptions[currentWallpaperIndex];
 
-        if (currentTile == null || newTile == null)
+        WallpaperSet newWallpaper =
+            wallpaperOptions[newWallpaperIndex];
+
+        if (currentWallpaper.tiles.Length != newWallpaper.tiles.Length)
         {
-            Debug.LogWarning("One of the wallpaper Tile assets is missing.");
+            Debug.LogError(
+                "Wallpaper sets do not contain the same number of tiles."
+            );
             return;
         }
 
-        if (currentTile != newTile)
+        for (int i = 0; i < currentWallpaper.tiles.Length; i++)
         {
-            wallpaperTilemap.SwapTile(currentTile, newTile);
+            TileBase oldTile = currentWallpaper.tiles[i];
+            TileBase newTile = newWallpaper.tiles[i];
+
+            if (oldTile == null || newTile == null)
+            {
+                Debug.LogWarning(
+                    "A wallpaper tile is missing at position " + i
+                );
+                continue;
+            }
+
+            wallpaperTilemap.SwapTile(oldTile, newTile);
         }
 
-        currentWallpaperIndex = wallpaperIndex;
+        currentWallpaperIndex = newWallpaperIndex;
 
         if (saveSelection)
         {
-            PlayerPrefs.SetInt(WallpaperSaveKey, currentWallpaperIndex);
+            PlayerPrefs.SetInt(
+                WallpaperSaveKey,
+                currentWallpaperIndex
+            );
+
             PlayerPrefs.Save();
         }
     }
