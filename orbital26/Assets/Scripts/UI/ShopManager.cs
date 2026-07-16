@@ -1,78 +1,120 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
-// Manages the SHOP UI
+// Manages the adoption shop and cafe customization menu
 public class ShopManager : MonoBehaviour
 {
+    [Header("Main Menu Panel")]
+    [SerializeField] private GameObject shopPanel;
 
-    
-    public GameObject shopPanel;
-    public List<CatData> cats; 
-    
-    // direct UI elements inside shop panel
-    public Transform itemContainer;
-    public GameObject shopItemPrefab;
-    public TextMeshProUGUI feedbackText;
+    [Header("Menu Pages")]
+    [SerializeField] private GameObject adoptCatPage;
+    [SerializeField] private GameObject customizationPage;
 
+    [Header("Cat Shop")]
+    [SerializeField] private List<CatData> cats;
+    [SerializeField] private Transform itemContainer;
+    [SerializeField] private GameObject shopItemPrefab;
+    [SerializeField] private TextMeshProUGUI feedbackText;
 
-    void Start()
+    private void Start()
     {
-        shopPanel.SetActive(false);
-        // Current we only have one 
-        // But I design this to handle list of cats
-        FillShop();
+        // Prepare the default page before hiding the full menu.
+        SetPage(adoptCatPage);
 
+        shopPanel.SetActive(false);
+
+        FillShop();
     }
 
-    // Add cat shop items to the shop
+    // Create all cat shop items.
     private void FillShop()
     {
-        foreach(CatData cat in cats)
-        {   
-            // create shop item UI
+        foreach (CatData cat in cats)
+        {
             GameObject item = Instantiate(shopItemPrefab, itemContainer);
+
             CatShopItem ui = item.GetComponent<CatShopItem>();
-            ui.Setup(cat,this);
+
+            if (ui != null)
+            {
+                ui.Setup(cat, this);
+            }
+            else
+            {
+                Debug.LogError(
+                    "CatShopItem component is missing from the shop item prefab."
+                );
+            }
         }
     }
 
     public void BuyCat(CatData catData)
     {
-        // SpendCash returns bool (success status), True => auto spends it
+        if (catData == null)
+        {
+            Debug.LogWarning("No CatData was provided.");
+            return;
+        }
+
+        // SpendCash returns true when the purchase is successful.
         if (GameManager.instance.SpendCash(catData.price))
         {
-            // play sound effect if the purchase is successful
             AudioManager.instance?.PlaySpendMoneySound();
+
             GameManager.instance.AddCat(catData);
             LevelManager.instance.SpawnCat(catData.prefab);
-            feedbackText.text = catData.name = " purchased!";
+
+            feedbackText.text = catData.name + " purchased!";
         }
         else
         {
-            feedbackText.text = "Not enough cash to buy" + catData.name + " :(";
+            feedbackText.text =
+                "Not enough cash to buy " + catData.name + " :(";
         }
     }
 
     public void OpenShopUI()
     {
-        // Shop and menu buttons
-        // click sound effect
         AudioManager.instance?.PlayUIClickSound();
-        //tutorial call back
+
         TutorialManager.instance?.OnShopOpen();
-        
 
         shopPanel.SetActive(true);
+
+        // Always open the cat adoption page first.
+        SetPage(adoptCatPage);
+
         feedbackText.text = "";
     }
 
     public void CloseShopUI()
     {
-        // click sound effect
-        AudioManager.instance?.PlayUIClickSound(); 
+        AudioManager.instance?.PlayUIClickSound();
+
         shopPanel.SetActive(false);
     }
 
+    // Called by the Adopt Cat tab button.
+    public void ShowAdoptCatPage()
+    {
+        AudioManager.instance?.PlayUIClickSound();
+
+        SetPage(adoptCatPage);
+    }
+
+    // Called by the Cafe Customization tab button.
+    public void ShowCustomizationPage()
+    {
+        AudioManager.instance?.PlayUIClickSound();
+
+        SetPage(customizationPage);
+    }
+
+    private void SetPage(GameObject pageToShow)
+    {
+        adoptCatPage.SetActive(pageToShow == adoptCatPage);
+        customizationPage.SetActive(pageToShow == customizationPage);
+    }
 }
