@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MatchaData
   m_EditorClassIdentifier: GameAssembly::FoodData
   foodName: Matcha
-  icon: {fileID: 21300000, guid: d052f0e4621252d49a11c24d51af280b, type: 3}
+  icon: {fileID: 21300000, guid: 188816e48e3ad8b44b289fd6912f64a1, type: 3}
   cookCost: 3
   cookTime: 2
   price: 15

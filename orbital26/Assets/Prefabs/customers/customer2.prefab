@@ -296,6 +296,7 @@ MonoBehaviour:
   maxCatWaitTime: 10
   catComplainInterval: 0
   timeSinceLastCatComplain: 0
+  platePrefab: {fileID: 6460000460039702816, guid: 6013fe7ca0275664a91aae6d035c129f, type: 3}
 --- !u!61 &-1931089796889933924
 BoxCollider2D:
   m_ObjectHideFlags: 0

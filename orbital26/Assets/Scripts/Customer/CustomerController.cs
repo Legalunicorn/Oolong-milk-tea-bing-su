@@ -61,6 +61,10 @@ public class CustomerController : MonoBehaviour
     private Vector3 currDest;
     private ChairSlot chair;
 
+
+    [SerializeField] private GameObject platePrefab;
+    private GameObject plate;
+
     void Awake()
     {
         entrance = GameObject.FindWithTag("Entrance").transform;
@@ -69,6 +73,9 @@ public class CustomerController : MonoBehaviour
 
         stopPositionLeft = GameObject.FindWithTag("stopLeft").transform;
         stopPositionRight = GameObject.FindWithTag("stopRight").transform;
+
+        plate = Instantiate(platePrefab);
+        plate.SetActive(false);
 
     }
 
@@ -263,15 +270,21 @@ public class CustomerController : MonoBehaviour
         StopWalking();
         bool isChairRight = chair.isFaceRight;
         SpriteRenderer render = GetComponent<SpriteRenderer>();
+        // TODO: add plate as well
+        float eatDuration = 3.5f;
         if (isChairRight) {
+            plate.transform.position = transform.position + new Vector3(0.8f,-0.4f,0f);
             render.flipX = false;
         }
         else {
+            plate.transform.position = transform.position + new Vector3(-0.8f,-0.4f,0f);
             render.flipX = true;
         }
-
+        
         animator.SetBool("isEating", true);
-        Invoke(nameof(FinishEating), 3.5f);
+        plate.SetActive(true);
+        // TODO: finish eating -> remove the plate
+        Invoke(nameof(FinishEating), eatDuration);
     }
 
      void FinishEating()
@@ -279,6 +292,7 @@ public class CustomerController : MonoBehaviour
         // if we flipped the customer when sitting
         // we need to flip back or else he would walk backwards
 
+        plate.SetActive(false);
         TutorialManager.instance?.OnFinishEating();
 
         SpriteRenderer render = GetComponent<SpriteRenderer>();
