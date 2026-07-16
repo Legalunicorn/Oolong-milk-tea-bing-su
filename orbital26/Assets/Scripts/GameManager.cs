@@ -118,6 +118,7 @@ public class GameManager : MonoBehaviour
 
     public void AddCash(int amt)
     {
+        LevelManager.instance?.AddEarned(amt);
         cash += amt;
     }
 
@@ -125,6 +126,7 @@ public class GameManager : MonoBehaviour
     {
         if (cash < amt) return false;
         cash -= amt;
+        LevelManager.instance?.AddSpent(amt);
         return true;
     }
 

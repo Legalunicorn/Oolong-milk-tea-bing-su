@@ -23,14 +23,34 @@ public class LevelResultUI : MonoBehaviour
     [SerializeField] private Button restartLevelButton;
     [SerializeField] private Button startMenuButton;
 
+
+    [SerializeField] private TextMeshProUGUI spentText;
+    [SerializeField] private TextMeshProUGUI earnedText;
+    [SerializeField] private TextMeshProUGUI profitText;
+
     void Awake()
     {
         instance = this;
         panel.SetActive(false);
     }
 
+
+    private void SetReport()
+    {
+        if (LevelManager.instance != null)
+        {
+            int spent = LevelManager.instance.getSpent();
+            int earned = LevelManager.instance.getEarned();
+            int profit = earned - spent;
+            spentText.text = ""+spent;
+            earnedText.text = ""+earned;
+            profitText.text = ""+profit;
+        }
+    }
+
     public void ShowWin()
     {
+        SetReport();
         panel.SetActive(true);
         // m
         if (GameManager.instance.IsAtFinalLevel())
@@ -52,6 +72,7 @@ public class LevelResultUI : MonoBehaviour
     // display panel 
     public void ShowLose()
     {
+        SetReport();
         panel.SetActive(true);
         headerText.text = "Mission Failed : (";
         nextLevelButton.gameObject.SetActive(false);
