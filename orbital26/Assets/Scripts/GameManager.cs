@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     // Hash Map to store Cats 
     // right now its only one cat but this will expand 
     public Dictionary<CatData, int> ownedCats = new Dictionary<CatData,int>();
+    public int equippedCounterId = 0; // 0 -> default to wooden counter, 2 -> stone, 3 -> cream
+    public List<int> ownedCounterIds = new List<int>{0};
 
     public CatData brownCat;
     public CatData cookieCat;

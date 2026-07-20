@@ -10,7 +10,8 @@ public class ShopManager : MonoBehaviour
 
     [Header("Menu Pages")]
     [SerializeField] private GameObject adoptCatPage;
-    [SerializeField] private GameObject customisationPage;
+    [SerializeField] private GameObject WallcustomisationPage;
+    [SerializeField] private GameObject counterCustomisationPage;
 
     [Header("Cat Shop")]
     [SerializeField] private List<CatData> cats;
@@ -18,12 +19,18 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private GameObject shopItemPrefab;
     [SerializeField] private TextMeshProUGUI feedbackText;
 
-    [Header("Wallpaper Shop")]
+
     [SerializeField]
+    // NOTE: ? why is this not set as singleton? why use ref value. trouble some have to manually assign each time
     private CafeCustomisationManager cafeCustomisationManager;
 
+    [Header("Wallpaper Shop")]
     [SerializeField] private Transform wallpaperItemContainer;
     [SerializeField] private GameObject wallpaperItemPrefab;
+
+    [Header("Counter shop")]
+    [SerializeField] private Transform counterItemContainer;
+    [SerializeField] private GameObject counterShopCardPrefab;
 
     private void Start()
     {
@@ -32,8 +39,27 @@ public class ShopManager : MonoBehaviour
 
         FillCatShop();
         FillWallpaperShop();
+        FillCounterShop();
 
         shopPanel.SetActive(false);
+    }
+
+
+    private void FillCounterShop()
+    {
+        if (counterShopCardPrefab==null || counterItemContainer == null)
+        {
+            Debug.LogError("COUNTER: card prefab OR container is null"); 
+            return;
+        }
+        int id = 0;
+        foreach (CounterData data in cafeCustomisationManager.counterDatas)
+        {
+            GameObject card = Instantiate(counterShopCardPrefab, counterItemContainer);
+            card.GetComponent<CounterShopItem>().Setup(data, id++);
+        }
+
+
     }
 
     // Creates the cat cards.
@@ -173,9 +199,7 @@ public class ShopManager : MonoBehaviour
         if (GameManager.instance.SpendCash(catData.price))
         {
             AudioManager.instance?.PlaySpendMoneySound();
-
             GameManager.instance.AddCat(catData);
-
             if (LevelManager.instance != null)
             {
                 LevelManager.instance.SpawnCat(catData.prefab);
@@ -201,9 +225,7 @@ public class ShopManager : MonoBehaviour
     public void OpenShopUI()
     {
         AudioManager.instance?.PlayUIClickSound();
-
         TutorialManager.instance?.OnShopOpen();
-
         shopPanel.SetActive(true);
 
         // Always show the cat page first.
@@ -215,14 +237,12 @@ public class ShopManager : MonoBehaviour
         }
 
         cafeCustomisationManager?.ClearFeedback();
-
         LevelManager.instance?.PauseLevel();
     }
 
     public void CloseShopUI()
     {
         AudioManager.instance?.PlayUIClickSound();
-
         shopPanel.SetActive(false);
         LevelManager.instance?.ResumeLevel();
     }
@@ -239,12 +259,20 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+
+    // NOTE: **WALL customization page to be specific, this was named broadly at the start
+    // but now we have multiple customizations
     public void ShowCustomisationPage()
     {
         AudioManager.instance?.PlayUIClickSound();
+        SetPage(WallcustomisationPage);
+        cafeCustomisationManager?.ClearFeedback();
+    }
 
-        SetPage(customisationPage);
-
+    public void ShowCounterPage()
+    {
+        AudioManager.instance?.PlayUIClickSound();
+        SetPage(counterCustomisationPage);
         cafeCustomisationManager?.ClearFeedback();
     }
 
@@ -257,11 +285,16 @@ public class ShopManager : MonoBehaviour
             );
         }
 
-        if (customisationPage != null)
+        if (WallcustomisationPage != null)
         {
-            customisationPage.SetActive(
-                pageToShow == customisationPage
+            WallcustomisationPage.SetActive(
+                pageToShow == WallcustomisationPage
             );
+        }
+
+        if (counterCustomisationPage != null)
+        {
+            counterCustomisationPage.SetActive(pageToShow == counterCustomisationPage);
         }
     }
 }

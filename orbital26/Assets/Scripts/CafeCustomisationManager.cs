@@ -4,6 +4,11 @@ using UnityEngine.Tilemaps;
 
 public class CafeCustomisationManager : MonoBehaviour
 {
+
+    // COUNTER CUSTOMIZATION STUFF 
+    [SerializeField] private SpriteRenderer counterObj;
+    [SerializeField] public CounterData[] counterDatas;
+
     [System.Serializable]
     public class WallpaperSet
     {
@@ -47,21 +52,24 @@ public class CafeCustomisationManager : MonoBehaviour
     {
         get
         {
-            if (wallpaperOptions == null)
-            {
-                return 0;
-            }
-
+            if (wallpaperOptions == null) return 0;
             return wallpaperOptions.Length;
+        }
+    }
+
+    public static CafeCustomisationManager instance;
+    // TODO: make a singleton
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
         }
     }
 
     private void Start()
     {
-        if (!ValidateSetup())
-        {
-            return;
-        }
+        if (!ValidateSetup()) return;
 
         // The scene is originally painted with the default wallpaper.
         currentWallpaperIndex = Mathf.Clamp(
@@ -92,15 +100,41 @@ public class CafeCustomisationManager : MonoBehaviour
 
         ApplyWallpaper(savedIndex);
         ClearFeedback();
+
+
+        ApplyCounter(GameManager.instance.equippedCounterId);
     }
+
+    public void ApplyCounter(int id)
+    {
+        counterObj.sprite = counterDatas[id].sprite;
+    }
+
+    public void SelectCounter(int id)
+    {
+        // check if owned or not 
+        CounterData data = counterDatas[id];
+        bool isOwened = GameManager.instance.ownedCounterIds.Contains(id);
+        if (!isOwened)
+        {
+            // false -> not enough to buy coutner
+            if (!GameManager.instance.SpendCash(data.price)) return;
+            // buy now 
+            AudioManager.instance?.PlaySpendMoneySound();
+            GameManager.instance.ownedCounterIds.Add(id);
+        }
+        
+
+        // equip item, either bought or already owned 
+        AudioManager.instance?.PlayUIClickSound();
+        ApplyCounter(id);
+    }
+
 
     // ShopManager uses this to obtain the information for each card.
     public WallpaperSet GetWallpaper(int wallpaperIndex)
     {
-        if (!IsValidIndex(wallpaperIndex))
-        {
-            return null;
-        }
+        if (!IsValidIndex(wallpaperIndex)) return null;
 
         return wallpaperOptions[wallpaperIndex];
     }
@@ -123,9 +157,7 @@ public class CafeCustomisationManager : MonoBehaviour
         if (IsWallpaperOwned(wallpaperIndex))
         {
             AudioManager.instance?.PlayUIClickSound();
-
             ApplyWallpaper(wallpaperIndex);
-
             SetFeedback(
                 selectedWallpaper.wallpaperName +
                 " wallpaper selected!"
@@ -146,11 +178,8 @@ public class CafeCustomisationManager : MonoBehaviour
             ))
         {
             SetWallpaperOwned(wallpaperIndex);
-
             AudioManager.instance?.PlaySpendMoneySound();
-
             ApplyWallpaper(wallpaperIndex);
-
             SetFeedback(
                 selectedWallpaper.wallpaperName +
                 " wallpaper purchased!"
@@ -159,7 +188,6 @@ public class CafeCustomisationManager : MonoBehaviour
         else
         {
             AudioManager.instance?.PlayUIClickSound();
-
             SetFeedback(
                 "Not enough cash to buy " +
                 selectedWallpaper.wallpaperName +
@@ -168,30 +196,22 @@ public class CafeCustomisationManager : MonoBehaviour
         }
     }
 
+
+    // interesting code
     private void ApplyWallpaper(int newWallpaperIndex)
     {
-        if (!IsValidIndex(newWallpaperIndex))
+        if (!IsValidIndex(newWallpaperIndex)) return;
+
+        WallpaperSet currentWallpaper =wallpaperOptions[currentWallpaperIndex];
+        WallpaperSet newWallpaper = wallpaperOptions[newWallpaperIndex];
+
+        if (currentWallpaper.tiles == null || newWallpaper.tiles == null)
         {
+            Debug.LogError("A wallpaper tile list is missing.");
             return;
         }
 
-        WallpaperSet currentWallpaper =
-            wallpaperOptions[currentWallpaperIndex];
-
-        WallpaperSet newWallpaper =
-            wallpaperOptions[newWallpaperIndex];
-
-        if (currentWallpaper.tiles == null ||
-            newWallpaper.tiles == null)
-        {
-            Debug.LogError(
-                "A wallpaper tile list is missing."
-            );
-            return;
-        }
-
-        if (currentWallpaper.tiles.Length !=
-            newWallpaper.tiles.Length)
+        if (currentWallpaper.tiles.Length != newWallpaper.tiles.Length)
         {
             Debug.LogError(
                 "All wallpaper sets must contain the same " +
@@ -200,17 +220,10 @@ public class CafeCustomisationManager : MonoBehaviour
             return;
         }
 
-        for (
-            int tileIndex = 0;
-            tileIndex < currentWallpaper.tiles.Length;
-            tileIndex++
-        )
+        for ( int tileIndex = 0; tileIndex < currentWallpaper.tiles.Length; tileIndex++)
         {
-            TileBase oldTile =
-                currentWallpaper.tiles[tileIndex];
-
-            TileBase newTile =
-                newWallpaper.tiles[tileIndex];
+            TileBase oldTile = currentWallpaper.tiles[tileIndex];
+            TileBase newTile = newWallpaper.tiles[tileIndex];
 
             if (oldTile == null || newTile == null)
             {
@@ -223,15 +236,15 @@ public class CafeCustomisationManager : MonoBehaviour
 
             if (oldTile != newTile)
             {
-                wallpaperTilemap.SwapTile(
-                    oldTile,
-                    newTile
-                );
+                wallpaperTilemap.SwapTile( oldTile, newTile);
             }
         }
 
         currentWallpaperIndex = newWallpaperIndex;
 
+        // ? apparently using player prefs now 
+        // TODO: if possible change this to game manager as source of truth 
+        // so its more consistent..
         PlayerPrefs.SetInt(
             SelectedWallpaperKey,
             currentWallpaperIndex
@@ -247,15 +260,8 @@ public class CafeCustomisationManager : MonoBehaviour
             return false;
         }
 
-        // Default wallpaper is always owned.
-        if (wallpaperIndex == defaultWallpaperIndex)
-        {
-            return true;
-        }
-
-        string key =
-            OwnedWallpaperKeyPrefix + wallpaperIndex;
-
+        if (wallpaperIndex == defaultWallpaperIndex) return true;
+        string key = OwnedWallpaperKeyPrefix + wallpaperIndex;
         return PlayerPrefs.GetInt(key, 0) == 1;
     }
 
@@ -295,18 +301,14 @@ public class CafeCustomisationManager : MonoBehaviour
     {
         if (wallpaperTilemap == null)
         {
-            Debug.LogError(
-                "Wallpaper Tilemap has not been assigned."
-            );
+            Debug.LogError("Wallpaper Tilemap has not been assigned.");
             return false;
         }
 
         if (wallpaperOptions == null ||
             wallpaperOptions.Length == 0)
         {
-            Debug.LogError(
-                "No wallpaper options have been assigned."
-            );
+            Debug.LogError("No wallpaper options have been assigned.");
             return false;
         }
 
