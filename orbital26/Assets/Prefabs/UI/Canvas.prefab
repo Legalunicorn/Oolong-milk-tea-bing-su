@@ -1578,7 +1578,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Choose a Wall paper
+  m_text: Choose a counter
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d1f383dcad87b764e9374fd7c9edd471, type: 2}
   m_sharedMaterial: {fileID: -6161690796745545159, guid: d1f383dcad87b764e9374fd7c9edd471, type: 2}
