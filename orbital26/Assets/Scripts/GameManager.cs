@@ -78,6 +78,7 @@ public class GameManager : MonoBehaviour
         currLevel = 1;
         cash = startingCash;
         ownedCats.Clear();
+        ownedCounterIds = new List<int>{0};
         InitInventory();
         SceneManager.LoadScene("Level1");
         // Reset wallpaper and purchased wallpaper ownership.
