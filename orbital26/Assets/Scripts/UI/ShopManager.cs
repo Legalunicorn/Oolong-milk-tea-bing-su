@@ -215,6 +215,8 @@ public class ShopManager : MonoBehaviour
         }
 
         cafeCustomisationManager?.ClearFeedback();
+
+        LevelManager.instance?.PauseLevel();
     }
 
     public void CloseShopUI()
@@ -222,6 +224,7 @@ public class ShopManager : MonoBehaviour
         AudioManager.instance?.PlayUIClickSound();
 
         shopPanel.SetActive(false);
+        LevelManager.instance?.ResumeLevel();
     }
 
     public void ShowAdoptCatPage()
