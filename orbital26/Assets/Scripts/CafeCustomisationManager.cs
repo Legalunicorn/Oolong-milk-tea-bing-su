@@ -9,6 +9,10 @@ public class CafeCustomisationManager : MonoBehaviour
     [SerializeField] private SpriteRenderer counterObj;
     [SerializeField] public CounterData[] counterDatas;
 
+    // Ground customization stuff 
+    [SerializeField] private SpriteRenderer groundObj;
+    [SerializeField] public GroundData[] groundDatas;
+
     [System.Serializable]
     public class WallpaperSet
     {
@@ -103,6 +107,11 @@ public class CafeCustomisationManager : MonoBehaviour
 
 
         ApplyCounter(GameManager.instance.equippedCounterId);
+        // Apply the ground 
+    }
+
+    public void ApplyGround(int id){
+        groundObj.sprite = groundDatas[id].sprite;
     }
 
     public void ApplyCounter(int id)
@@ -128,6 +137,21 @@ public class CafeCustomisationManager : MonoBehaviour
         // equip item, either bought or already owned 
         AudioManager.instance?.PlayUIClickSound();
         ApplyCounter(id);
+    }
+
+    public void SelectGround(int id){
+        GroundData data = groundDatas[id];
+        bool isOwned = GameManager.instance.ownedGroundIds.Contains(id);
+        if (!isOwned)
+        {
+            if (!GameManager.instance.SpendCash(data.price)) return;
+            AudioManager.instance?.PlaySpendMoneySound();
+            GameManager.instance.ownedGroundIds.Add(id);
+        }
+        
+        // equip item, either bought or already owned 
+        AudioManager.instance?.PlayUIClickSound();
+        ApplyGround(id);
     }
 
 
@@ -316,6 +340,9 @@ public class CafeCustomisationManager : MonoBehaviour
     }
 
     // Called when the player starts a new game.
+    // NOTE: 
+    // for ground and counter costomization, it is NOT set in player prefs 
+    // so it will reset by game maanager not by resetting player prefs
     public static void ResetCustomisationData()
     {
         // Green wallpaper is index 0.

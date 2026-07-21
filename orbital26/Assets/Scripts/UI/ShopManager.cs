@@ -12,6 +12,7 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private GameObject adoptCatPage;
     [SerializeField] private GameObject WallcustomisationPage;
     [SerializeField] private GameObject counterCustomisationPage;
+    [SerializeField] private GameObject groundCustomisationPage;
 
     [Header("Cat Shop")]
     [SerializeField] private List<CatData> cats;
@@ -32,6 +33,11 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Transform counterItemContainer;
     [SerializeField] private GameObject counterShopCardPrefab;
 
+    [Header("ground shop")]
+    [SerializeField] private Transform groundItemContainer;
+    [SerializeField] private GameObject groundShopCardPreb;
+
+
     private void Start()
     {
         // Make the cat adoption page the default page.
@@ -40,10 +46,25 @@ public class ShopManager : MonoBehaviour
         FillCatShop();
         FillWallpaperShop();
         FillCounterShop();
+        FillGroundShop();
 
         shopPanel.SetActive(false);
     }
 
+
+    private void FillGroundShop(){
+        if (groundCustomisationPage == null || groundItemContainer == null){
+            Debug.LogError("ground page or container is set to null");
+            return;
+        }
+        Debug.Log("fill groundf");
+        int id = 0;
+        foreach (GroundData data in cafeCustomisationManager.groundDatas)
+        {
+            GameObject card = Instantiate(groundShopCardPreb, groundItemContainer);
+            card.GetComponent<GroundShopItem>().Setup(data, id++);
+        }
+    }
 
     private void FillCounterShop()
     {
@@ -276,6 +297,12 @@ public class ShopManager : MonoBehaviour
         cafeCustomisationManager?.ClearFeedback();
     }
 
+    public void ShopGroundPage(){
+        AudioManager.instance?.PlayUIClickSound();
+        SetPage(groundCustomisationPage);
+        cafeCustomisationManager?.ClearFeedback();
+    }
+
     private void SetPage(GameObject pageToShow)
     {
         if (adoptCatPage != null)
@@ -295,6 +322,9 @@ public class ShopManager : MonoBehaviour
         if (counterCustomisationPage != null)
         {
             counterCustomisationPage.SetActive(pageToShow == counterCustomisationPage);
+        }
+        if (groundCustomisationPage != null){
+            groundCustomisationPage.SetActive(pageToShow == groundCustomisationPage);
         }
     }
 }

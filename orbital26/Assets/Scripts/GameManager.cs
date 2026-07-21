@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public Dictionary<CatData, int> ownedCats = new Dictionary<CatData,int>();
     public int equippedCounterId = 0; // 0 -> default to wooden counter, 2 -> stone, 3 -> cream
     public List<int> ownedCounterIds = new List<int>{0};
+    public List<int> ownedGroundIds = new List<int>{0};
 
     public CatData brownCat;
     public CatData cookieCat;
@@ -79,6 +80,7 @@ public class GameManager : MonoBehaviour
         cash = startingCash;
         ownedCats.Clear();
         ownedCounterIds = new List<int>{0};
+        ownedGroundIds = new List<int>{0};
         InitInventory();
         SceneManager.LoadScene("Level1");
         // Reset wallpaper and purchased wallpaper ownership.
