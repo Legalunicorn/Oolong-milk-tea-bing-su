@@ -89,7 +89,10 @@ public class GameManager : MonoBehaviour
         ownedCats.Clear();
         ownedCounterIds = new List<int>{0};
         ownedGroundIds = new List<int>{0};
+        currCounterId = 0;
+        currGroundId = 0;
         InitInventory();
+
         SceneManager.LoadScene("Level1");
         // Reset wallpaper and purchased wallpaper ownership.
         CafeCustomisationManager.ResetCustomisationData();
