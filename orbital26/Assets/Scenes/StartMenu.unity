@@ -716,11 +716,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 93669968}
+  - {fileID: 1787889650}
   - {fileID: 1377126134}
   - {fileID: 1573736695}
   - {fileID: 2093067471}
   - {fileID: 830452483}
-  - {fileID: 1787889650}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -898,6 +898,10 @@ MonoBehaviour:
   tempCash: 0
   tutorialCash: 0
   startingCash: 50
+  ownedCounterIds: 00000000
+  ownedGroundIds: 00000000
+  currCounterId: 0
+  currGroundId: 0
   brownCat: {fileID: 11400000, guid: 2c35c2d94ced0754785f14dafa3bea77, type: 2}
   cookieCat: {fileID: 11400000, guid: cbe163956450c4645a5933c8f2954713, type: 2}
   currLevel: 1
@@ -1445,7 +1449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e04a266e15004938b07139bc0382ec2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  targetX: 100
+  targetX: 50
   speed: 180
 --- !u!95 &1573736697
 Animator:
