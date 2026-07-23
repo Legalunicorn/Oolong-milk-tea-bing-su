@@ -17,3 +17,4 @@ MonoBehaviour:
   cookCost: 3
   cookTime: 1.5
   price: 15
+  unlockLevel: 2

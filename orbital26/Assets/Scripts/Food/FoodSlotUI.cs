@@ -44,10 +44,11 @@ public class FoodSlotUI : MonoBehaviour
         // Stop locked food from cooking.
         if (GameManager.instance.currLevel < foodData.unlockLevel)
         {
-            foodFeedbackText.text =
+            ShowFoodFeedback(
                 foodData.foodName +
                 " is unlocked in Level " +
-                foodData.unlockLevel;
+                foodData.unlockLevel
+            );
 
             AudioManager.instance?.PlayUIClickSound();
             return;
@@ -122,5 +123,37 @@ public class FoodSlotUI : MonoBehaviour
         // updat the inventory count 
         if (FoodManager.instance == null) return;
         countText.text = "Owned: " + FoodManager.instance.GetStock(foodData);
+    }
+
+    private Coroutine feedbackCoroutine;
+
+    private void ShowFoodFeedback(string message)
+    {
+        if (foodFeedbackText == null)
+        {
+            Debug.LogWarning("Food Feedback Text is not assigned.");
+            return;
+        }
+
+        foodFeedbackText.text = message;
+
+        if (feedbackCoroutine != null)
+        {   
+            StopCoroutine(feedbackCoroutine);
+        }
+
+        feedbackCoroutine = StartCoroutine(ClearFeedbackAfterDelay());
+    }
+
+    private IEnumerator ClearFeedbackAfterDelay()
+    {
+        yield return new WaitForSeconds(1f);
+
+        if (foodFeedbackText != null)
+        {
+            foodFeedbackText.text = "";
+        }
+
+        feedbackCoroutine = null;
     }
 }
