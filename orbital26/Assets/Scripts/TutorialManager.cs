@@ -120,7 +120,7 @@ public class TutorialManager : MonoBehaviour
             case 9:
                 // FoodRequestArrow.SetActive(true);
                 // InSetCustomerArrow(true);
-                Invoke(nameof(SetCustomerArrow), 1.5f);
+                Invoke(nameof(SetCustomerArrow), 1.3f);
                 SetMessage("Click the food request bubble to open the food menu.");
                 ShowNextButton(false);
                 break;
@@ -132,6 +132,7 @@ public class TutorialManager : MonoBehaviour
                 ShowNextButton(false);
                 break;
             case 11:
+                CustomerArrow.SetActive(false);
                 PrepareFoodArrow.SetActive(false);
                 Invoke(nameof(ShowDragArrow), 1f);
                 // DragToCustomerArrow.SetActive(true);
@@ -167,7 +168,7 @@ public class TutorialManager : MonoBehaviour
                 break;
             case 17: 
                 ShopmenuArrow.SetActive(false);
-                SetMessage("You can buy new cats here using the cash earned : )");
+                SetMessage("You can buy new cats here using the cash earned : ) Money can also be used to customize your cafe!");
                 ShowNextButton(true);
                 break;
             case 18:

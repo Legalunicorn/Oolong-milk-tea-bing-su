@@ -106,6 +106,7 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        ResumeLevel();
         spent = 0;
         earned = 0;
         isPaused = false;
@@ -203,22 +204,23 @@ public class LevelManager : MonoBehaviour
             CancelCatSelection();
         }
 
-        // TODO: remove once tested: testing pause unpause system
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            if (isPaused) ResumeLevel();
-            else PauseLevel();
-            Debug.Log("Is paused: " + isPaused);
-        }
-        // TODO: FOR TESTING ONLY 
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            Time.timeScale = 2.0f;
-        }
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            Time.timeScale = 1.0f;
-        }
+        // NOTE: Below is for testing only
+        // // TODO: remove once tested: testing pause unpause system
+        // if (Input.GetKeyDown(KeyCode.P))
+        // {
+        //     if (isPaused) ResumeLevel();
+        //     else PauseLevel();
+        //     Debug.Log("Is paused: " + isPaused);
+        // }
+        // // TODO: FOR TESTING ONLY 
+        // if (Input.GetKeyDown(KeyCode.M))
+        // {
+        //     Time.timeScale = 2.0f;
+        // }
+        // if (Input.GetKeyDown(KeyCode.N))
+        // {
+        //     Time.timeScale = 1.0f;
+        // }
     }
 
    public void SpawnCustomer()
@@ -343,6 +345,7 @@ public class LevelManager : MonoBehaviour
             Debug.Log("LevelUI NULL");
         }
         if (res) {
+            GameManager.instance?.CompleteLevel();
             LevelResultUI.instance.ShowWin();
             AudioManager.instance?.PlayWinLevelSound();
         }

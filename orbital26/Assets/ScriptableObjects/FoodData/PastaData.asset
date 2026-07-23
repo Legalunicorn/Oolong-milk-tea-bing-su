@@ -15,5 +15,5 @@ MonoBehaviour:
   foodName: Pasta
   icon: {fileID: 21300000, guid: 6e6739b80aa5a0449bb3e979420e3f59, type: 3}
   cookCost: 10
-  cookTime: 3
+  cookTime: 2
   price: 30

@@ -105,8 +105,8 @@ public class CafeCustomisationManager : MonoBehaviour
         ApplyWallpaper(savedIndex);
         ClearFeedback();
 
-
-        ApplyCounter(GameManager.instance.equippedCounterId);
+        ApplyCounter(GameManager.instance.currCounterId);
+        ApplyGround(GameManager.instance.currGroundId);
         // Apply the ground 
     }
 
@@ -132,11 +132,11 @@ public class CafeCustomisationManager : MonoBehaviour
             AudioManager.instance?.PlaySpendMoneySound();
             GameManager.instance.ownedCounterIds.Add(id);
         }
-        
 
         // equip item, either bought or already owned 
         AudioManager.instance?.PlayUIClickSound();
         ApplyCounter(id);
+        GameManager.instance.currCounterId = id;
     }
 
     public void SelectGround(int id){
@@ -152,6 +152,7 @@ public class CafeCustomisationManager : MonoBehaviour
         // equip item, either bought or already owned 
         AudioManager.instance?.PlayUIClickSound();
         ApplyGround(id);
+        GameManager.instance.currGroundId = id;
     }
 
 
