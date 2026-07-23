@@ -11,6 +11,8 @@ public class WallpaperShopItem : MonoBehaviour
     [SerializeField] private Button buyButton;
 
     private int wallpaperIndex;
+    private int wallpaperPrice;
+
     private CafeCustomisationManager cafeCustomisationManager;
 
     public void Setup(
@@ -20,25 +22,73 @@ public class WallpaperShopItem : MonoBehaviour
     {
         if (data == null || manager == null)
         {
-            Debug.LogError("Wallpaper data or manager is missing.");
+            Debug.LogError(
+                "Wallpaper data or manager is missing."
+            );
             return;
         }
 
         wallpaperIndex = index;
+        wallpaperPrice = data.price;
         cafeCustomisationManager = manager;
 
         wallpaperIcon.sprite = data.previewIcon;
         wallpaperIcon.preserveAspect = true;
 
         wallpaperNameText.text = data.wallpaperName;
-        wallpaperPriceText.text = data.price.ToString();
 
-        buyButton.onClick.RemoveListener(OnWallpaperButtonClicked);
-        buyButton.onClick.AddListener(OnWallpaperButtonClicked);
+        // Display the price or "Owned".
+        RefreshDisplay();
+
+        buyButton.onClick.RemoveListener(
+            OnWallpaperButtonClicked
+        );
+
+        buyButton.onClick.AddListener(
+            OnWallpaperButtonClicked
+        );
     }
 
     private void OnWallpaperButtonClicked()
     {
-        cafeCustomisationManager.SelectWallpaper(wallpaperIndex);
+        if (cafeCustomisationManager == null)
+        {
+            Debug.LogError(
+                "CafeCustomisationManager is missing."
+            );
+            return;
+        }
+
+        // Buys the wallpaper if unowned,
+        // or selects it if already owned.
+        cafeCustomisationManager.SelectWallpaper(
+            wallpaperIndex
+        );
+
+        // Update the price text immediately.
+        RefreshDisplay();
+    }
+
+    private void RefreshDisplay()
+    {
+        if (cafeCustomisationManager == null)
+        {
+            return;
+        }
+
+        bool isOwned =
+            cafeCustomisationManager.IsWallpaperOwned(
+                wallpaperIndex
+            );
+
+        if (isOwned)
+        {
+            wallpaperPriceText.text = "Owned";
+        }
+        else
+        {
+            wallpaperPriceText.text =
+                wallpaperPrice.ToString();
+        }
     }
 }

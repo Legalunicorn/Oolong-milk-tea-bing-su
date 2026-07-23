@@ -5,7 +5,6 @@ using TMPro;
 
 // Manage the food slot UI
 // the inventory count, cook timers etc
-
 public class FoodSlotUI : MonoBehaviour
 {
     
@@ -16,6 +15,7 @@ public class FoodSlotUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI costText;
     [SerializeField] private TextMeshProUGUI price; // revenue
+    [SerializeField] private TextMeshProUGUI foodFeedbackText;
     [SerializeField] private Button cookButton;
     [SerializeField] private Image cookFillImage;
     private bool isCooking = false;
@@ -39,21 +39,49 @@ public class FoodSlotUI : MonoBehaviour
     }
     void OnCookClicked()
     {
-        // for tutorial call back which is cake 
-        TutorialManager.instance?.OnFoodCooked(foodData.foodName);
-
-
-        //costText.text = "Cooking...";
         if (isCooking) return;
-        Debug.Log("Cash bef:" + GameManager.instance.cash + "Cost: " + foodData.cookCost);
-        if (!GameManager.instance.SpendCash(foodData.cookCost))
+
+        // Stop locked food from cooking.
+        if (GameManager.instance.currLevel < foodData.unlockLevel)
         {
-            Debug.Log("not enough to cook food" + foodData.foodName);
+            foodFeedbackText.text =
+                foodData.foodName +
+                " is unlocked in Level " +
+                foodData.unlockLevel;
+
+            AudioManager.instance?.PlayUIClickSound();
             return;
         }
-        Debug.Log("cook success: " + GameManager.instance.cash);
+
+        // Clear the previous message.
+        foodFeedbackText.text = "";
+
+        TutorialManager.instance?.OnFoodCooked(foodData.foodName);
+
+        Debug.Log(
+            "Cash bef: " +
+            GameManager.instance.cash +
+            " Cost: " +
+            foodData.cookCost
+        );
+
+        if (!GameManager.instance.SpendCash(foodData.cookCost))
+        {
+            Debug.Log(
+                "Not enough to cook food " +
+                foodData.foodName
+            );
+            return;
+        }
+
+        Debug.Log(
+         "Cook success: " +
+            GameManager.instance.cash
+        );
+
         StartCoroutine(Cook());
-    }
+    }   
+    
     //IEnumarator -> an interface 
     // let us carry an action over multiple frame ahead\
     IEnumerator Cook()
