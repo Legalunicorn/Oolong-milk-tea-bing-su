@@ -97,6 +97,7 @@ public class GameManager : MonoBehaviour
 
     public void StartTutorial()
     {
+        Time.timeScale = 1f;
         // cache the actual cash for now 
         // later reset back when tutorial ends
         tempCash = cash;
@@ -106,6 +107,7 @@ public class GameManager : MonoBehaviour
 
     public void GoNextLevel()
     {
+        Time.timeScale = 1f;
         // should not be possible to be called but just in case
         if (finishAllLevels){
             SceneManager.LoadScene("StartMenu");
@@ -126,6 +128,7 @@ public class GameManager : MonoBehaviour
 
     public void GoToStartMenu()
     {
+        Time.timeScale = 1f;
         if (LevelManager.instance.IsTutorialLevel())
         {
             // reset the cash back to the proper level

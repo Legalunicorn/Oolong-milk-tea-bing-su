@@ -84,13 +84,13 @@ public class TutorialManager : MonoBehaviour
             case 3:
                 SatisfactionBarArrow.SetActive(false);
                 TimerArrow.SetActive(true);
-                SetMessage("This is the clock. Each level lasts from 8am to 5pm.");
+                SetMessage("This is the clock. Each level lasts from 8am to 5pm. Move on to the next level by survivng the shift!");
                 ShowNextButton(true);
                 break;
             case 4:
                 TimerArrow.SetActive(false);
                 CashDisplayArrow.SetActive(true);
-                SetMessage("This is your cash. Earn money from customers and use it to buy new cats");
+                SetMessage("This is your cash. Earn money from customers and use it to buy cats from the shop.");
                 ShowNextButton(true);
                 break;
             case 5:
@@ -120,7 +120,7 @@ public class TutorialManager : MonoBehaviour
             case 9:
                 // FoodRequestArrow.SetActive(true);
                 // InSetCustomerArrow(true);
-                Invoke(nameof(SetCustomerArrow), 1.3f);
+                Invoke(nameof(SetCustomerArrow), 0.1f);
                 SetMessage("Click the food request bubble to open the food menu.");
                 ShowNextButton(false);
                 break;
@@ -163,7 +163,7 @@ public class TutorialManager : MonoBehaviour
                 break;
             case 16:
                 ShopmenuArrow.SetActive(true);
-                SetMessage("Great job! Sometimes customers may request cats you dont own. Click the cat shop menu.");
+                SetMessage("Great job! Happy customers keep your satisfaction high. Customers may request cats you dont own. Click the cat shop menu.");
                 ShowNextButton(false);
                 break;
             case 17: 
