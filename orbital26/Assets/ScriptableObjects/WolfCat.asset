@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb7bf1608b06b4944b8857b3094bdc11, type: 3}
   m_Name: ' purchased!'
   m_EditorClassIdentifier: GameAssembly::CatData
-  catName: Grey Cat
+  catName: Sesame
   prefab: {fileID: 4795691163591342916, guid: db34a0128168b6542b14b70bcc9504d7, type: 3}
   icon: {fileID: -157986675002122066, guid: 7067fb99971b7c3459e5950113bb4804, type: 3}
   price: 25

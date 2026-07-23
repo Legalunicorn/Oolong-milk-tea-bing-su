@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb7bf1608b06b4944b8857b3094bdc11, type: 3}
   m_Name: ' purchased!'
   m_EditorClassIdentifier: Assembly-CSharp::CatData
-  catName: Brown Cat
+  catName: Cocoa
   prefab: {fileID: 7196350137628518048, guid: d9921309be16e68438a9488d3fe90b76, type: 3}
   icon: {fileID: 1593486516139116798, guid: 09b0c344368b6674999db1970b4e1a0f, type: 3}
   price: 15
