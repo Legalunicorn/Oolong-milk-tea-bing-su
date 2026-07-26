@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using UnityEngine.EventSystems;
 
 // Referncing a YT tutorial
 // https://www.youtube.com/watch?v=BCYJ4UNClhk
@@ -82,4 +82,24 @@ public class CursorUI : MonoBehaviour
         SetEveryCursorInactive();
         selectionCursor.SetActive(true);
     }
+
+    // webgl not hidding cursotr for some, reason, just force on update 
+    // hacky way is to try force hide on click? lets see
+    private void Update(){
+        // didnt work..
+        if (Cursor.visible && Input.GetMouseButtonDown(0)) Cursor.visible = false;
+    }
+
+
+    // // start menu just use sys cursor then
+    // public void UseSysCursor(){
+    //     Cursor.visible = true;
+    //     defaultCursor.SetActive(false);
+    //     selectionCursor.SetActive(false);
+    // }
+    //
+    // public voud UsaeCustomCursor(){
+    //     Cursor.visible = false;
+    //     ShowDefaultCursor();
+    // }
 }

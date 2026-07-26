@@ -353,11 +353,11 @@ public class CustomerController : MonoBehaviour
         // shouldnt be possible for exaclty one to exist 
         if (LevelManager.instance != null)
         {
-            LevelManager.instance.DecreaseSatisfaction(8);
+            LevelManager.instance.DecreaseSatisfaction(10);
         }
         if (FloatingTextManager.instance != null)
         {
-            FloatingTextManager.instance.SpawnHeartText("-8", transform.position + Vector3.up);
+            FloatingTextManager.instance.SpawnHeartText("-10", transform.position + Vector3.up);
         }
         if (currentBubble != null) Destroy(currentBubble);
         StartExiting(); // transition state to exit -> and walk out

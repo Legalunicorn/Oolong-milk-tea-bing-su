@@ -588,6 +588,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CursorCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 1991256319425879935, guid: 2961ebf697105f042868fed7bfcd79c2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2634864433074842906, guid: 2961ebf697105f042868fed7bfcd79c2, type: 3}
       propertyPath: m_Pivot.x
       value: 0

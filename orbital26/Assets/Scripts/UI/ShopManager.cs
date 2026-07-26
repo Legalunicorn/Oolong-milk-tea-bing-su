@@ -228,8 +228,7 @@ public class ShopManager : MonoBehaviour
 
             if (feedbackText != null)
             {
-                feedbackText.text =
-                    catData.catName = " purchased!";
+                feedbackText.text  = " purchased!";
             }
         }
         else

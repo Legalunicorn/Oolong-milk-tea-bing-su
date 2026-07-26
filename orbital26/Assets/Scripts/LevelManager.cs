@@ -114,6 +114,11 @@ public class LevelManager : MonoBehaviour
         cash = GameManager.instance.cash;
         timeLeft = timeLimit;
         satisfactionBar.SetMaxSatisfaction(maxSatisfaction);
+        // Bonus: Make the first customer always space 5s from start of game, regardless of level 
+        // This is to make level 1 less boring because the interval is incredibly long 
+        CustomerspawnTimer = CustomerspawnInterval - 6f;
+        // found a bug, Tutortial level should be exception; 
+        if (IsTutorialLevel()) CustomerspawnTimer = 0f;
 
         if (room2Objects != null) room2Objects.SetActive(hasSecondRoom);
         //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Object.FindObjectsByType.html

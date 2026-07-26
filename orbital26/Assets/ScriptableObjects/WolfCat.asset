@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb7bf1608b06b4944b8857b3094bdc11, type: 3}
-  m_Name: ' purchased!'
+  m_Name: WolfCat
   m_EditorClassIdentifier: GameAssembly::CatData
   catName: Sesame
   prefab: {fileID: 4795691163591342916, guid: db34a0128168b6542b14b70bcc9504d7, type: 3}

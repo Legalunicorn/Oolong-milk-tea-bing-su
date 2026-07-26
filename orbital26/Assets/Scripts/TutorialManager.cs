@@ -78,7 +78,7 @@ public class TutorialManager : MonoBehaviour
                 break;
             case 2:
                 SatisfactionBarArrow.SetActive(true);
-                SetMessage("This is the satisfaction bar. If it returnes zero, you lose the level.");
+                SetMessage("This is the satisfaction bar. If it reaches zero, you lose the level.");
                 ShowNextButton(true);
                 break;
             case 3:
@@ -176,6 +176,13 @@ public class TutorialManager : MonoBehaviour
                 // nextButton. = "Finish";
                 // TODO: chane "Next" to "Finish" button text, then skip to nextleve l
                 ShowNextButton(true);
+                break;
+            case 19: 
+                // load the previously stopped level
+                int lvl =  GameManager.instance.currLevel;
+                if (lvl > 3) lvl = 3; // just incase it somhow is invalid 
+                if (lvl < 1) lvl = 1;
+                SceneManager.LoadScene("Level"+lvl);
                 break;
             default:
                 GameManager.instance.GoToStartMenu();
