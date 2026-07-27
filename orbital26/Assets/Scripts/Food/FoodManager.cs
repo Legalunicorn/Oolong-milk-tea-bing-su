@@ -27,6 +27,12 @@ public class FoodManager : MonoBehaviour
         }
     }
 
+    public void clearFoodStock()
+    {
+        stock = new Dictionary<FoodData, int>();
+    }
+
+
     public int GetStock(FoodData ft)
     {
         // return stock[ft];

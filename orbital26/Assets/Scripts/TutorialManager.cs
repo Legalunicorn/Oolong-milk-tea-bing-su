@@ -178,6 +178,12 @@ public class TutorialManager : MonoBehaviour
                 ShowNextButton(true);
                 break;
             case 19: 
+
+                // BUG! since we change to skip to start level
+                // the temp cash was never restored
+                GameManager.instance.SetCashToTemp();
+
+
                 // load the previously stopped level
                 int lvl =  GameManager.instance.currLevel;
                 if (lvl > 3) lvl = 3; // just incase it somhow is invalid 

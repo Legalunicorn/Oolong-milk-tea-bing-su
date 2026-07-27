@@ -91,7 +91,9 @@ public class GameManager : MonoBehaviour
         ownedGroundIds = new List<int>{0};
         currCounterId = 0;
         currGroundId = 0;
+        finishAllLevels = false; // bug! only discovered after rerun game twice
         InitInventory();
+        FoodManager.instance?.clearFoodStock();
 
         SceneManager.LoadScene("Level1");
         // Reset wallpaper and purchased wallpaper ownership.
@@ -140,6 +142,11 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
     }
     
+    public void SetCashToTemp()
+    {
+        if (LevelManager.instance.IsTutorialLevel()) cash =tempCash;
+    }
+
     public bool IsAtFinalLevel()
     {
         // return currLevel >= totalLevels;
