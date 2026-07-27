@@ -84,11 +84,6 @@ public class CustomerController : MonoBehaviour
         maxWaitDuration = LevelManager.instance.customerWaitCounterDuration;
         maxCatWaitTime = LevelManager.instance.customerWaitForCatDuration;
         transform.position = entrance.position;
-        // actually i dont like this, randomn is not good enough 
-        // change to any position between two points
-        // find random counter instead
-        // Transform randomStop = stopPositions[Random.Range(0, stopPositions.Length)].transform;
-        // SetPath(randomStop.position, CustomerState.WalkingToCounter);
 
         Vector3 randpos = new Vector3(
             Random.Range(stopPositionLeft.position.x, stopPositionRight.position.x),
@@ -187,6 +182,16 @@ public class CustomerController : MonoBehaviour
         // but later make it store in some manager globally 
         // the cat -> que animation for duration, then auto relase
         assignedCat.InteractWithCustomer();
+
+
+        // Customer tips, amount fixed for now 
+        // We can choose to extend this to tips based on the cat data as well 
+        // Rough guide could be Cat cost /2 as tipping amount   
+        int catInteractionTip = 15;
+        AudioManager.instance?.PlayEarnMoneySound();
+        GameManager.instance?.AddCash(catInteractionTip);
+        FloatingTextManager.instance?.SpawnCoinText("+"+catInteractionTip, transform.position + Vector3.up);
+
         Invoke(nameof(FinishCatInteraction), 4f);
     }
 
@@ -257,7 +262,7 @@ public class CustomerController : MonoBehaviour
 
     void OnReachCounter()
     {
-        TutorialManager.instance?.OnReachCounter();
+        // TutorialManager.instance?.OnReachCounter();
         // start to request for food
         state = CustomerState.WaitingAtCounter;
         StopWalking();
@@ -317,6 +322,8 @@ public class CustomerController : MonoBehaviour
         if (state != CustomerState.WaitingAtCounter) return;
         if (currentBubble != null) Destroy(currentBubble);
 
+        TutorialManager.instance?.OnReachCounter();
+
         // Customer order with gibbersh sounds;
         AudioManager.instance?.PlayGibberishSound();
 
@@ -340,13 +347,17 @@ public class CustomerController : MonoBehaviour
         // Later ti should refererence from the level manager
         // so for now all 3 levels has same peanlioty 
         // i think its fine bc we already increase customer frequency  
+        //
+
+        // NOTE: both level manafer and floating manager should exist together or both dont exist 
+        // shouldnt be possible for exaclty one to exist 
         if (LevelManager.instance != null)
         {
-            LevelManager.instance.DecreaseSatisfaction(8);
+            LevelManager.instance.DecreaseSatisfaction(10);
         }
         if (FloatingTextManager.instance != null)
         {
-            FloatingTextManager.instance.SpawnHeartText("-8", transform.position + Vector3.up);
+            FloatingTextManager.instance.SpawnHeartText("-10", transform.position + Vector3.up);
         }
         if (currentBubble != null) Destroy(currentBubble);
         StartExiting(); // transition state to exit -> and walk out
@@ -375,7 +386,6 @@ public class CustomerController : MonoBehaviour
         {
             // this should not happen because i put alot of chairs 
             // but just incase this happens we make the customer exit 
-            // maybe in the future we can do sth else 
             StartExiting();
             return;
         }
@@ -383,7 +393,8 @@ public class CustomerController : MonoBehaviour
         Vector3 chairOffset = new Vector3(0f, 0.5f,  0f); // mannually adjust
         SetPath(chair.transform.position + chairOffset,  CustomerState.WalkingToChair);
 
-        // Experimental: close the food menu automatically 
+        // Experimental: close the food menu automatically
+        // NOTE: i think it fits nicely, keep it here. Reduce useless clicks for players
         FoodMenuUI.instance.Hide();
     }
 

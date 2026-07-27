@@ -12,4 +12,5 @@ public class FoodData : ScriptableObject
     public int cookCost;
     public float cookTime;
     public int price; // revenue
+    public int unlockLevel; // level to unlock this food item
 }

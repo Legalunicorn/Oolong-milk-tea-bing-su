@@ -13,13 +13,18 @@ public class GameManager : MonoBehaviour
     // static instance accessible globbally 
     public static GameManager instance {get; private set;}
 
-    public int cash = 50; 
-    public int tempCash; // store here during tutorial
+    public int cash = 65;
+    public int tempCash  ; // store here during tutorial
     public int tutorialCash;
-    [SerializeField] private int startingCash = 50;
+    [SerializeField] private int startingCash = 65;
     // Hash Map to store Cats 
     // right now its only one cat but this will expand 
     public Dictionary<CatData, int> ownedCats = new Dictionary<CatData,int>();
+    public List<int> ownedCounterIds = new List<int>{0};
+    public List<int> ownedGroundIds = new List<int>{0};
+    public int currCounterId = 0;
+    public int currGroundId = 0;
+    private bool finishAllLevels = false;
 
     public CatData brownCat;
     public CatData cookieCat;
@@ -42,6 +47,7 @@ public class GameManager : MonoBehaviour
             //InitInventory();
             Debug.Log("Game manager restarted new");
             cash = startingCash;
+            tempCash = startingCash;
             
         }
         else
@@ -67,6 +73,11 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public void CompleteLevel(){
+        if (currLevel <  totalLevels) currLevel++;
+        else finishAllLevels = true;
+    }
+
 
     /**
     * Reset the game from level 1 
@@ -76,32 +87,53 @@ public class GameManager : MonoBehaviour
         currLevel = 1;
         cash = startingCash;
         ownedCats.Clear();
+        ownedCounterIds = new List<int>{0};
+        ownedGroundIds = new List<int>{0};
+        currCounterId = 0;
+        currGroundId = 0;
+        finishAllLevels = false; // bug! only discovered after rerun game twice
         InitInventory();
+        FoodManager.instance?.clearFoodStock();
+
         SceneManager.LoadScene("Level1");
+        // Reset wallpaper and purchased wallpaper ownership.
+        CafeCustomisationManager.ResetCustomisationData();
     }
 
     public void StartTutorial()
     {
+        Time.timeScale = 1f;
         // cache the actual cash for now 
         // later reset back when tutorial ends
         tempCash = cash;
+        Debug.Log("temp cash: "+ tempCash);
         SceneManager.LoadScene("tutorial");
     }
 
     public void GoNextLevel()
     {
-        currLevel++;
-        // if exeed max level (which should not happen)
-        // just load the start menu again 
-        if (currLevel > totalLevels) {
-            currLevel = totalLevels;
-            SceneManager.LoadScene("StartMenu"); // 0 -> start menu 
+        Time.timeScale = 1f;
+        // should not be possible to be called but just in case
+        if (finishAllLevels){
+            SceneManager.LoadScene("StartMenu");
+            return;
         }
-        else SceneManager.LoadScene(levelScenes[currLevel - 1]);
+        // CompleteLevel();
+        SceneManager.LoadScene(levelScenes[currLevel-1]);
+        
+        // currLevel++;
+        // // if exeed max level (which should not happen)
+        // // just load the start menu again 
+        // if (currLevel > totalLevels) {
+        //     currLevel = totalLevels;
+        //     SceneManager.LoadScene("StartMenu"); // 0 -> start menu 
+        // }
+        // else SceneManager.LoadScene(levelScenes[currLevel - 1]);
     }
 
     public void GoToStartMenu()
     {
+        Time.timeScale = 1f;
         if (LevelManager.instance.IsTutorialLevel())
         {
             // reset the cash back to the proper level
@@ -110,9 +142,15 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
     }
     
+    public void SetCashToTemp()
+    {
+        if (LevelManager.instance.IsTutorialLevel()) cash =tempCash;
+    }
+
     public bool IsAtFinalLevel()
     {
-        return currLevel >= totalLevels;
+        // return currLevel >= totalLevels;
+        return finishAllLevels;
     }
         
 

@@ -1,78 +1,330 @@
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
 
-// Manages the SHOP UI
+// Manages the cat adoption and cafe customisation pages.
 public class ShopManager : MonoBehaviour
 {
+    [Header("Main Menu Panel")]
+    [SerializeField] private GameObject shopPanel;
 
-    
-    public GameObject shopPanel;
-    public List<CatData> cats; 
-    
-    // direct UI elements inside shop panel
-    public Transform itemContainer;
-    public GameObject shopItemPrefab;
-    public TextMeshProUGUI feedbackText;
+    [Header("Menu Pages")]
+    [SerializeField] private GameObject adoptCatPage;
+    [SerializeField] private GameObject WallcustomisationPage;
+    [SerializeField] private GameObject counterCustomisationPage;
+    [SerializeField] private GameObject groundCustomisationPage;
+
+    [Header("Cat Shop")]
+    [SerializeField] private List<CatData> cats;
+    [SerializeField] private Transform itemContainer;
+    [SerializeField] private GameObject shopItemPrefab;
+    [SerializeField] private TextMeshProUGUI feedbackText;
 
 
-    void Start()
+    [SerializeField]
+    // NOTE: ? why is this not set as singleton? why use ref value. trouble some have to manually assign each time
+    private CafeCustomisationManager cafeCustomisationManager;
+
+    [Header("Wallpaper Shop")]
+    [SerializeField] private Transform wallpaperItemContainer;
+    [SerializeField] private GameObject wallpaperItemPrefab;
+
+    [Header("Counter shop")]
+    [SerializeField] private Transform counterItemContainer;
+    [SerializeField] private GameObject counterShopCardPrefab;
+
+    [Header("ground shop")]
+    [SerializeField] private Transform groundItemContainer;
+    [SerializeField] private GameObject groundShopCardPreb;
+
+
+    private void Start()
     {
+        // Make the cat adoption page the default page.
+        SetPage(adoptCatPage);
+
+        FillCatShop();
+        FillWallpaperShop();
+        FillCounterShop();
+        FillGroundShop();
+
         shopPanel.SetActive(false);
-        // Current we only have one 
-        // But I design this to handle list of cats
-        FillShop();
+    }
+
+
+    private void FillGroundShop(){
+        if (groundCustomisationPage == null || groundItemContainer == null){
+            Debug.LogError("ground page or container is set to null");
+            return;
+        }
+        Debug.Log("fill groundf");
+        int id = 0;
+        foreach (GroundData data in cafeCustomisationManager.groundDatas)
+        {
+            GameObject card = Instantiate(groundShopCardPreb, groundItemContainer);
+            card.GetComponent<GroundShopItem>().Setup(data, id++);
+        }
+    }
+
+    private void FillCounterShop()
+    {
+        if (counterShopCardPrefab==null || counterItemContainer == null)
+        {
+            Debug.LogError("COUNTER: card prefab OR container is null"); 
+            return;
+        }
+        int id = 0;
+        foreach (CounterData data in cafeCustomisationManager.counterDatas)
+        {
+            GameObject card = Instantiate(counterShopCardPrefab, counterItemContainer);
+            card.GetComponent<CounterShopItem>().Setup(data, id++);
+        }
+
 
     }
 
-    // Add cat shop items to the shop
-    private void FillShop()
+    // Creates the cat cards.
+    private void FillCatShop()
     {
-        foreach(CatData cat in cats)
-        {   
-            // create shop item UI
-            GameObject item = Instantiate(shopItemPrefab, itemContainer);
+        if (cats == null)
+        {
+            Debug.LogError("Cats list is not assigned.");
+            return;
+        }
+
+        if (itemContainer == null)
+        {
+            Debug.LogError("Cat Item Container is not assigned.");
+            return;
+        }
+
+        if (shopItemPrefab == null)
+        {
+            Debug.LogError("Cat Shop Item Prefab is not assigned.");
+            return;
+        }
+
+        foreach (CatData cat in cats)
+        {
+            if (cat == null)
+            {
+                Debug.LogWarning("A CatData entry is missing.");
+                continue;
+            }
+
+            GameObject item = Instantiate(
+                shopItemPrefab,
+                itemContainer
+            );
+
             CatShopItem ui = item.GetComponent<CatShopItem>();
-            ui.Setup(cat,this);
+
+            if (ui != null)
+            {
+                ui.Setup(cat, this);
+            }
+            else
+            {
+                Debug.LogError(
+                    "CatShopItem component is missing from " +
+                    "the cat shop item prefab."
+                );
+            }
+        }
+    }
+
+    // Creates the wallpaper cards.
+    private void FillWallpaperShop()
+    {
+        if (cafeCustomisationManager == null)
+        {
+            Debug.LogError(
+                "Cafe Customisation Manager is not assigned."
+            );
+            return;
+        }
+
+        if (wallpaperItemContainer == null)
+        {
+            Debug.LogError(
+                "Wallpaper Item Container is not assigned."
+            );
+            return;
+        }
+
+        if (wallpaperItemPrefab == null)
+        {
+            Debug.LogError(
+                "Wallpaper Item Prefab is not assigned."
+            );
+            return;
+        }
+
+        for (
+            int index = 0;
+            index < cafeCustomisationManager.WallpaperCount;
+            index++
+        )
+        {
+            CafeCustomisationManager.WallpaperSet wallpaper =
+                cafeCustomisationManager.GetWallpaper(index);
+
+            if (wallpaper == null)
+            {
+                Debug.LogWarning(
+                    "Wallpaper data is missing at index " + index
+                );
+                continue;
+            }
+
+            GameObject item = Instantiate(
+                wallpaperItemPrefab,
+                wallpaperItemContainer
+            );
+
+            WallpaperShopItem ui =
+                item.GetComponent<WallpaperShopItem>();
+
+            if (ui != null)
+            {
+                ui.Setup(
+                    wallpaper,
+                    index,
+                    cafeCustomisationManager
+                );
+            }
+            else
+            {
+                Debug.LogError(
+                    "WallpaperShopItem component is missing " +
+                    "from the wallpaper item prefab."
+                );
+            }
         }
     }
 
     public void BuyCat(CatData catData)
     {
-        // SpendCash returns bool (success status), True => auto spends it
+        if (catData == null)
+        {
+            Debug.LogWarning("No CatData was provided.");
+            return;
+        }
+
+        if (GameManager.instance == null)
+        {
+            Debug.LogError("GameManager instance was not found.");
+            return;
+        }
+
         if (GameManager.instance.SpendCash(catData.price))
         {
-            // play sound effect if the purchase is successful
             AudioManager.instance?.PlaySpendMoneySound();
             GameManager.instance.AddCat(catData);
-            LevelManager.instance.SpawnCat(catData.prefab);
-            feedbackText.text = catData.name = " purchased!";
+            if (LevelManager.instance != null)
+            {
+                LevelManager.instance.SpawnCat(catData.prefab);
+            }
+
+            if (feedbackText != null)
+            {
+                feedbackText.text  = " purchased!";
+            }
         }
         else
         {
-            feedbackText.text = "Not enough cash to buy" + catData.name + " :(";
+            if (feedbackText != null)
+            {
+                feedbackText.text =
+                    "Not enough cash to buy " +
+                    catData.catName + " :(";
+            }
         }
     }
 
     public void OpenShopUI()
     {
-        // Shop and menu buttons
-        // click sound effect
         AudioManager.instance?.PlayUIClickSound();
-        //tutorial call back
         TutorialManager.instance?.OnShopOpen();
-        
-
         shopPanel.SetActive(true);
-        feedbackText.text = "";
+
+        // Always show the cat page first.
+        SetPage(adoptCatPage);
+
+        if (feedbackText != null)
+        {
+            feedbackText.text = "";
+        }
+
+        cafeCustomisationManager?.ClearFeedback();
+        LevelManager.instance?.PauseLevel();
     }
 
     public void CloseShopUI()
     {
-        // click sound effect
-        AudioManager.instance?.PlayUIClickSound(); 
+        AudioManager.instance?.PlayUIClickSound();
         shopPanel.SetActive(false);
+        LevelManager.instance?.ResumeLevel();
     }
 
+    public void ShowAdoptCatPage()
+    {
+        AudioManager.instance?.PlayUIClickSound();
+
+        SetPage(adoptCatPage);
+
+        if (feedbackText != null)
+        {
+            feedbackText.text = "";
+        }
+    }
+
+
+    // NOTE: **WALL customization page to be specific, this was named broadly at the start
+    // but now we have multiple customizations
+    public void ShowCustomisationPage()
+    {
+        AudioManager.instance?.PlayUIClickSound();
+        SetPage(WallcustomisationPage);
+        cafeCustomisationManager?.ClearFeedback();
+    }
+
+    public void ShowCounterPage()
+    {
+        AudioManager.instance?.PlayUIClickSound();
+        SetPage(counterCustomisationPage);
+        cafeCustomisationManager?.ClearFeedback();
+    }
+
+    public void ShopGroundPage(){
+        AudioManager.instance?.PlayUIClickSound();
+        SetPage(groundCustomisationPage);
+        cafeCustomisationManager?.ClearFeedback();
+    }
+
+    private void SetPage(GameObject pageToShow)
+    {
+        if (adoptCatPage != null)
+        {
+            adoptCatPage.SetActive(
+                pageToShow == adoptCatPage
+            );
+        }
+
+        if (WallcustomisationPage != null)
+        {
+            WallcustomisationPage.SetActive(
+                pageToShow == WallcustomisationPage
+            );
+        }
+
+        if (counterCustomisationPage != null)
+        {
+            counterCustomisationPage.SetActive(pageToShow == counterCustomisationPage);
+        }
+        if (groundCustomisationPage != null){
+            groundCustomisationPage.SetActive(pageToShow == groundCustomisationPage);
+        }
+    }
 }
+  

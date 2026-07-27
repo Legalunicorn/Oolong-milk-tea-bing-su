@@ -1,2 +1,21 @@
 fileFormatVersion: 2
 guid: 37c8bdb349cc7c14eb46c24308823ce3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - foodData: {instanceID: 0}
+  - foodIcon: {instanceID: 0}
+  - foodNameText: {instanceID: 0}
+  - countText: {instanceID: 0}
+  - timerText: {instanceID: 0}
+  - costText: {instanceID: 0}
+  - price: {instanceID: 0}
+  - foodFeedbackText: {instanceID: 0}
+  - cookButton: {instanceID: 0}
+  - cookFillImage: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

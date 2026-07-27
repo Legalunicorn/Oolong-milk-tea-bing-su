@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 // bubble with a cat inside 
 // when clicked -> will change the game to selection mode
@@ -13,11 +14,14 @@ public class RequestCatBubble : MonoBehaviour
 
     [SerializeField] private  CustomerTimer timer;
 
+    [SerializeField] private  TextMeshPro catName;
+
     public void Setup(CustomerController customerRef, CatData data)
     {
         customer = customerRef;
         requestedCatData = data;
         catIcon.sprite = data.icon;
+        catName.text = data.catName;
     }
 
 

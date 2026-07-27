@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 858cf124150ae6a4ca4ee733bcfac48f, type: 3}
+  m_Name: Wooden
+  m_EditorClassIdentifier: GameAssembly::GroundData
+  name: Wood
+  price: 0
+  preview: {fileID: 6948899077824102139, guid: 32158690f8a85cb47a4ee85ba7a7ef55, type: 3}
+  sprite: {fileID: 21300000, guid: 12d8f573808ff4e4486102789b95f969, type: 3}

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 858cf124150ae6a4ca4ee733bcfac48f, type: 3}
+  m_Name: Checker
+  m_EditorClassIdentifier: GameAssembly::GroundData
+  name: Checkered
+  price: 10
+  preview: {fileID: 8647851275514414930, guid: 70b0e7dfa3213ad449ec812ea18cb335, type: 3}
+  sprite: {fileID: 21300000, guid: 6f4d58327f5d39742be77d5555df5b48, type: 3}

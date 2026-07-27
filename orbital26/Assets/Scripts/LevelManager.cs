@@ -106,6 +106,7 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        ResumeLevel();
         spent = 0;
         earned = 0;
         isPaused = false;
@@ -113,6 +114,11 @@ public class LevelManager : MonoBehaviour
         cash = GameManager.instance.cash;
         timeLeft = timeLimit;
         satisfactionBar.SetMaxSatisfaction(maxSatisfaction);
+        // Bonus: Make the first customer always space 5s from start of game, regardless of level 
+        // This is to make level 1 less boring because the interval is incredibly long 
+        CustomerspawnTimer = CustomerspawnInterval - 6f;
+        // found a bug, Tutortial level should be exception; 
+        if (IsTutorialLevel()) CustomerspawnTimer = 0f;
 
         if (room2Objects != null) room2Objects.SetActive(hasSecondRoom);
         //https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Object.FindObjectsByType.html
@@ -203,22 +209,23 @@ public class LevelManager : MonoBehaviour
             CancelCatSelection();
         }
 
-        // TODO: remove once tested: testing pause unpause system
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            if (isPaused) ResumeLevel();
-            else PauseLevel();
-            Debug.Log("Is paused: " + isPaused);
-        }
-        // TODO: FOR TESTING ONLY 
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            Time.timeScale = 2.0f;
-        }
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            Time.timeScale = 1.0f;
-        }
+        // NOTE: Below is for testing only
+        // // TODO: remove once tested: testing pause unpause system
+        // if (Input.GetKeyDown(KeyCode.P))
+        // {
+        //     if (isPaused) ResumeLevel();
+        //     else PauseLevel();
+        //     Debug.Log("Is paused: " + isPaused);
+        // }
+        // // TODO: FOR TESTING ONLY 
+        // if (Input.GetKeyDown(KeyCode.M))
+        // {
+        //     Time.timeScale = 2.0f;
+        // }
+        // if (Input.GetKeyDown(KeyCode.N))
+        // {
+        //     Time.timeScale = 1.0f;
+        // }
     }
 
    public void SpawnCustomer()
@@ -343,6 +350,7 @@ public class LevelManager : MonoBehaviour
             Debug.Log("LevelUI NULL");
         }
         if (res) {
+            GameManager.instance?.CompleteLevel();
             LevelResultUI.instance.ShowWin();
             AudioManager.instance?.PlayWinLevelSound();
         }
